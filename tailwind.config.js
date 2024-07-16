@@ -10,7 +10,10 @@ module.exports = {
     extend: {
       colors: {
         ...colors,
-      }
+      },
+      fontFamily: {
+        roboto: ['Roboto', 'sans-serif'],
+      },
     },
   },
   plugins: [],
