@@ -120,12 +120,12 @@ export default function Metronome(props) {
             performPlaylist(props.playlist);
         }
         else {
-            stopPlaylist();
+            stopPerformance();
         }
     }, [props.performing]);
 
     // Helper function for concluding playlist performance
-    function stopPlaylist() {
+    function stopPerformance() {
         clearTimeout(playlistTimerRef.current);
     };
 
