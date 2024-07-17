@@ -39,6 +39,7 @@ const Pattern = forwardRef((props, ref) => {
                     <div className="flex flex-col justify-center items-center col-span-1 row-span-2">
                         <p>BPM</p>
                         <NumberInput
+                            name="bpm"
                             value={inputData.bpm}
                             min={1}
                             max={300}
@@ -48,6 +49,7 @@ const Pattern = forwardRef((props, ref) => {
                     <div className="flex flex-col justify-center items-center col-span-1 row-span-2">
                         <p>Beats</p>
                         <NumberInput
+                            name="beatsPerMeasure"
                             value={inputData.beatsPerMeasure}
                             min={1}
                             max={64}
@@ -57,6 +59,7 @@ const Pattern = forwardRef((props, ref) => {
                     <div className="flex flex-col justify-center items-center col-span-1 row-span-2">
                         <p>Measures</p>
                         <NumberInput
+                            name="numMeasures"
                             value={inputData.numMeasures}
                             min={1}
                             max={64}
