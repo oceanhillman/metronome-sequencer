@@ -59,6 +59,14 @@ export default function Playlist(props) {
         handleClonePattern(pattern);
     }
 
+    function handleDragStart () {
+        document.body.classList.add('disable-select');
+    };
+    
+    function handleDragStop () {
+        document.body.classList.remove('disable-select');
+    };
+
     return (
         <ResponsiveGridLayout
             className="layout"
@@ -69,6 +77,8 @@ export default function Playlist(props) {
             onLayoutChange={(layout) => handleLayoutChange(layout)}
             draggableHandle=".handle" // This makes the first div draggable
             draggableCancel=".no-drag" // This makes the second div non-draggable
+            onDragStart={handleDragStart}
+            onDragStop={handleDragStop}
         >
             {playlistData.map(pattern => (
                 <div key={pattern.id} className="h-full">
