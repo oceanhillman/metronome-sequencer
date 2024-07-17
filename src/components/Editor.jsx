@@ -1,15 +1,10 @@
 'use client'
 
-
-import "../app/globals.css";
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
+import Image from "next/image"
 import Metronome from "@/components/Metronome"
-import GridLayout from "react-grid-layout"
-import { WidthProvider, Responsive } from 'react-grid-layout';
-import Pattern from "@/components/Pattern"
 import Playlist from "@/components/Playlist"
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
+import PlusIcon from "/public/plus.svg"
 
 function generatePatternId() {
     return String(Math.round(Date.now() + Math.random()));
@@ -17,11 +12,7 @@ function generatePatternId() {
 
 export default function Editor() {
 
-    const [editingBpm, setEditingBpm] = useState(120);
-    const [editingBeatsPerMeasure, setEditingBeatsPerMeasure] = useState(4);
-    const [editingNumMeasures, setEditingNumMeasures] = useState(1);
     const [sequencing, setSequencing] = useState(false);
-    const [layoutData, setLayoutData] = useState([]);
     const [playlist, setPlaylist] = useState([{
         id: generatePatternId(),
         bpm: 120,
@@ -30,33 +21,9 @@ export default function Editor() {
     },
     ]);
 
-    // Enforce reasonable limits on metronome parameters
-    useEffect(() => {
-        if (editingNumMeasures <= 0)
-            setEditingNumMeasures(1);
-        else if (editingNumMeasures > 128)
-            setEditingNumMeasures(128);
-
-        if (editingBeatsPerMeasure <= 0)
-            setEditingBeatsPerMeasure(1);
-        else if (editingBeatsPerMeasure > 64)
-            setEditingBeatsPerMeasure(64);
-
-        if (editingBpm <= 0)
-            setEditingBpm(1);
-        else if (editingBpm > 300)
-            setEditingBpm(300);
-    }, [editingBpm, editingBeatsPerMeasure, editingNumMeasures]);
-
     // Clear all patterns from playlist
     function handleClear() {
         setPlaylist([]);
-    }
-
-    // Delete a single pattern from playlist
-    function handleClickDelete(event, id) {
-        event.stopPropagation();
-        setPlaylist((prevItems) => prevItems.filter(item => item.id !== id));
     }
 
     // Trigger metronome to play playlist
@@ -70,26 +37,6 @@ export default function Editor() {
         setSequencing(false);
     };
 
-    // Sort the layout by the y value (and x if necessary)
-    function sortLayout(layout) {
-        const sortedLayout = layout.sort((a, b) => {
-            if (a.y === b.y) {
-                return a.x - b.x; // Secondary sort by x if y values are the same
-            }
-            return a.y - b.y;
-        });
-        return sortedLayout;
-    }
-
-    // Reorder playlist to match layout order
-    function reorderPlaylist(newLayout) {
-        const newPlaylistOrder = newLayout.map(item =>
-            playlist.find(pattern => pattern.id === item.i)
-        ).filter(Boolean);
-        
-        setPlaylist(newPlaylistOrder);
-    }
-
     // Add new pattern with default values
     function initalizeNewPattern() {
         const newPattern = {
@@ -101,25 +48,19 @@ export default function Editor() {
         setPlaylist((prev) => [...prev, newPattern]);
     }
 
-    // Callback function for Pattern component
-    function handleUpdatePattern(id, attribute, value) {
-        setPlaylist((prev) =>
-            prev.map((pattern) =>
-                pattern.id === id ? { ...pattern, [attribute]: value } : pattern
-            )
-        );
-    }
-
-    // Callback function for onLayoutChange 
-    function handleLayoutChange(layout) {
-        const sortedLayout = sortLayout(layout);
-        setLayoutData(sortedLayout);
-
-        reorderPlaylist(sortedLayout);
-    }
-
+    // Callback for returning updates from Playlist component 
     function handleUpdatePlaylist(playlistData) {
         setPlaylist(playlistData);
+    }
+
+    function handleClonePattern(patternData) {
+        const clonedPattern = {
+            id: generatePatternId(),
+            bpm: patternData.bpm,
+            beatsPerMeasure: patternData.beatsPerMeasure,
+            numMeasures: patternData.numMeasures,
+        }
+        setPlaylist((prev) => [...prev, clonedPattern]);
     }
 
     return (
@@ -138,15 +79,18 @@ export default function Editor() {
                         <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
                             Clear
                         </button>
-                        <button onClick={initalizeNewPattern} className="mt-2 bg-slate-700 text-white text-sm px-1 py-1 rounded">
-                            +
-                        </button> 
                     </div>
-                    <div>
-                        <Playlist 
-                            playlistData={playlist}
-                            handleUpdatePlaylist={handleUpdatePlaylist}
-                        />
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="w-[100%] md:w-[80%] lg:w-[80%]">
+                            <Playlist 
+                                playlistData={playlist}
+                                handleUpdatePlaylist={handleUpdatePlaylist}
+                                handleClonePattern={handleClonePattern}
+                            />
+                        </div>
+                        <button onClick={initalizeNewPattern} className="mt-2 bg-[#1C2025] border-[#303740] border-[1px] hover:bg-[#0059B2] hover:border-[#007fff] p-4 rounded-full">
+                            <Image src={PlusIcon} alt="Plus icon" className="w-auto h-auto"/>
+                        </button>
                     </div>     
                 </div>
             </div>
