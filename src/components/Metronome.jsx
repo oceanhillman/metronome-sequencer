@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from "react"
+import NumberInput from "@/components/NumberInput";
 
 export default function Metronome(props) {
     const [bpm, setBpm] = useState(120);
@@ -195,32 +196,36 @@ export default function Metronome(props) {
                     }}
                 ></div>
             </div>
-            <p className="text-white mt-4">BPM</p>
-            <input
-                className="text-black"
-                id="bpm"
-                type="number"
-                max={300}
-                value={bpm}
-                onChange={(e) => setBpm(Number(e.target.value))}
-            />
-            <p className="text-white">Beats per measure</p>
-            <input
-                className="text-black"
-                id="beatsPerMeasure"
-                type="number"
-                min={0}
-                max={64}
-                value={beatsPerMeasure}
-                onChange={(e) => setBeatsPerMeasure(Number(e.target.value))}
-            />
-            <br />
-            <button onClick={() => setPlaying(!playing)} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
-                {playing ? 'Stop' : 'Play'}
-            </button>
-            <button onClick={handleTap} className="mt-2 bg-green-500 text-white px-4 py-2 rounded">
-                Tap Tempo
-            </button>
+            <div className="flex flex-row">
+                <div className="flex flex-col justify-center items-center mx-2">
+                    <p className="text-white">BPM</p>
+                    <NumberInput
+                        name="metronomeBpm"
+                        value={bpm}
+                        min={0}
+                        max={300}
+                        onChange={(e) => setBpm(Number(e.target.value))}
+                    />
+                </div>
+                <div className="flex flex-col justify-center items-center mx-2">
+                    <p className="text-white">Beats per measure</p>
+                    <NumberInput
+                        name="metronomeBeatsPerMeasure"
+                        value={beatsPerMeasure}
+                        min={0}
+                        max={64}
+                        onChange={(e) => setBeatsPerMeasure(Number(e.target.value))}
+                    />
+                </div>
+            </div>
+            <div className="flex flex-row">
+                <button onClick={() => setPlaying(!playing)} className="mt-2 bg-gray-800 text-white px-2 py-1 rounded mx-2">
+                    {playing ? 'Stop' : 'Play'}
+                </button>
+                <button onClick={handleTap} className="mt-2 bg-gray-800 text-white px-4 py-1 rounded mx-2">
+                    Tap Tempo
+                </button>
+            </div>
         </div>
     );
 }
