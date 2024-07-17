@@ -1,6 +1,5 @@
 import React, { forwardRef, useState, useEffect } from "react"
 import Image from "next/image"
-import QuantityInput from "@/components/QuantityInput"
 import NumberInput from "@/components/NumberInput"
 import DragHandleIcon from "/public/drag_handle.svg"
 import DeleteIcon from "/public/delete.svg"
