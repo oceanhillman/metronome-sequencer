@@ -34,3 +34,18 @@ body {
     text-wrap: balance;
   }
 }
+
+.react-grid-item {
+  position: relative;
+}
+
+.react-grid-item .react-resizable-handle {
+  display: none; /* Hide all handles */
+}
+
+.react-grid-placeholder {
+  border-radius: 6px;
+  border: 2px dashed #ffffff; /* Example border */
+  background-color: #6e2323 !important;
+  transition: background-color 0.3s; /* Smooth transition */
+}
