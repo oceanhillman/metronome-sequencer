@@ -12,7 +12,7 @@ function generatePatternId() {
 
 export default function Editor() {
 
-    const [sequencing, setSequencing] = useState(false);
+    const [performing, setPerforming] = useState(false);
     const [playlist, setPlaylist] = useState([{
         id: generatePatternId(),
         bpm: 120,
@@ -29,12 +29,12 @@ export default function Editor() {
     // Trigger metronome to play playlist
     function handleClickPlay() {
         if (playlist.length > 0)
-            setSequencing(!sequencing);
+            setPerforming(!performing);
     }
 
     // Callback for when playlist has finished playing
     function handlePlaylistEnd() {
-        setSequencing(false);
+        setPerforming(false);
     };
 
     // Add new pattern with default values
@@ -68,13 +68,13 @@ export default function Editor() {
             <div className="">
                 <Metronome
                     playlist={playlist}
-                    sequencing={sequencing}
+                    performing={performing}
                     onPlaylistEnd={handlePlaylistEnd}
                 />
                 <div className="flex flex-col justify-center">
                     <div className="flex items-center justify-center">
                         <button onClick={(handleClickPlay)} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
-                            {sequencing ? "Stop" : "Start performance"}
+                            {performing ? "Stop" : "Start performance"}
                         </button>
                         <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
                             Clear

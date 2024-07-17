@@ -116,13 +116,13 @@ export default function Metronome(props) {
 
     // Handle trigger and callback for playlist beginning and end
     useEffect(() => {
-        if (props.sequencing === true) {
+        if (props.performing === true) {
             performPlaylist(props.playlist);
         }
         else {
             stopPlaylist();
         }
-    }, [props.sequencing]);
+    }, [props.performing]);
 
     // Helper function for concluding playlist performance
     function stopPlaylist() {
