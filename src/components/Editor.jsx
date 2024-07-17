@@ -77,7 +77,7 @@ export default function Editor() {
                     onPlaylistEnd={handlePlaylistEnd}
                     onNextPattern={updateCurrentPattern}
                 />
-                <div className="flex flex-col justify-center">
+                <div className="flex flex-col justify-center mt-16">
                     <div className="flex items-center justify-center">
                         <button onClick={(handleClickPlay)} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
                             {performing ? "Stop" : "Start performance"}
