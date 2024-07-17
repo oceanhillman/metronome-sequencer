@@ -1,18 +1,33 @@
 'use client'
 
+
+import "../app/globals.css";
 import { useState, useEffect, useRef } from "react"
 import Metronome from "@/components/Metronome"
 import GridLayout from "react-grid-layout"
+import { WidthProvider, Responsive } from 'react-grid-layout';
 import Pattern from "@/components/Pattern"
 
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
+function generatePatternId() {
+    return String(Math.round(Date.now() + Math.random()));
+}
 
 export default function Playlist() {
 
     const [editingBpm, setEditingBpm] = useState(120);
     const [editingBeatsPerMeasure, setEditingBeatsPerMeasure] = useState(4);
     const [editingNumMeasures, setEditingNumMeasures] = useState(1);
-    const [playlist, setPlaylist] = useState([]);
     const [sequencing, setSequencing] = useState(false);
+    const [layoutData, setLayoutData] = useState([]);
+    const [playlist, setPlaylist] = useState([{
+        id: generatePatternId(),
+        bpm: 120,
+        beatsPerMeasure: 4,
+        numMeasures: 4,
+    },
+    ]);
 
     // Enforce reasonable limits on metronome parameters
     useEffect(() => {
@@ -32,30 +47,21 @@ export default function Playlist() {
             setEditingBpm(300);
     }, [editingBpm, editingBeatsPerMeasure, editingNumMeasures]);
 
-    // Add pattern to playlist
-    function handleAddPattern() {
-        setPlaylist((prev) => [...prev, {
-                id: Date.now(),
-                bpm: editingBpm,
-                beatsPerMeasure: editingBeatsPerMeasure,
-                numMeasures: editingNumMeasures,
-            }
-        ]);
-    }
-
     // Clear all patterns from playlist
     function handleClear() {
         setPlaylist([]);
     }
 
     // Delete a single pattern from playlist
-    function handleDelete(id) {
+    function handleClickDelete(event, id) {
+        event.stopPropagation();
         setPlaylist((prevItems) => prevItems.filter(item => item.id !== id));
     }
 
     // Trigger metronome to play playlist
-    function beginSequencing() {
-        setSequencing(!sequencing);
+    function handleClickPlay() {
+        if (playlist.length > 0)
+            setSequencing(!sequencing);
     }
 
     // Callback for when playlist has finished playing
@@ -63,80 +69,94 @@ export default function Playlist() {
         setSequencing(false);
     };
 
-    const [layoutData, setLayoutData] = useState([]);
-
-    function updateLayout() {
-        const updatedLayoutData = patternData.map((pattern, index) => ({
-            i: pattern.id,
-            x: 0,
-            y: index,
-            w: 1,
-            h: 1,
-            isResizable: false,
-            isDraggable: true,
-        }));
-        setLayoutData(updatedLayoutData);
+    function sortLayout(layout) {
+        // Sort the layout by the y value (and x if necessary)
+        const sortedLayout = layout.sort((a, b) => {
+            if (a.y === b.y) {
+                return a.x - b.x; // Secondary sort by x if y values are the same
+            }
+            return a.y - b.y;
+        });
+        return sortedLayout;
     }
 
-    function generatePatternId() {
-        return String(Math.round(Date.now() + Math.random()));
+    function reorderPlaylist(newLayout) {
+        // Map sorted layout to reorder the playlist
+        const newPlaylistOrder = newLayout.map(item =>
+            playlist.find(pattern => pattern.id === item.i)
+        ).filter(Boolean);
+        
+        setPlaylist(newPlaylistOrder);
     }
-
-    const [patternData, setPatternData] = useState([{
-        id: generatePatternId(),
-        bpm: 120,
-        timeSignature: [4, 4],
-        numMeasures: 4,
-    },
-    ]);
-
-    useEffect(() => {
-        updateLayout();
-    }, [patternData]);
 
     function initalizeNewPattern() {
         const newPattern = {
             id: generatePatternId(),
             bpm: 120,
-            timeSignature: [3, 4],
+            beatsPerMeasure: 4,
             numMeasures: 4,
         };
-        setPatternData((prev) => [...prev, newPattern]);
+        setPlaylist((prev) => [...prev, newPattern]);
+    }
+
+    function handleUpdatePattern(id, attribute, value) {
+        setPlaylist((prev) =>
+            prev.map((pattern) =>
+                pattern.id === id ? { ...pattern, [attribute]: value } : pattern
+            )
+        );
+    }
+
+    function handleLayoutChange(layout) {
+        const sortedLayout = sortLayout(layout);
+        setLayoutData(sortedLayout);
+
+        reorderPlaylist(sortedLayout);
     }
 
     return (
         <div className="w-screen">
-            <div className="w-full">
-                {/* <Metronome
+            <div className="">
+                <Metronome
                     playlist={playlist}
                     sequencing={sequencing}
                     onSequenceEnd={handleSequenceEnd}
-                /> */}
-                <div className="flex flex-col justify-center mx-96">                
-                    <GridLayout
-                        className="layout flex flex-col justify-center items-center h-full mx-96 bg-white"
-                        layout={layoutData}
-                        cols={1}
-                        rowHeight={50}
-                        width={1200}
-                        onLayoutChange={(layout) => updateLayout()}
-                    >
-                        {patternData.map(pattern => (
-                            <div key={pattern.id} className="h-full">
-                                <Pattern
-                                    key={pattern.id}
-                                    id={pattern.id}
-                                    dataGrid={layoutData.find((layout) => layout.i === pattern.id)}
-                                    bpm={pattern.bpm}
-                                    timeSignature={pattern.timeSignature}
-                                    numMeasures={pattern.numMeasures}
-                                />
-                            </div>
-                        ))}
-                    </GridLayout>
-                    <button onClick={initalizeNewPattern} className="mt-2 bg-slate-700 text-white text-sm px-1 py-1 rounded">
-                        +
-                    </button>
+                />
+                <div className="flex flex-col justify-center">
+                    <div className="flex items-center justify-center">
+                        <button onClick={(handleClickPlay)} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
+                            {sequencing ? "Stop" : "Play sequence"}
+                        </button>
+                        <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
+                            Clear
+                        </button>
+                        <button onClick={initalizeNewPattern} className="mt-2 bg-slate-700 text-white text-sm px-1 py-1 rounded">
+                            +
+                        </button> 
+                    </div>
+                    <div>
+                        <ResponsiveGridLayout
+                            className="layout mx-96"
+                            layout={layoutData}
+                            cols={{xxl:1, xl:1, lg:1, md:1, sm:1, xs:1, xxs:1}}
+                            rowHeight={100}
+                            width={""}
+                            onLayoutChange={(layout) => handleLayoutChange(layout)}
+                        >
+                            {playlist.map(pattern => (
+                                <div key={pattern.id} className="h-full">
+                                    <Pattern
+                                        key={pattern.id}
+                                        dataGrid={layoutData.find(layout => layout.i === pattern.id)}
+                                        patternData={pattern}
+                                        handleUpdatePattern={handleUpdatePattern}
+                                        handleClickDelete={handleClickDelete}
+                                    />
+                                </div>
+                            ))}
+                        </ResponsiveGridLayout>
+                    </div>     
+                    
                     {/*<div className="cursor-move rounded-lg w-[600px] h-[150px] bg-blue-800">
                         <div className="absolute grid grid-cols-3 rounded-b-lg w-[600px] h-[130px] translate-y-5 bg-slate-300">
                             <div>
@@ -178,23 +198,14 @@ export default function Playlist() {
                     </div>*/}
                 </div>
             </div>
-            <div className="flex items-center justify-center">
-                <button onClick={(beginSequencing)} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
-                    {sequencing ? "Stop" : "Play sequence"}
-                </button>
-                <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
-                    Clear
-                </button>
-            </div>
+            
             <div className="flex items-center justify-center">
                 <ol type="1">
                     {playlist.map(item => (
                         <li key={item.id}>
                             {playlist.indexOf(item) + 1}. {item.numMeasures} measures of {item.beatsPerMeasure} beats at {item.bpm} BPM
                             <span> </span>
-                            <button onClick={() => handleDelete(item.id)} className="mt-2 bg-slate-700 text-white text-sm px-1 py-1 rounded">
-                                Delete
-                            </button>
+                            
                         </li>
                     ))}
                 </ol>
