@@ -130,13 +130,13 @@ export default function Metronome(props) {
     };
 
     // Perform the playlist
-    function performPlaylist(sequence) {
+    function performPlaylist(playlist) {
         let patternIndex = 0;
         let measureIndex = 0;
         let beatIndex = 0;
     
         function playClick() {
-            const currentPattern = sequence[patternIndex];
+            const currentPattern = playlist[patternIndex];
     
             if (beatIndex === 0) {
                 setBpm(currentPattern.bpm);
@@ -162,9 +162,9 @@ export default function Metronome(props) {
                 if (measureIndex >= currentPattern.numMeasures) {
                     measureIndex = 0;
                     patternIndex++;
-                    if (patternIndex >= sequence.length) {
-                        if (props.onSequenceEnd) {
-                            props.onSequenceEnd();
+                    if (patternIndex >= playlist.length) {
+                        if (props.onPlaylistEnd) {
+                            props.onPlaylistEnd();
                         }
                         return;
                     }

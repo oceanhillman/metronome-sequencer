@@ -33,7 +33,7 @@ export default function Editor() {
     }
 
     // Callback for when playlist has finished playing
-    function handleSequenceEnd() {
+    function handlePlaylistEnd() {
         setSequencing(false);
     };
 
@@ -69,12 +69,12 @@ export default function Editor() {
                 <Metronome
                     playlist={playlist}
                     sequencing={sequencing}
-                    onSequenceEnd={handleSequenceEnd}
+                    onPlaylistEnd={handlePlaylistEnd}
                 />
                 <div className="flex flex-col justify-center">
                     <div className="flex items-center justify-center">
                         <button onClick={(handleClickPlay)} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
-                            {sequencing ? "Stop" : "Play sequence"}
+                            {sequencing ? "Stop" : "Start performance"}
                         </button>
                         <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
                             Clear
