@@ -127,6 +127,7 @@ export default function Metronome(props) {
     // Helper function for concluding playlist performance
     function stopPerformance() {
         clearTimeout(playlistTimerRef.current);
+        props.onNextPattern("");
     };
 
     // Perform the playlist
@@ -137,6 +138,7 @@ export default function Metronome(props) {
     
         function playClick() {
             const currentPattern = playlist[patternIndex];
+            props.onNextPattern(playlist[patternIndex].id)
     
             if (beatIndex === 0) {
                 setBpm(currentPattern.bpm);

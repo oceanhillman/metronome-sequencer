@@ -8,7 +8,7 @@ import Pattern from "@/components/Pattern"
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function Playlist(props) {
-    const { playlistData, handleUpdatePlaylist, handleClonePattern } = props;
+    const { playlistData, handleUpdatePlaylist, handleClonePattern, currentPatternId } = props;
     const [layoutData, setLayoutData] = useState([]);
 
     // Sort the layout by the y value (and x if necessary)
@@ -79,6 +79,7 @@ export default function Playlist(props) {
                         handleUpdatePattern={handleUpdatePattern}
                         handleClickDelete={handleClickDelete}
                         handleClickClone={handleClickClone}
+                        currentPatternId={currentPatternId}
                     />
                 </div>
             ))}

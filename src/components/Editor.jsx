@@ -18,8 +18,13 @@ export default function Editor() {
         bpm: 120,
         beatsPerMeasure: 4,
         numMeasures: 4,
-    },
-    ]);
+    }]);
+    const [currentPattern, setCurrentPattern] = useState();
+
+    function updateCurrentPattern(patternId) {
+        setCurrentPattern(patternId);
+        console.log(patternId);
+    }
 
     // Clear all patterns from playlist
     function handleClear() {
@@ -70,6 +75,7 @@ export default function Editor() {
                     playlist={playlist}
                     performing={performing}
                     onPlaylistEnd={handlePlaylistEnd}
+                    onNextPattern={updateCurrentPattern}
                 />
                 <div className="flex flex-col justify-center">
                     <div className="flex items-center justify-center">
@@ -86,6 +92,7 @@ export default function Editor() {
                                 playlistData={playlist}
                                 handleUpdatePlaylist={handleUpdatePlaylist}
                                 handleClonePattern={handleClonePattern}
+                                currentPatternId={currentPattern}
                             />
                         </div>
                         <button onClick={initalizeNewPattern} className="mt-2 bg-[#1C2025] border-[#303740] border-[1px] hover:bg-[#0059B2] hover:border-[#007fff] p-4 rounded-full">
