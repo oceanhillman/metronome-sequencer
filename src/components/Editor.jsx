@@ -69,7 +69,7 @@ export default function Editor() {
     }
 
     return (
-        <div className="w-screen">
+        <div className="w-full mt-16">
             <div className="">
                 <Metronome
                     playlist={playlist}
@@ -95,7 +95,7 @@ export default function Editor() {
                                 currentPatternId={currentPattern}
                             />
                         </div>
-                        <button onClick={initalizeNewPattern} className="mt-2 bg-[#1C2025] border-[#303740] border-[1px] hover:bg-[#0059B2] hover:border-[#007fff] p-4 rounded-full">
+                        <button onClick={initalizeNewPattern} className="mt-2 bg-[#1C2025] border-[#303740] border-[1px] hover:bg-[#0059B2] hover:border-[#007fff] p-3 rounded-full">
                             <Image src={PlusIcon} alt="Plus icon" className="w-auto h-auto"/>
                         </button>
                     </div>     
