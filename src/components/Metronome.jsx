@@ -182,7 +182,7 @@ export default function Metronome(props) {
     return (
         <div className="flex flex-col items-center">
             <div className="flex flex-col items-center">
-                <div className="relative bg-slate-400 w-24 h-60 flex items-center justify-center"
+                <div className="relative bg-blue-500 w-24 h-60 flex items-center justify-center"
                     style={{
                         clipPath: "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)",
                     }}
