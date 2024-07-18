@@ -14,6 +14,7 @@ module.exports = {
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
         manrope: ['Manrope', 'sans-serif'],
+        'cutive-mono': ['"Cutive Mono"', 'monospace'],
       },
     },
   },
