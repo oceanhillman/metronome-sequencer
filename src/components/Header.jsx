@@ -1,28 +1,58 @@
 'use client'
 
+import Image from 'next/image';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-export default function Header() {
+import Button from 'react-bootstrap/Button';
+export default function Header({ user }) {
+
+    const logInOrOut = user ? (
+        <Button variant="dark"
+          className="mr-2"
+          onClick={() => signOut({ callbackUrl: '/' })}
+        >
+          Log out
+        </Button>
+      ) : (
+        <Link 
+          className="mr-2"
+          href="/auth/login"
+        >
+          Log in
+        </Link>
+      );
+
+      const userImage = user?.image ? (
+        <Image 
+            className="rounded-full"
+            src={user?.image}
+            width={48}
+            height={48}
+            alt={user?.name ?? "Profile Pic"}
+            priority = {true}
+        />
+      ) : null;
+
+      const emailDisplay = user?.email ? (
+        <div className="">
+          {user?.email}
+        </div>
+      ) : null;
+        
     return (
         <div className="w-full">
-            <Navbar className="w-full h-[80px] border-b-2 border-blue-900" data-bs-theme="dark">
+            <Navbar className="w-full h-[80px]" data-bs-theme="dark">
                 <Container>
                     <Navbar.Brand className="font-cutive-mono text-4xl"href="/">
                         Metronome Sequencer
                     </Navbar.Brand>
-                    <Nav className="">
-                        <Link 
-                            className="mr-2"
-                            href="/signup">
-                            Login
-                        </Link>
-                        <Link 
-                            className="ml-2"
-                            href="/signup">
-                            Signup
-                        </Link>
+                    <Nav className="flex flex-row items-center">
+                        {logInOrOut}
+                        {emailDisplay}
+                        {userImage}
                     </Nav>
                 </Container>
             </Navbar>
