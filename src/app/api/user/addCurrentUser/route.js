@@ -12,7 +12,7 @@ export default withApiAuthRequired(async (req, res) => {
   const { email, name } = session.user;
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/addUser`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/user/addUser`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
