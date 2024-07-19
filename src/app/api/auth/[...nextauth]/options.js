@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 import clientPromise from "@/lib/mongodb"
 import { encode, decode } from 'next-auth/jwt';
+import { verifyPassword } from '@/lib/auth';
 
 export const options = {
     providers: [
@@ -34,7 +35,7 @@ export const options = {
                 const users = client.db('userDatabase').collection('users');
                 const user = await users.findOne({ email: credentials.email });
         
-                if (user && user.password === credentials.password) {
+                if (user && verifyPassword(credentials.password, user.password)) {
                   return { email: user.email };
                 } else {
                   return null;
