@@ -102,8 +102,6 @@ export default function Header() {
                     </Navbar.Brand>
                     <Nav className="flex flex-row items-center">
                         {logInOrOut}
-                        <a href="/api/auth/login">Login</a>
-                        <a href="/api/auth/logout">Logout</a>
                         {registerOrUserProfile}
                     </Nav>
                     <button onClick={() => handleSubmit(userData)}>
