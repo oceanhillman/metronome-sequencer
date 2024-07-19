@@ -1,6 +1,9 @@
 import GitHubProvider from 'next-auth/providers/github'
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
+import clientPromise from "@/lib/mongodb"
+import { encode, decode } from 'next-auth/jwt';
 
 export const options = {
     providers: [
@@ -15,10 +18,10 @@ export const options = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                username: {
-                    label: "Username:",
+                email: {
+                    label: "Email:",
                     type: "text",
-                    placeholder: "enter username",
+                    placeholder: "enter email",
                 },
                 password: {
                     label: "Password:",
@@ -26,18 +29,38 @@ export const options = {
                     placeholder: "enter password",
                 }
             },
-            async authorize(credentials) {
-                // This is where you need to retrieve user data
-                // to verify with credentials
-                // Docs: https://next-auth.js.org/providers/credentials
-                const user = { id: "42", name: "Ocean", password: "nextauth" }
-
-                if (credentials?.username === user.name && credentials?.password === user.password) {
-                    return user
+            authorize: async (credentials) => {
+                const client = await clientPromise;
+                const users = client.db('userDatabase').collection('users');
+                const user = await users.findOne({ email: credentials.email });
+        
+                if (user && user.password === credentials.password) {
+                  return { email: user.email };
                 } else {
-                    return null
+                  return null;
                 }
-            }
+            },
         })
     ],
+
+    pages: {
+        signIn: '/auth/signin',
+    },
+
+    adapter: MongoDBAdapter(clientPromise),
+
+    secret: process.env.NEXTAUTH_SECRET,
+
+    session: {
+        strategy: "jwt",
+    },
+    
+    jwt: { encode, decode },
+
+    callbacks: {
+        async session({session, token}) {
+            session.user.email = token.email;
+            return session;
+        }
+    }
 }

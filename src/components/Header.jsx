@@ -19,7 +19,7 @@ export default function Header({ user }) {
       ) : (
         <Link 
           className="mr-2"
-          href="/auth/login"
+          href="/auth/signin"
         >
           Log in
         </Link>
@@ -41,6 +41,20 @@ export default function Header({ user }) {
           {user?.email}
         </div>
       ) : null;
+
+      const registerOrUserProfile = user ? (
+        <>
+          {emailDisplay}
+          {userImage}
+        </>
+      ) : (
+        <Link 
+          className="mr-2"
+          href="/auth/register"
+        >
+          Register
+        </Link>
+      );
         
     return (
         <div className="w-full">
@@ -51,8 +65,7 @@ export default function Header({ user }) {
                     </Navbar.Brand>
                     <Nav className="flex flex-row items-center">
                         {logInOrOut}
-                        {emailDisplay}
-                        {userImage}
+                        {registerOrUserProfile}
                     </Nav>
                 </Container>
             </Navbar>

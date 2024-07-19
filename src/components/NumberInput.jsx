@@ -1,20 +1,29 @@
+import { useState, useEffect } from 'react'
 import Image from "next/image"
 import MinusIcon from "/public/minus.svg";
 import PlusIcon from "/public/plus.svg";
 
 export default function NumberInput( {name, value, min, max, onChange, } ) {
 
-    const handleIncrement = () => {
-        if (value < max) {
-          onChange({ target: { value: value + 1 } });
-        }
-      };
-    
-      const handleDecrement = () => {
-        if (value > min) {
-          onChange({ target: { value: value - 1 } });
-        }
-      };
+  const handleIncrement = () => {
+      if (value < max) {
+        onChange({ target: { value: value + 1 } });
+      }
+    };
+  
+    const handleDecrement = () => {
+      if (value > min) {
+        onChange({ target: { value: value - 1 } });
+      }
+    };
+
+    //value={value.toString().replace(/^0+/, '')}
+
+    // perfect behavior:
+    // - can backspace into blank field, but falls back to 0 when lost focus
+    // - removes leading zero
+    // - doesn't allow non-numerical input to affect value (minus sign, equals sign, etc)
+    // - doesn't allow decimals at all (for now)
 
     return (
         <div className="flex items-center justify-center">
