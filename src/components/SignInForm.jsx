@@ -3,7 +3,6 @@ import { useRef } from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import GoogleSignInButton from "@/components/GoogleSignInButton";
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function SignInForm() {
