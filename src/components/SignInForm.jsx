@@ -14,26 +14,7 @@ export default function SignInForm() {
 
     
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        const email = emailRef.current.value;
-        const password = passwordRef.current.value;
-
-        const result = await signIn('credentials', {
-            redirect: false,
-            email: email,
-            password: password,
-        });
-        
-        console.log(result);
-        if (result?.error) {
-            console.error('Sign-in failed:', result.error);
-            // Show an error message to the user
-          } else if (result?.url) {
-            console.log('Sign-in successful!');
-            // Redirect to the specified URL
-            router.push("/");
-            router.refresh();
-          }
+    
       };
     
     return (

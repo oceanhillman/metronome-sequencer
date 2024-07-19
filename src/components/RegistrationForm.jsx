@@ -12,47 +12,7 @@ export default function RegistrationForm() {
     const [success, setSuccess] = useState('');
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const email = emailRef.current.value;
-        const password = passwordRef.current.value;
-        const confirmPassword = confirmPasswordRef.current.value;
-
-        // Basic validation
-        // if (!email || !password || !confirmPassword) {
-        //     setError('All fields are required.');
-        //     return;
-        // }
-        // if (password !== confirmPassword) {
-        //     setError('Passwords do not match.');
-        //     return;
-        // }
-
-        try {
-            const response = await fetch('/api/user/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setSuccess('Registration successful!');
-                setError('');
-                emailRef.current.value = '';
-                passwordRef.current.value = '';
-                confirmPasswordRef.current.value = '';
-            } else {
-                setError(data.error || 'An error occurred. Please try again.');
-                setSuccess('');
-            }
-        } catch (error) {
-            setError(error.message || 'An unexpected error occurred.');
-            setSuccess('');
-        }
+        
     };
 
     return (
