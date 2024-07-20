@@ -37,7 +37,7 @@ export async function POST(request) {
 
     // Insert song
     await sql`
-      INSERT INTO Songs (User_id, Title, Created_at, Last_saved, Playlist, Layout) 
+      INSERT INTO songs (user_id, title, created_at, last_saved, playlist, layout) 
       VALUES (${user_id}, ${title}, ${created_at}, ${last_saved}, ${playlist}, ${layout})
     `;
 
