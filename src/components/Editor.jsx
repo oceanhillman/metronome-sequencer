@@ -110,7 +110,7 @@ export default function Editor() {
         const creationTime = now.toISOString();
         
         const newSong = {
-            user_id: user?.user_id,
+            user_id: user?.sub,
             title: songTitle,
             created_at: creationTime,
             last_saved: creationTime,
