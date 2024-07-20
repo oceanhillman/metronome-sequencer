@@ -16,46 +16,6 @@ export default function Header() {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error.message}</div>;
 
-  const userData = {
-    email: 'user@example.com',
-    password: 'password',
-    auth0_id: 'auth0|1234567890abcdef',
-  };
-
-  useEffect(() => {
-    async function addUser() {
-      try {
-        const response = await fetch('/api/addCurrentUser');
-        if (!response.ok) {
-          console.error('Failed to add user');
-        }
-      } catch (error) {
-        console.error('Error adding user:', error);
-      }
-    }
-
-    addUser();
-  }, []);
-
-
-  async function handleSubmit(data) {
-    const response = await fetch('/api/user/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ data }),
-    });
-  
-    const result = await response.json();
-    console.log(result);
-  }
-
-
-
-
-
-
   const logInOrOut = user ? (
     <a href="/api/auth/logout" className="mx-1">
       Logout
@@ -104,9 +64,6 @@ export default function Header() {
                         {logInOrOut}
                         {registerOrUserProfile}
                     </Nav>
-                    <button onClick={() => handleSubmit(userData)}>
-                      register
-                    </button>
                 </Container>
             </Navbar>
             {/* <div className="grid grid-cols-3 h-[80px] border-b-2 border-blue-900 px-[5%] lg:px-[9%]">
