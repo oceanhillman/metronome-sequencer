@@ -1,20 +1,19 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
- 
-export async function GET(request) {
-  const { searchParams } = new URL(request.url);
-  const user_id = searchParams.get('user_id');
-  const email = searchParams.get('email');
-  const name = searchParams.get('name');
- 
+
+export async function POST(request) {
   try {
+    // Parse JSON body from the request
+    const { user_id, email, name } = await request.json();
+
+    // Validate required fields
     if (!user_id || !email || !name) {
       return NextResponse.json({ error: 'User_id, email, and name are required' }, { status: 400 });
     }
 
     // Prevent duplicate user_id
-    const existingUser_id = await sql`SELECT 1 FROM Users WHERE User_id = ${user_id} LIMIT 1`;
-    if (existingUser_id.rowCount > 0) {
+    const existingUserId = await sql`SELECT 1 FROM Users WHERE User_id = ${user_id} LIMIT 1`;
+    if (existingUserId.rowCount > 0) {
       return NextResponse.json({ error: 'User_id already exists' }, { status: 400 });
     }
 
@@ -26,11 +25,12 @@ export async function GET(request) {
 
     // Insert user
     await sql`INSERT INTO Users (User_id, Email, Name) VALUES (${user_id}, ${email}, ${name})`;
+
+    // Respond with the newly created user
+    const user = await sql`SELECT * FROM Users WHERE User_id = ${user_id} LIMIT 1`;
+    return NextResponse.json({ user: user.rows[0] }, { status: 200 });
+
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
- 
-  // Respond with user
-  const user = await sql`SELECT 1 FROM Users WHERE User_id = ${user_id} LIMIT 1`;
-  return NextResponse.json({ user }, { status: 200 });
 }
