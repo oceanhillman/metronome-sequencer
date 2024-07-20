@@ -118,6 +118,8 @@ export default function Editor() {
             layout: JSON.stringify(layout),
         }
 
+        console.log(user, error, isLoading);
+
         try {
             const response = await fetch('/api/songs/addSong', {
               method: 'POST',
