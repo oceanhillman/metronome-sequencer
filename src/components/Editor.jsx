@@ -114,8 +114,8 @@ export default function Editor() {
             title: songTitle,
             created_at: creationTime,
             last_saved: creationTime,
-            playlist: playlist,
-            layout: layout,
+            playlist: JSON.stringify(playlist),
+            layout: JSON.stringify(layout),
         }
 
         try {
