@@ -147,9 +147,13 @@ export default function Editor() {
         
     }
 
-    function handleClickSave() {
+    async function handleClickSave() {
         // logged in? save
-        createNewSong();
+        try {
+            await createNewSong();
+        } catch (error) {
+            console.error("error handling save:", error.message);
+        }
         // not logged in? we should log in, but hold onto the song data
     }
 
