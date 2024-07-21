@@ -15,7 +15,7 @@ import { title } from "process"
 
 
 export default function Editor(props) {
-    const { songId } = props;
+    const { songPayload } = props;
 
     // const router = useRouter();
 
@@ -49,13 +49,21 @@ export default function Editor(props) {
     const [creationSuccess, setCreationSuccess] = useState(null);
 
     useEffect(() => {
+        if (songPayload) {
+            setLayout(songPayload.layout);
+            setPlaylist(songPayload.playlist);
+            setSongTitle(songPayload.songTitle);
+        }
+    }, [songPayload])
+
+    useEffect(() => {
         setSong(prev => ({
             ...prev,
             title: songTitle,
             layout: layout,
             playlist: playlist
         }));
-    }, [songTitle, layout, playlist])
+    }, [songTitle, layout, playlist]);
 
     // Callback function to update layout
     function updateLayout(layoutData) {
@@ -91,7 +99,7 @@ export default function Editor(props) {
     }
 
     // Add new pattern with default values
-    function initalizeNewPattern() {
+    function initializeNewPattern() {
         const newPattern = {
             id: generatePatternId(),
             bpm: 120,
@@ -171,12 +179,6 @@ export default function Editor(props) {
           }
     }
 
-    function saveSong() {
-        // song exists? overwrite it
-        // song doesn't exist? create it
-        
-    }
-    
     async function updateSong(songId) {
         const now = new Date();
         const updatedTime = now.toISOString();
@@ -282,9 +284,9 @@ export default function Editor(props) {
                             updateSongTitle={updateSongTitle}
                             onSave={handleSaveAsNew}
                         />
-                        <button onClick={handleSave} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
+                        <Button onClick={handleSave} disabled={true} variant="dark">
                             Save
-                        </button>
+                        </Button>
                         <button onClick={handleClickPlay} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
                             {performing ? "Stop" : "Start performance"}
                         </button>
@@ -293,7 +295,7 @@ export default function Editor(props) {
                         </button>
                     </div>
                     <div className="flex flex-col items-center justify-center">
-                        <div className="w-[100%] md:w-[80%] lg:w-[80%]">
+                        <div className="w-[100%] md:w-[80%]">
                             <Playlist 
                                 playlistData={playlist}
                                 handleUpdatePlaylist={handleUpdatePlaylist}
@@ -302,7 +304,7 @@ export default function Editor(props) {
                                 onUpdateLayout={updateLayout}
                             />
                         </div>
-                        <button onClick={initalizeNewPattern} className="mt-2 bg-[#1C2025] border-[#303740] border-[1px] hover:bg-[#0059B2] hover:border-[#007fff] p-3 rounded-full">
+                        <button onClick={initializeNewPattern} className="mt-2 bg-[#1C2025] border-[#303740] border-[1px] hover:bg-[#0059B2] hover:border-[#007fff] p-3 rounded-full">
                             <Image src={PlusIcon} alt="Plus icon" className="w-auto h-auto"/>
                         </button>
                     </div>     
