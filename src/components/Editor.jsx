@@ -3,13 +3,18 @@
 import Metronome from "@/components/Metronome"
 import Playlist from "@/components/Playlist"
 import PlusIcon from "/public/plus.svg"
+import SaveAsNewButton from "@/components/SaveAsNewButton"
 
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Form, Button } from "react-bootstrap"
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { useRouter } from "next/router"
+import Modal from 'react-bootstrap/Modal'
 
-export default function Editor() {
+
+export default function Editor(props) {
+    const { songId } = props;
 
     const { user, error, isLoading } = useUser();
     const [performing, setPerforming] = useState(false);
@@ -21,11 +26,31 @@ export default function Editor() {
     }]);
     const [currentPattern, setCurrentPattern] = useState();
     const [layout, setLayout] = useState([]);
-    const [songTitle, setSongTitle] = useState(`Untitled Project #${1}`);
+
+    // when we open up the editor there are some possible scenarios:
+    // 1. logged out, new unsaved song      -   initialize a new default song with no id
+    // 2. logged in, new unsaved song       -   initialize a new default song with no id
+    // 3. logged in, editing existing song  -   get passed a song id and initialize that specific song 
+
+    // for now, just initialize a new default song with no id
+    const [song, setSong] = useState({
+        id: '',
+        title: 'Untitled Song',
+        playlist: playlist,
+        layout: layout,
+    });
 
     const [creating, setCreating] = useState(false);
     const [creationError, setCreationError] = useState(null);
     const [creationSuccess, setCreationSuccess] = useState(null);
+
+    useEffect(() => {
+        setSong(prev => ({
+            ...prev,
+            layout: layout,
+            playlist: playlist
+        }));
+    }, [layout, playlist])
 
     // Callback function to update layout
     function updateLayout(layoutData) {
@@ -97,7 +122,7 @@ export default function Editor() {
     // function updateSong() {
     //     setSongData({
             // user_id: user?.user_id,
-            // title: songTitle,
+            // title: song.title,
             // created_at: creationTime,
             // last_saved: creationTime,
             // playlist: playlist,
@@ -111,11 +136,11 @@ export default function Editor() {
         
         const newSongData = {
             user_id: user?.sub,
-            title: songTitle,
+            title: song.title,
             created_at: creationTime,
             last_saved: creationTime,
-            playlist: JSON.stringify(playlist),
-            layout: JSON.stringify(layout),
+            playlist: JSON.stringify(song.playlist),
+            layout: JSON.stringify(song.layout),
         }
 
         try {
@@ -147,21 +172,13 @@ export default function Editor() {
         
     }
     
-    async function updateSong() {
+    async function updateSong(songId) {
         const now = new Date();
         const updatedTime = now.toISOString();
 
-        // const updatedSongData = {
-        //     id: songId,                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //     title: songTitle,
-        //     last_saved: updatedTime,
-        //     playlist: JSON.stringify(playlist),
-        //     layout: JSON.stringify(layout),
-        // };
-
         const updatedSongData = {
-            id: 2,                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            title: "Amara's song",
+            id: songId,                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            title: song.title,
             last_saved: updatedTime,
             playlist: JSON.stringify(playlist),
             layout: JSON.stringify(layout),
@@ -189,17 +206,48 @@ export default function Editor() {
         };
     }
 
-    async function handleClickSave() {
+    function handleSave() {
+        updateSong(songId);
+    }
 
+    // top shows current song name, or defaults to 'untitled project'
+    // clicking saveAsNew gives a prompt to enter the title, and updates the name up top
 
-        // logged in? save
-        try {
-            await createNewSong();
-        } catch (error) {
-            console.error("error handling save:", error.message);
+    // clicking save updates the current song without a prompt
+
+    async function handleSaveAsNew() {
+        if (user) {
+            try {
+                await createNewSong();
+                localStorage.removeItem('unsavedProject');
+            } catch (error) {
+                console.error("error handling save:", error.message);
+            }
+        } else {
+            localStorage.setItem('unsavedProject', data);
+            const router = useRouter();
+            router.push('api/auth/login');
         }
+        
         // not logged in? we should log in, but hold onto the song data
     }
+
+    // useEffect(() => {
+    //     const unsavedProject = localStorage.getItem('unsaavedProject');
+    //     if (unsavedProject) {
+    //       setSong(unsavedProject);
+    //     }
+    //   }, []);
+
+    function updateSongTitle(newTitle) {
+        setSong(prev => ({
+            ...prev,
+            title: newTitle
+        }))
+    }
+
+    
+
 
     return (
         <div className="w-full mt-16">
@@ -211,18 +259,18 @@ export default function Editor() {
                     onNextPattern={handleGetNextPattern}
                 />
                 <div className="flex flex-col justify-center mt-16">
-                    <Form.Control className="w-[200px] self-center"
-                        type="text"
-                        value={songTitle}
-                        onChange={(e) => setSongTitle(e.target.value)}
-                        placeholder={"Song Title"}
-                    />
+                    
                     <div className="flex items-center justify-center">
-                        <button onClick={handleClickSave} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
-                            Save
+                        <SaveAsNewButton 
+                            song={song}
+                            updateSongTitle={updateSongTitle}
+                            onSave={handleSaveAsNew}
+                        />
+                        <button onClick={handleSaveAsNew} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
+                            Save as new
                         </button>
-                        <button onClick={updateSong} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
-                            Update
+                        <button onClick={handleSave} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
+                            Save
                         </button>
                         <button onClick={handleClickPlay} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
                             {performing ? "Stop" : "Start performance"}
