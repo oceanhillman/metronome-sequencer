@@ -109,7 +109,7 @@ export default function Editor() {
         const now = new Date();
         const creationTime = now.toISOString();
         
-        const newSong = {
+        const newSongData = {
             user_id: user?.sub,
             title: songTitle,
             created_at: creationTime,
@@ -118,15 +118,13 @@ export default function Editor() {
             layout: JSON.stringify(layout),
         }
 
-        console.log(user, error, isLoading);
-
         try {
             const response = await fetch('/api/songs/addSong', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify(newSong), // Replace 'songName' with your actual field
+              body: JSON.stringify(newSongData),
             });
       
             if (!response.ok) {
@@ -148,8 +146,52 @@ export default function Editor() {
         // song doesn't exist? create it
         
     }
+    
+    async function updateSong() {
+        const now = new Date();
+        const updatedTime = now.toISOString();
+
+        // const updatedSongData = {
+        //     id: songId,                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //     title: songTitle,
+        //     last_saved: updatedTime,
+        //     playlist: JSON.stringify(playlist),
+        //     layout: JSON.stringify(layout),
+        // };
+
+        const updatedSongData = {
+            id: 2,                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            title: "Amara's song",
+            last_saved: updatedTime,
+            playlist: JSON.stringify(playlist),
+            layout: JSON.stringify(layout),
+        };
+
+        try {
+            const response = await fetch('/api/songs/updateSong', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedSongData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+
+        } catch (error) {
+
+        } finally {
+
+        };
+    }
 
     async function handleClickSave() {
+
+
         // logged in? save
         try {
             await createNewSong();
@@ -158,8 +200,6 @@ export default function Editor() {
         }
         // not logged in? we should log in, but hold onto the song data
     }
-
-    
 
     return (
         <div className="w-full mt-16">
@@ -180,6 +220,9 @@ export default function Editor() {
                     <div className="flex items-center justify-center">
                         <button onClick={handleClickSave} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
                             Save
+                        </button>
+                        <button onClick={updateSong} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
+                            Update
                         </button>
                         <button onClick={handleClickPlay} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
                             {performing ? "Stop" : "Start performance"}
