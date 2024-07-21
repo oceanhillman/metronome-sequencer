@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -13,46 +12,30 @@ export default function Header() {
     // Session data
     const { user, error, isLoading } = useUser();
 
-    // Shows logout or login button
-    const logInOrOut = user ? (
-        <Button variant="primary">
-            <a href="/api/auth/logout" className="mx-1">Logout</a>
-        </Button>
-        
-    ) : (
-        <Button variant="primary">
-            <a href="/api/auth/login" className="mx-1">Login</a>
-        </Button>
-    );
-
-    // Shows logged in user's email
-    const emailDisplay = user?.email ? (
-        <>
-            {user?.email}
-        </>
-    ) : null;
-
-    // Shows logged in user's picture
-    const pictureDisplay = user?.picture ? (
-        <Image 
-            className="rounded-full"
-            src={user?.image}
-            width={48}
-            height={48}
-            alt={user?.name ?? "Profile Pic"}
-            priority = {true}
-        />
-    ) : null;
+    function AuthSection() {
+        if (isLoading) {
+            return <div>Loading...</div>
+        } else if (error) {
+            return <div>{error.message}</div>
+        } else if (!user) {
+            return <Button variant="primary"><a href="/api/auth/login" className="mx-1">Login</a></Button>
+        } else {
+            return (
+                <Button variant="primary"><a href="/api/auth/logout" className="mx-1">Logout</a></Button>
+            );
+        };
+    }
 
     // Shows logged in user's profile
-    const userProfile = user ? (
-        <>
-            {emailDisplay}
-            {pictureDisplay}
-        </>
-    ) : (
-        null
-    );
+    function ProfileSection() {
+        if (!user) {
+            return null;
+        } else {
+            return (
+                <div className="mr-4">Hello, {user.name}!</div>
+            );
+        };
+    }
             
     return (
         <Navbar className="w-full h-[80px]">
@@ -61,8 +44,8 @@ export default function Header() {
                     Metronome Sequencer
                 </Navbar.Brand>
                 <Nav className="flex flex-row items-center">
-                    {logInOrOut}
-                    {userProfile}
+                    <ProfileSection />
+                    <AuthSection />
                 </Nav>
             </Container>
         </Navbar>
