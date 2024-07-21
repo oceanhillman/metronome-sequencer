@@ -12,6 +12,14 @@ export default function Header() {
     // Session data
     const { user, error, isLoading } = useUser();
 
+    function handleLogout() {
+        // Clear localStorage
+        localStorage.removeItem('unsavedProject');
+    
+        // Perform the logout
+        window.location.href = '/api/auth/logout'; // Or use a custom logout API endpoint
+    }
+
     function AuthSection() {
         if (isLoading) {
             return <div>Loading...</div>
@@ -21,7 +29,7 @@ export default function Header() {
             return <Button variant="primary"><a href="/api/auth/login" className="mx-1">Login</a></Button>
         } else {
             return (
-                <Button variant="primary"><a href="/api/auth/logout" className="mx-1">Logout</a></Button>
+                <Button onClick={handleLogout} variant="primary">Logout</Button>
             );
         };
     }

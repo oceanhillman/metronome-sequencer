@@ -3,7 +3,7 @@ import { Form, Button } from "react-bootstrap"
 import { useState } from 'react';
 
 export default function SaveAsNewButton(props) {
-    const { song, updateSongTitle, onSave } = props;
+    const { songTitle, updateSongTitle, onSave } = props;
         
 
     const [show, setShow] = useState(false);
@@ -30,7 +30,7 @@ export default function SaveAsNewButton(props) {
             <Modal.Body>
                 <Form.Control className="w-[200px] self-center"
                     type="text"
-                    value={song.title}
+                    value={songTitle}
                     onChange={(e) => updateSongTitle(e.target.value)}
                     placeholder={"Song Title"}
                 />

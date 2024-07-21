@@ -11,10 +11,13 @@ import { Form, Button } from "react-bootstrap"
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from "next/router"
 import Modal from 'react-bootstrap/Modal'
+import { title } from "process"
 
 
 export default function Editor(props) {
     const { songId } = props;
+
+    // const router = useRouter();
 
     const { user, error, isLoading } = useUser();
     const [performing, setPerforming] = useState(false);
@@ -26,6 +29,7 @@ export default function Editor(props) {
     }]);
     const [currentPattern, setCurrentPattern] = useState();
     const [layout, setLayout] = useState([]);
+    const [songTitle, setSongTitle] = useState('Untitled Song');
 
     // when we open up the editor there are some possible scenarios:
     // 1. logged out, new unsaved song      -   initialize a new default song with no id
@@ -35,7 +39,7 @@ export default function Editor(props) {
     // for now, just initialize a new default song with no id
     const [song, setSong] = useState({
         id: '',
-        title: 'Untitled Song',
+        title: songTitle,
         playlist: playlist,
         layout: layout,
     });
@@ -47,10 +51,11 @@ export default function Editor(props) {
     useEffect(() => {
         setSong(prev => ({
             ...prev,
+            title: songTitle,
             layout: layout,
             playlist: playlist
         }));
-    }, [layout, playlist])
+    }, [songTitle, layout, playlist])
 
     // Callback function to update layout
     function updateLayout(layoutData) {
@@ -136,7 +141,7 @@ export default function Editor(props) {
         
         const newSongData = {
             user_id: user?.sub,
-            title: song.title,
+            title: songTitle,
             created_at: creationTime,
             last_saved: creationTime,
             playlist: JSON.stringify(song.playlist),
@@ -178,7 +183,7 @@ export default function Editor(props) {
 
         const updatedSongData = {
             id: songId,                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            title: song.title,
+            title: songTitle,
             last_saved: updatedTime,
             playlist: JSON.stringify(playlist),
             layout: JSON.stringify(layout),
@@ -220,30 +225,41 @@ export default function Editor(props) {
             try {
                 await createNewSong();
                 localStorage.removeItem('unsavedProject');
+                console.log("removing");
             } catch (error) {
-                console.error("error handling save:", error.message);
+                console.error("Error handling save:", error.message);
             }
         } else {
-            localStorage.setItem('unsavedProject', data);
-            const router = useRouter();
-            router.push('api/auth/login');
+            console.log("setting ")
+            localStorage.setItem('unsavedProject', JSON.stringify(song));
+            window.location.href = '/api/auth/login'; // Direct navigation
+            // router.push('/api/auth/login');
+            
         }
         
         // not logged in? we should log in, but hold onto the song data
     }
 
-    // useEffect(() => {
-    //     const unsavedProject = localStorage.getItem('unsaavedProject');
-    //     if (unsavedProject) {
-    //       setSong(unsavedProject);
-    //     }
-    //   }, []);
+    
+
+    useEffect(() => {
+        const unsavedProject = localStorage.getItem('unsavedProject'); // Corrected typo
+        if (unsavedProject) {
+            const unsavedProjectData = JSON.parse(unsavedProject);
+            console.log("setting", unsavedProject);
+
+            setLayout(unsavedProjectData.layout);
+            setPlaylist(unsavedProjectData.playlist);
+            setSongTitle(unsavedProjectData.title);
+
+            setSong(JSON.parse(unsavedProject)); // Parse the string back into an object
+        } else {
+            console.log("no unsaved project");
+        }
+    }, []);
 
     function updateSongTitle(newTitle) {
-        setSong(prev => ({
-            ...prev,
-            title: newTitle
-        }))
+        setSongTitle(newTitle);
     }
 
     
@@ -262,13 +278,10 @@ export default function Editor(props) {
                     
                     <div className="flex items-center justify-center">
                         <SaveAsNewButton 
-                            song={song}
+                            song={songTitle}
                             updateSongTitle={updateSongTitle}
                             onSave={handleSaveAsNew}
                         />
-                        <button onClick={handleSaveAsNew} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
-                            Save as new
-                        </button>
                         <button onClick={handleSave} className="mt-2 mx-2 bg-green-700 text-white px-4 py-2 rounded">
                             Save
                         </button>
