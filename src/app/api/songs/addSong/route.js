@@ -8,7 +8,7 @@ export async function POST(request) {
 
     // Validate required fields
     if (!user_id || !title || !playlist || !layout) {
-      return NextResponse.json({ error: `Important field missing ${user_id} ${title} ${playlist} ${layout}` }, { status: 400 });
+      return NextResponse.json({ error: `Missing important information` }, { status: 400 });
     }
 
     // Check user exists
