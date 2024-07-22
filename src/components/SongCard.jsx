@@ -24,15 +24,15 @@ export default function SongCard(props) {
     }
 
     return (
-        <div className="grid grid-cols-12 rounded-xl min-h-20  bg-gray-800 hover:border-gray-600">
-            <Link href={`/song/${id}`} className="col-span-11 p-2 rounded-xl bg-gray-900 border-2 border-gray-800 hover:bg-gray-700 hover:border-gray-800">
-                <h5 className="text-white font-roboto">
+        <div className="grid grid-cols-12 rounded-xl min-h-[100px] bg-muted-blue hover:border-arsenic">
+            <Link href={`/song/${id}`} className="col-span-11 p-2 rounded-xl bg-eerie-black border-2 border-muted-blue hover:bg-subtle-gray hover:border-arsenic">
+                <h5 className="text-cultured text-lg font-sans">
                     {title}
                 </h5>
-                <p className="m-0 text-sm text-gray-400 font-roboto">Created: {created}</p>
-                <p className="m-0 text-sm text-gray-400 font-roboto">Last saved: {saved}</p>
+                <p className="m-0 text-sm text-gray-400 font-sans">Created: {created}</p>
+                <p className="m-0 text-sm text-gray-400 font-sans">Last saved: {saved}</p>
             </Link>
-            <div className="col-span-1 flex justify-center items-center bg-slate-800 rounded-xl p-2">
+            <div className="col-span-1 flex justify-center items-center bg-muted-blue rounded-xl p-2">
                 <ShareButton />
                 <DeleteSongButton
                     songId={id}

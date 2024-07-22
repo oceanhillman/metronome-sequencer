@@ -26,10 +26,10 @@ export default function Header() {
         } else if (error) {
             return <div>{error.message}</div>
         } else if (!user) {
-            return <Button variant="primary"><a href="/api/auth/login" className="mx-1">Login</a></Button>
+            return <Button variant="primary"><a href="/api/auth/login" className="mx-1 font-sans">Login</a></Button>
         } else {
             return (
-                <Button onClick={handleLogout} className="bg-gunmetal text-cultured border-none">Logout</Button>
+                <Button onClick={handleLogout} className="bg-gunmetal text-cultured border-none font-sans">Logout</Button>
             );
         };
     }
@@ -41,14 +41,14 @@ export default function Header() {
         } else {
             return (
                 <div className="flex flex-row items-center">
-                    <div className="mr-4 text-cultured">
+                    <div className="mr-4 text-cultured font-sans">
                         Hello, {user.name}!
                     </div>
                     <Link href="/">
-                        <Button className="bg-cultured text-eerie-black border-none mr-4">Song Editor</Button>
+                        <Button className="bg-cultured text-eerie-black border-none mr-4 font-sans">Song Editor</Button>
                     </Link>
                     <Link href="/my-songs">
-                        <Button className="bg-persian-pink text-eerie-black border-none mr-4">My Songs</Button>
+                        <Button className="bg-persian-pink text-eerie-black border-none mr-4 font-sans">My Songs</Button>
                     </Link>
                 </div>
             );

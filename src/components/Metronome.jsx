@@ -196,7 +196,7 @@ export default function Metronome(props) {
                     }}
                 ></div>
             </div>
-            <div className="flex flex-row">
+            <div className="flex flex-row font-sans mt-3">
                 <div className="flex flex-col justify-center items-center mx-2">
                     <p className="text-white">BPM</p>
                     <NumberInput
@@ -218,11 +218,11 @@ export default function Metronome(props) {
                     />
                 </div>
             </div>
-            <div className="flex flex-row">
-                <button onClick={() => setPlaying(!playing)} className="mt-2 bg-gray-800 text-white px-2 py-1 rounded mx-2">
-                    {playing ? 'Stop' : 'Play'}
+            <div className="flex flex-row font-sans">
+                <button onClick={() => setPlaying(!playing)} className="mt-2 bg-muted-blue text-white px-2 py-1 rounded mx-2">
+                    {playing ? 'Stop Click' : 'Play Click'}
                 </button>
-                <button onClick={handleTap} className="mt-2 bg-gray-800 text-white px-4 py-1 rounded mx-2">
+                <button onClick={handleTap} className="mt-2 bg-muted-blue text-white px-4 py-1 rounded mx-2">
                     Tap Tempo
                 </button>
             </div>

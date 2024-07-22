@@ -14,18 +14,11 @@ export default function RootLayout({ children }) {
     <UserProvider>
       <html lang="en">
         <head>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap"
-            rel="stylesheet"
-          />
-          <link 
-            href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" 
-            rel="stylesheet"
-        />
+            <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+            <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet"/>
+            <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+            <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet" />
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
         </head>
         <body className="bg-dark-gunmetal">{children}</body>
       </html>

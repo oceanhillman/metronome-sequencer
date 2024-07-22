@@ -26,6 +26,8 @@ module.exports = {
         roboto: ['Roboto', 'sans-serif'],
         'cutive-mono': ['"Cutive Mono"', 'monospace'],
         orbitron: ['Orbitron', 'sans-serif'],
+        'sans': ['Source Sans Pro', 'sans-serif'],
+        'poppins': ['Poppins', 'sans-serif'],
       },
     },
   },
