@@ -13,9 +13,7 @@ import { useRouter } from "next/router"
 import Modal from 'react-bootstrap/Modal'
 import { title } from "process"
 
-import { FaPlay } from "react-icons/fa6";
-import { FaStop } from "react-icons/fa6";
-
+import { FaPlay, FaStop } from "react-icons/fa6";
 
 export default function Editor(props) {
     const { songPayload } = props;
@@ -102,6 +100,7 @@ export default function Editor(props) {
     // Trigger metronome to play playlist
     function handleClickPlay() {
         if (playlist.length > 0) {
+            setCurrentSection(playlist);
             setPerforming(!performing);
         }
     }
@@ -303,14 +302,19 @@ export default function Editor(props) {
         setSongTitle(newTitle);
     }
 
-    
+    function handleStartFromPattern(patternId) {
+        const leadingPatternIndex = playlist.findIndex(pattern => pattern.id === patternId);
+        setCurrentSection(playlist.slice(leadingPatternIndex));
+        setPerforming(true);
+    }
 
+    const [currentSection, setCurrentSection] = useState();
 
     return (
         <div className="w-full mt-16">
             <div className="pb-16">
                 <Metronome
-                    playlist={playlist}
+                    playlist={currentSection}
                     performing={performing}
                     onPlaylistEnd={handlePlaylistEnd}
                     onNextPattern={handleGetNextPattern}
@@ -318,7 +322,7 @@ export default function Editor(props) {
                 <div className="flex flex-col justify-center mt-8">
                     <div className="flex flex-col items-center justify-center">
                         <div className="flex flex-col w-[100%] md:w-[80%] justify-center">
-                            <Form.Control className="w-[400px] self-center border-2 bg-chinese-black border-muted-blue text-cultured font-roboto font-bold rounded-md text-center
+                            <Form.Control className="w-[400px] self-center border-2 bg-chinese-black border-muted-blue text-cultured font-poppins text-lg rounded-md text-center
                             focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-subtle-gray focus:outline-none"
                                 type="text"
                                 value={songTitle}
@@ -332,6 +336,7 @@ export default function Editor(props) {
                                 currentPatternId={currentPattern}
                                 onUpdateLayout={updateLayout}
                                 performing={performing}
+                                startFromPattern={handleStartFromPattern}
                             />
                         </div>
                         <button onClick={initializeNewPattern} className="mt-2 bg-muted-blue hover:bg-arsenic border-2 border-arsenic p-3 rounded-full">

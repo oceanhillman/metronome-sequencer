@@ -5,9 +5,11 @@ import NumberInput from "@/components/NumberInput"
 import DragHandleIcon from "/public/drag_handle.svg"
 import DeleteIcon from "/public/delete.svg"
 import CloneIcon from "/public/clone.svg"
+import { FaP, FaPlay } from "react-icons/fa6";
+
 
 const Pattern = forwardRef((props, ref) => {
-    const { dataGrid, patternData, handleUpdatePattern, handleClickClone, handleClickDelete, currentPatternId, performing } = props;
+    const { dataGrid, patternData, handleUpdatePattern, handleClickClone, handleClickDelete, currentPatternId, performing, startFromPattern } = props;
 
     const [inputData, setInputData] = useState({
             name: patternData.name,
@@ -24,12 +26,18 @@ const Pattern = forwardRef((props, ref) => {
         handleUpdatePattern(patternData.id, attribute, value);
     }
 
+    function handleClickPlay(event) {
+        event.stopPropagation();
+        startFromPattern(patternData.id)
+    }
+    
+
     return (
         <div data-grid={{...dataGrid, isResizable: false}} key={ref} className={`handle cursor-move flex flex-row rounded-md h-full w-full content-between justify-center items-start 
             ${currentPatternId === patternData.id ? "bg-arsenic" : "bg-muted-blue"} text-black`}>
 
             <input 
-                className="bg-inherit ml-2 text-cultured font-roboto text-sm mt-[2px]"
+                className="bg-inherit ml-2 text-cultured font-sans text-sm mt-[2px]"
                 type="text"
                 placeholder="Pattern Name"
                 value={inputData.name}
@@ -39,6 +47,9 @@ const Pattern = forwardRef((props, ref) => {
             <Image src={DragHandleIcon} alt="Drag handle icon" className="absolute w-auto h-auto"/>
 
             <div className="flex h-[24px] items-center space-x-1 ml-auto mr-2">
+                <button onMouseDown={(event) => handleClickPlay(event)} className="w-[20px] h-[20px]">
+                    <FaPlay />
+                </button>
                 <button onMouseDown={(event) => handleClickClone(event, patternData)} className="w-[20px] h-[20px]">
                     <Image src={CloneIcon} alt="Clone icon" className="w-auto h-auto"/>
                 </button>
@@ -49,7 +60,7 @@ const Pattern = forwardRef((props, ref) => {
 
             <div className={`no-drag cursor-auto absolute w-full h-[80%] rounded-b-md bottom-0 
             ${currentPatternId === patternData.id ? "bg-subtle-gray" : "bg-eerie-black"}`}>
-                <div className="grid grid-cols-3 grid-rows-2 font-roboto text-xl text-white">
+                <div className="grid grid-cols-3 grid-rows-2 font-sans text-xl text-cultured">
                     <div className="flex flex-col justify-center items-center col-span-1 row-span-2 py-2">
                         <p>BPM</p>
                         <NumberInput
