@@ -4,10 +4,8 @@ import Footer from "@/components/Footer"
 import SongLibrary from "@/components/SongLibrary"
 
 // app/profile/page.js
-import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 
-export default withPageAuthRequired(function MySongs() {
-
+export default function MySongs() {
     return (
         <main className="flex min-h-screen flex-col items-center">
             <Header />
@@ -16,4 +14,4 @@ export default withPageAuthRequired(function MySongs() {
         </main>
     );
 
-}, { returnTo: '/my-songs' })
+}
