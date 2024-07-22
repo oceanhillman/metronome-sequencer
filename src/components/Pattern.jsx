@@ -10,23 +10,32 @@ const Pattern = forwardRef((props, ref) => {
     const { dataGrid, patternData, handleUpdatePattern, handleClickClone, handleClickDelete, currentPatternId, performing } = props;
 
     const [inputData, setInputData] = useState({
+            name: patternData.name,
             beatsPerMeasure: patternData.beatsPerMeasure,
             bpm: patternData.bpm,
             numMeasures: patternData.numMeasures,
         });
 
-        function handleUpdate(attribute, value) {
-            setInputData((prev) => ({
-                ...prev,
-                [attribute]: value,
-            }));
-            handleUpdatePattern(patternData.id, attribute, value);
-        }
+    function handleUpdate(attribute, value) {
+        setInputData((prev) => ({
+            ...prev,
+            [attribute]: value,
+        }));
+        handleUpdatePattern(patternData.id, attribute, value);
+    }
 
     return (
         <div data-grid={{...dataGrid, isResizable: false}} key={ref} className={`handle cursor-move flex flex-row rounded-md h-full w-full content-between justify-center items-start 
             ${currentPatternId === patternData.id ? "bg-arsenic" : "bg-muted-blue"} text-black`}>
 
+            <input 
+                className="bg-inherit ml-2 text-cultured font-roboto text-sm mt-[2px]"
+                type="text"
+                placeholder="Pattern Name"
+                value={inputData.name}
+                onMouseDown={(e) => e.stopPropagation()}
+                onChange={(e) => handleUpdate('name', e.target.value)}
+            />
             <Image src={DragHandleIcon} alt="Drag handle icon" className="absolute w-auto h-auto"/>
 
             <div className="flex h-[24px] items-center space-x-1 ml-auto mr-2">

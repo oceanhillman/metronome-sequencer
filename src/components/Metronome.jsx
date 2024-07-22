@@ -182,13 +182,13 @@ export default function Metronome(props) {
     return (
         <div className="flex flex-col items-center">
             <div className="flex flex-col items-center">
-                <div className="relative bg-persian-pink w-24 h-60 flex items-center justify-center"
+                <div className="relative bg-persian-pink w-12 h-32 flex items-center justify-center"
                     style={{
                         clipPath: "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)",
                     }}
                 ></div>
                 <div
-                    className={`absolute w-1 h-40 rounded-xl bg-white transition-transform ease-linear`}
+                    className={`absolute w-1 h-20 rounded-xl bg-cultured transition-transform ease-linear`}
                     style={{
                         transform: `rotate(${rotation}deg)`,
                         transformOrigin: 'bottom center',

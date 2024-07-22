@@ -83,7 +83,7 @@ export default function Song() {
     };
 
     return (
-        <main>
+        <main className="flex min-h-screen flex-col items-center">
             <Header />
             <Editor songPayload={song} />
             <Footer />

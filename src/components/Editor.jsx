@@ -13,6 +13,9 @@ import { useRouter } from "next/router"
 import Modal from 'react-bootstrap/Modal'
 import { title } from "process"
 
+import { FaPlay } from "react-icons/fa6";
+import { FaStop } from "react-icons/fa6";
+
 
 export default function Editor(props) {
     const { songPayload } = props;
@@ -23,6 +26,7 @@ export default function Editor(props) {
     const [performing, setPerforming] = useState(false);
     const [playlist, setPlaylist] = useState([{
         id: generatePatternId(),
+        name: 'Pattern #1',
         bpm: 120,
         beatsPerMeasure: 4,
         numMeasures: 4,
@@ -106,6 +110,7 @@ export default function Editor(props) {
     function initializeNewPattern() {
         const newPattern = {
             id: generatePatternId(),
+            name: `Pattern #${playlist.length + 1}`,
             bpm: 120,
             beatsPerMeasure: 4,
             numMeasures: 4,
@@ -121,6 +126,7 @@ export default function Editor(props) {
     function handleClonePattern(patternData) {
         const clonedPattern = {
             id: generatePatternId(),
+            name: `${patternData.name} (clone)`,
             bpm: patternData.bpm,
             beatsPerMeasure: patternData.beatsPerMeasure,
             numMeasures: patternData.numMeasures,
@@ -237,7 +243,7 @@ export default function Editor(props) {
     function SaveButton() {
         if (user && song.id) {
             return (
-                <Button onClick={handleSave} variant="dark">
+                <Button onClick={handleSave} className="bg-gunmetal text-cultured border-none ml-4">
                     Save
                 </Button>
             );
@@ -302,37 +308,23 @@ export default function Editor(props) {
 
     return (
         <div className="w-full mt-16">
-            <div className="">
+            <div className="pb-16">
                 <Metronome
                     playlist={playlist}
                     performing={performing}
                     onPlaylistEnd={handlePlaylistEnd}
                     onNextPattern={handleGetNextPattern}
                 />
-                <div className="flex flex-col justify-center mt-16">
-                    <div className="flex items-center justify-center">
-                        <SaveAsNewButton 
-                            songTitle={songTitle}
-                            updateSongTitle={updateSongTitle}
-                            onSave={handleSaveAsNew}
-                        />
-                        <SaveButton />
-                        <button onClick={handleClickPlay} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
-                            {performing ? "Stop" : "Start performance"}
-                        </button>
-                        <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
-                            Clear
-                        </button>
-                        <Form>
-                            <Form.Check // prettier-ignore
-                                type="switch"
-                                id="custom-switch"
-                                label="Count-in"
-                            />
-                        </Form>
-                    </div>
+                <div className="flex flex-col justify-center mt-8">
                     <div className="flex flex-col items-center justify-center">
-                        <div className="w-[100%] md:w-[80%]">
+                        <div className="flex flex-col w-[100%] md:w-[80%] justify-center">
+                            <Form.Control className="w-[400px] self-center border-2 bg-chinese-black border-muted-blue text-cultured font-roboto font-bold rounded-md text-center
+                            focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-subtle-gray focus:outline-none"
+                                type="text"
+                                value={songTitle}
+                                onChange={(e) => updateSongTitle(e.target.value)}
+                                placeholder={"Song Title"}
+                            />
                             <Playlist 
                                 playlistData={playlist}
                                 handleUpdatePlaylist={handleUpdatePlaylist}
@@ -342,10 +334,47 @@ export default function Editor(props) {
                                 performing={performing}
                             />
                         </div>
-                        <button onClick={initializeNewPattern} className="mt-2 bg-[#1C2025] border-[#303740] border-[1px] hover:bg-[#0059B2] hover:border-[#007fff] p-3 rounded-full">
+                        <button onClick={initializeNewPattern} className="mt-2 bg-muted-blue hover:bg-arsenic border-2 border-arsenic p-3 rounded-full">
                             <Image src={PlusIcon} alt="Plus icon" className="w-auto h-auto"/>
                         </button>
                     </div>     
+                </div>
+            </div>
+
+            <div className="sticky bottom-0 bg-eerie-black border-t-2 border-arsenic text-cultured py-4">
+                <div className="grid grid-cols-3 items-center justify-center">
+                    <div className="col-span-1 flex w-full h-full items-center justify-center">
+                        <SaveAsNewButton 
+                            songTitle={songTitle}
+                            updateSongTitle={updateSongTitle}
+                            onSave={handleSaveAsNew}
+                        />
+                        <SaveButton />
+                    </div>
+                    <div className="col-span-1 grid grid-cols-3 items-center justify-center">
+                        <div className="col-span-1 flex w-full h-full items-center justify-center">
+                        
+                        </div>
+                        <div className="col-span-1 flex w-full h-full items-center justify-center">
+                            <button onClick={handleClickPlay} className="mt-2 mx-2 bg-cultured text-black h-16 w-16 flex items-center justify-center rounded-full">
+                                {performing ? <FaStop className="h-8 w-8" /> : <FaPlay className="ml-[5px] h-8 w-8"/>}
+                            </button>
+                        </div>
+                        <div className="col-span-1 flex w-full h-full items-center justify-center">
+                            <Form>
+                                <Form.Check // prettier-ignore
+                                    type="switch"
+                                    id="custom-switch"
+                                    label="Count-in"
+                                />
+                            </Form>
+                        </div>
+                    </div>
+                    <div className="col-span-1 flex w-full h-full items-center justify-center">
+                        <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
+                            Clear
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

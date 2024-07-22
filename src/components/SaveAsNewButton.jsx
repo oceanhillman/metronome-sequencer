@@ -17,7 +17,7 @@ export default function SaveAsNewButton(props) {
   
     return (
       <>
-        <Button variant="dark" className="mx-2" onClick={handleShow}>
+        <Button className="bg-gunmetal text-cultured border-none ml-4" onClick={handleShow}>
           Save as new
         </Button>
   

@@ -17,6 +17,7 @@ module.exports = {
         'muted-blue': '#2a2a3e',
         'arsenic': '#3a3a4e',
         'subtle-gray': '#20202f',
+        'chinese-black': '#0e0e16',
         'persian-pink': '#ff79c6',
         'key-lime': '#f1fa8c',
         'cyan': '#8be9fd',

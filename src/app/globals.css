@@ -41,9 +41,9 @@ body {
 
 .react-grid-placeholder {
   border-radius: 6px;
-  border: 2px dashed #ffffff; /* Example border */
-  background-color: #6e2323 !important;
-  transition: background-color 0.3s; /* Smooth transition */
+  /* border: 2px dashed #ff79c6; */
+  background-color: #ffffff !important;
+  /* transition: background-color 0.3s; Smooth transition */
 }
 
 /* Remove the up/down arrows from number inputs */

@@ -69,7 +69,7 @@ export default function Playlist(props) {
 
     return (
         <ResponsiveGridLayout
-            className="layout bg-[#0e0e16] border-2 border-arsenic rounded-xl px-4 mt-4"
+            className="layout bg-chinese-black border-2 border-arsenic rounded-xl px-4 mt-4"
             layout={layoutData}
             cols={{xxl:1, xl:1, lg:1, md:1, sm:1, xs:1, xxs:1}}
             rowHeight={120}
@@ -80,6 +80,7 @@ export default function Playlist(props) {
             draggableCancel=".no-drag" // This makes the second div non-draggable
             onDragStart={handleDragStart}
             onDragStop={handleDragStop}
+            transitionDuration={0}
         >
             {playlistData.map(pattern => (
                 <div key={pattern.id} className="h-full">
