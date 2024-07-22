@@ -32,7 +32,7 @@ export default function Metronome(props) {
     // Handle starting and stopping metronome
     useEffect(() => {
         if (playing) {
-            lastClickTimeRef.current = Date.now();
+            lastClickTimeRef.current = performance.now();
             playMetronome();
         } else {
             clearTimeout(intervalIdRef.current);
@@ -46,7 +46,7 @@ export default function Metronome(props) {
     // Dynamically adjust time between clicks as it is changed by the user
     useEffect(() => {
         if (playing) {
-            const elapsedTime = Date.now() - lastClickTimeRef.current;
+            const elapsedTime = performance.now() - lastClickTimeRef.current;
             const remainingTime = getInterval(bpm) - elapsedTime;
             
             if (remainingTime <= 0) {
@@ -66,7 +66,7 @@ export default function Metronome(props) {
     
     // Play basic metronome
     const playMetronome = () => {
-        const now = Date.now();
+        const now = performance.now();
         lastClickTimeRef.current = now;
 
         if (intervalIdRef.current) {
@@ -93,7 +93,7 @@ export default function Metronome(props) {
     // Handle tap tempo input
     const handleTap = () => {
         setPlaying(false);
-        const now = Date.now();
+        const now = performance.now();
 
         audioHi.current.currentTime = 0; // Reset audio
         audioHi.current.play();
