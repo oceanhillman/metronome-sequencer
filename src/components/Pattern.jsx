@@ -1,5 +1,5 @@
 'use client'
-import React, { forwardRef, useState, useEffect } from "react"
+import React, { forwardRef, useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import NumberInput from "@/components/NumberInput"
 import DragHandleIcon from "/public/drag_handle.svg"
@@ -12,11 +12,22 @@ const Pattern = forwardRef((props, ref) => {
     const { dataGrid, patternData, handleUpdatePattern, handleClickClone, handleClickDelete, currentPatternId, performing, startFromPattern } = props;
 
     const [inputData, setInputData] = useState({
-            name: patternData.name,
-            beatsPerMeasure: patternData.beatsPerMeasure,
-            bpm: patternData.bpm,
-            numMeasures: patternData.numMeasures,
-        });
+        name: patternData.name,
+        beatsPerMeasure: patternData.beatsPerMeasure,
+        bpm: patternData.bpm,
+        numMeasures: patternData.numMeasures,
+    });
+
+    const patternRef = useRef(null);
+
+    useEffect(() => {
+        // Check if the current pattern ID matches the pattern's ID
+        if (currentPatternId === patternData.id) {
+            // Scroll into view when the component mounts or currentPatternId changes
+            patternRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [currentPatternId, patternData.id]);
+
 
     function handleUpdate(attribute, value) {
         setInputData((prev) => ({
@@ -30,6 +41,8 @@ const Pattern = forwardRef((props, ref) => {
         event.stopPropagation();
         startFromPattern(patternData.id)
     }
+
+    
 
     function Buttons() {
         if (!performing) {
@@ -55,7 +68,7 @@ const Pattern = forwardRef((props, ref) => {
     
 
     return (
-        <div data-grid={{...dataGrid, isResizable: false}} key={ref} className={`handle cursor-move flex flex-row rounded-md h-full w-full content-between justify-center 
+        <div ref={patternRef} data-grid={{...dataGrid, isResizable: false}} key={ref} className={`handle cursor-move flex flex-row rounded-md h-full w-full content-between justify-center 
             ${currentPatternId === patternData.id ? "bg-arsenic" : "bg-muted-blue"} text-black`}>
 
             <input 
