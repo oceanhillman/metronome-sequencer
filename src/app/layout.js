@@ -22,8 +22,12 @@ export default function RootLayout({ children }) {
             href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap"
             rel="stylesheet"
           />
+          <link 
+            href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" 
+            rel="stylesheet"
+        />
         </head>
-        <body className="bg-black">{children}</body>
+        <body className="bg-dark-gunmetal">{children}</body>
       </html>
     </UserProvider>
   );

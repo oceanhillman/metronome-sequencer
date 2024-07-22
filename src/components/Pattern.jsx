@@ -1,3 +1,4 @@
+'use client'
 import React, { forwardRef, useState, useEffect } from "react"
 import Image from "next/image"
 import NumberInput from "@/components/NumberInput"
@@ -6,7 +7,7 @@ import DeleteIcon from "/public/delete.svg"
 import CloneIcon from "/public/clone.svg"
 
 const Pattern = forwardRef((props, ref) => {
-    const { dataGrid, patternData, handleUpdatePattern, handleClickClone, handleClickDelete, currentPatternId } = props;
+    const { dataGrid, patternData, handleUpdatePattern, handleClickClone, handleClickDelete, currentPatternId, performing } = props;
 
     const [inputData, setInputData] = useState({
             beatsPerMeasure: patternData.beatsPerMeasure,
@@ -23,8 +24,8 @@ const Pattern = forwardRef((props, ref) => {
         }
 
     return (
-        <div data-grid={{...dataGrid, isResizable: false}} key={ref} className={`handle cursor-move flex flex-row rounded-md h-[100px] w-full content-between justify-center items-start 
-            ${currentPatternId === patternData.id ? "bg-blue-400" : "bg-blue-500"} text-black`}>
+        <div data-grid={{...dataGrid, isResizable: false}} key={ref} className={`handle cursor-move flex flex-row rounded-md h-full w-full content-between justify-center items-start 
+            ${currentPatternId === patternData.id ? "bg-arsenic" : "bg-muted-blue"} text-black`}>
 
             <Image src={DragHandleIcon} alt="Drag handle icon" className="absolute w-auto h-auto"/>
 
@@ -37,10 +38,10 @@ const Pattern = forwardRef((props, ref) => {
                 </button>
             </div>
 
-            <div className={`no-drag cursor-auto absolute w-full h-[75%] rounded-b-md bottom-0 
-            ${currentPatternId === patternData.id ? "bg-gray-800" : "bg-gray-900"}`}>
+            <div className={`no-drag cursor-auto absolute w-full h-[80%] rounded-b-md bottom-0 
+            ${currentPatternId === patternData.id ? "bg-subtle-gray" : "bg-eerie-black"}`}>
                 <div className="grid grid-cols-3 grid-rows-2 font-roboto text-xl text-white">
-                    <div className="flex flex-col justify-center items-center col-span-1 row-span-2">
+                    <div className="flex flex-col justify-center items-center col-span-1 row-span-2 py-2">
                         <p>BPM</p>
                         <NumberInput
                             name="bpm"
@@ -48,6 +49,8 @@ const Pattern = forwardRef((props, ref) => {
                             min={1}
                             max={300}
                             onChange={(e) => handleUpdate('bpm', Number(e.target.value))}
+                            disabled={performing}
+                            currentPattern={currentPatternId === patternData.id ? true : false}
                         />
                     </div>
                     <div className="flex flex-col justify-center items-center col-span-1 row-span-2">
@@ -58,6 +61,8 @@ const Pattern = forwardRef((props, ref) => {
                             min={1}
                             max={64}
                             onChange={(e) => handleUpdate('beatsPerMeasure', Number(e.target.value))}
+                            disabled={performing}
+                            currentPattern={currentPatternId === patternData.id ? true : false}
                         />
                     </div>
                     <div className="flex flex-col justify-center items-center col-span-1 row-span-2">
@@ -68,6 +73,8 @@ const Pattern = forwardRef((props, ref) => {
                             min={1}
                             max={64}
                             onChange={(e) => handleUpdate('numMeasures', Number(e.target.value))}
+                            disabled={performing}
+                            currentPattern={currentPatternId === patternData.id ? true : false}
                         />
                     </div>
                 </div>

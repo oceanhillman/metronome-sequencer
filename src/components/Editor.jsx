@@ -310,7 +310,6 @@ export default function Editor(props) {
                     onNextPattern={handleGetNextPattern}
                 />
                 <div className="flex flex-col justify-center mt-16">
-                    
                     <div className="flex items-center justify-center">
                         <SaveAsNewButton 
                             songTitle={songTitle}
@@ -324,6 +323,13 @@ export default function Editor(props) {
                         <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
                             Clear
                         </button>
+                        <Form>
+                            <Form.Check // prettier-ignore
+                                type="switch"
+                                id="custom-switch"
+                                label="Count-in"
+                            />
+                        </Form>
                     </div>
                     <div className="flex flex-col items-center justify-center">
                         <div className="w-[100%] md:w-[80%]">
@@ -333,6 +339,7 @@ export default function Editor(props) {
                                 handleClonePattern={handleClonePattern}
                                 currentPatternId={currentPattern}
                                 onUpdateLayout={updateLayout}
+                                performing={performing}
                             />
                         </div>
                         <button onClick={initializeNewPattern} className="mt-2 bg-[#1C2025] border-[#303740] border-[1px] hover:bg-[#0059B2] hover:border-[#007fff] p-3 rounded-full">

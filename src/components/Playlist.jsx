@@ -8,7 +8,7 @@ import Pattern from "@/components/Pattern"
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function Playlist(props) {
-    const { playlistData, handleUpdatePlaylist, handleClonePattern, currentPatternId, onUpdateLayout } = props;
+    const { playlistData, handleUpdatePlaylist, handleClonePattern, currentPatternId, onUpdateLayout, performing } = props;
     const [layoutData, setLayoutData] = useState([]);
 
     // Sort the layout by the y value (and x if necessary)
@@ -69,10 +69,11 @@ export default function Playlist(props) {
 
     return (
         <ResponsiveGridLayout
-            className="layout"
+            className="layout bg-[#0e0e16] border-2 border-arsenic rounded-xl px-4 mt-4"
             layout={layoutData}
             cols={{xxl:1, xl:1, lg:1, md:1, sm:1, xs:1, xxs:1}}
-            rowHeight={100}
+            rowHeight={120}
+            margin={[0, 25]}
             width={"100%"}
             onLayoutChange={(layout) => handleLayoutChange(layout)}
             draggableHandle=".handle" // This makes the first div draggable
@@ -90,6 +91,7 @@ export default function Playlist(props) {
                         handleClickDelete={handleClickDelete}
                         handleClickClone={handleClickClone}
                         currentPatternId={currentPatternId}
+                        performing={performing}
                     />
                 </div>
             ))}

@@ -29,7 +29,7 @@ export default function Header() {
             return <Button variant="primary"><a href="/api/auth/login" className="mx-1">Login</a></Button>
         } else {
             return (
-                <Button onClick={handleLogout} variant="dark">Logout</Button>
+                <Button onClick={handleLogout} className="bg-gunmetal text-cultured border-none">Logout</Button>
             );
         };
     }
@@ -41,14 +41,14 @@ export default function Header() {
         } else {
             return (
                 <div className="flex flex-row items-center">
-                    <div className="mr-4 text-white">
+                    <div className="mr-4 text-cultured">
                         Hello, {user.name}!
                     </div>
                     <Link href="/">
-                        <Button variant="light" className="mr-4">Song Editor</Button>
+                        <Button className="bg-cultured text-eerie-black border-none mr-4">Song Editor</Button>
                     </Link>
                     <Link href="/my-songs">
-                        <Button variant="primary" className="mr-4">My Songs</Button>
+                        <Button className="bg-persian-pink text-eerie-black border-none mr-4">My Songs</Button>
                     </Link>
                 </div>
             );
@@ -56,9 +56,9 @@ export default function Header() {
     }
             
     return (
-        <Navbar className="w-full h-[80px]">
+        <Navbar className="w-full h-[80px] bg-eerie-black">
             <Container>
-                <Link href="/" className="text-white font-cutive-mono text-4xl">
+                <Link href="/" className="text-cultured font-orbitron font-medium text-4xl">
                     Metronome Sequencer
                 </Link>
                 <Nav className="flex flex-row items-center">
