@@ -52,7 +52,11 @@ export default function Editor(props) {
         if (songPayload) {
             setLayout(songPayload.layout);
             setPlaylist(songPayload.playlist);
-            setSongTitle(songPayload.songTitle);
+            setSongTitle(songPayload.title);
+            setSong((prev => ({
+                ...prev,
+                id: songPayload.id
+            })));
         }
     }, [songPayload])
 
@@ -132,16 +136,32 @@ export default function Editor(props) {
     // playlist (get here)
     // layout (get from playlist)
 
-    // function updateSong() {
-    //     setSongData({
-            // user_id: user?.user_id,
-            // title: song.title,
-            // created_at: creationTime,
-            // last_saved: creationTime,
-            // playlist: playlist,
-            // layout: layout,
-    //     });
-    // }
+    async function updateSong() {
+        const now = new Date();
+        const saveTime = now.toISOString();
+        let currentSongData = song;
+        currentSongData.last_saved = saveTime;
+
+        try {
+            const response = await fetch('/api/songs/updateSong', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(currentSongData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+    
+        const result = await response.json();
+        console.log('Song saved successfully!');
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const createNewSong = async (event) => {
         const now = new Date();
@@ -184,7 +204,8 @@ export default function Editor(props) {
         const updatedTime = now.toISOString();
 
         const updatedSongData = {
-            id: songId,                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            id: songId,         
+            user_id: user?.sub,                        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             title: songTitle,
             last_saved: updatedTime,
             playlist: JSON.stringify(playlist),
@@ -213,8 +234,20 @@ export default function Editor(props) {
         };
     }
 
-    function handleSave() {
-        updateSong(songId);
+    function SaveButton() {
+        if (user && song.id) {
+            return (
+                <Button onClick={handleSave} variant="dark">
+                    Save
+                </Button>
+            );
+        } else return null;
+    }
+
+    async function handleSave() {
+        if (user && song.id) {
+            await updateSong(song.id);
+        };
     }
 
     // top shows current song name, or defaults to 'untitled project'
@@ -280,13 +313,11 @@ export default function Editor(props) {
                     
                     <div className="flex items-center justify-center">
                         <SaveAsNewButton 
-                            song={songTitle}
+                            songTitle={songTitle}
                             updateSongTitle={updateSongTitle}
                             onSave={handleSaveAsNew}
                         />
-                        <Button onClick={handleSave} disabled={true} variant="dark">
-                            Save
-                        </Button>
+                        <SaveButton />
                         <button onClick={handleClickPlay} className="mt-2 mx-2 bg-blue-500 text-white px-4 py-2 rounded">
                             {performing ? "Stop" : "Start performance"}
                         </button>

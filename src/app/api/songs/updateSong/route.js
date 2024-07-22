@@ -4,7 +4,7 @@ import { withApiAuthRequired, getSession } from '@auth0/nextjs-auth0';
 
 export const PATCH = withApiAuthRequired(async function PATCH(request) {
   try {
-    const { id, user_id, title, last_saved, playlist, layout } = await request.json();
+    const { id, user_id, title, last_saved, playlist, layout, created_at } = await request.json();
 
     if (!id || !user_id || !title || !last_saved || !playlist || !layout) {
         return new Response(JSON.stringify({ error: 'Unable to save: missing required fields' }), { status: 400 });
