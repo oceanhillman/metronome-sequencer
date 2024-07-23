@@ -117,10 +117,11 @@ export default function Editor(props) {
     async function handleSaveAsNew() {
         if (user) {
             try {
-                await addSong(user?.sub, songTitle, playlist, layout);
+                const id = await addSong(user?.sub, songTitle, playlist, layout);
                 localStorage.removeItem('unsavedProject');
+                window.location.href = `/song/${id}`;
             } catch (error) {
-                console.error("Error handling save:", error.message);
+                console.error("Error adding song:", error.message);
             }
         } else {
             localStorage.setItem('unsavedProject', JSON.stringify(song));
