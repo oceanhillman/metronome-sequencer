@@ -322,7 +322,7 @@ export default function Editor(props) {
                 <div className="flex flex-col justify-center mt-4 lg:mt-8">
                     <div className="flex flex-col items-center justify-center">
                         <div className="flex flex-col w-[100%] md:w-[80%] justify-center">
-                            <Form.Control className="w-full self-center border-2 bg-chinese-black border-arsenic text-cultured font-poppins text-lg rounded-md text-center
+                            <Form.Control className="w-full self-center border-2 bg-black border-arsenic text-cultured font-poppins text-lg rounded-md text-center
                             focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-muted-blue focus:outline-none"
                                 type="text"
                                 value={songTitle}

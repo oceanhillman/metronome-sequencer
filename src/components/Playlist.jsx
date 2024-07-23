@@ -69,7 +69,7 @@ export default function Playlist(props) {
 
     return (
         <ResponsiveGridLayout
-            className="layout bg-chinese-black border-2 border-arsenic rounded-xl px-[2px] lg:px-4 mt-2 lg:mt-4"
+            className="layout bg-black border-2 border-arsenic rounded-xl px-[2px] lg:px-4 mt-2 lg:mt-4"
             layout={layoutData}
             cols={{xxl:1, xl:1, lg:1, md:1, sm:1, xs:1, xxs:1}}
             rowHeight={120}

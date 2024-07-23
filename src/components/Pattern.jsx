@@ -6,6 +6,7 @@ import DragHandleIcon from "/public/drag_handle.svg"
 import DeleteIcon from "/public/delete.svg"
 import CloneIcon from "/public/clone.svg"
 import { FaPlay } from "react-icons/fa6";
+import { IconContext } from "react-icons";
 
 const Pattern = forwardRef((props, ref) => {
     const { dataGrid, patternData, handleUpdatePattern, handleClickClone, handleClickDelete, currentPatternId, performing, startFromPattern } = props;
@@ -46,7 +47,11 @@ const Pattern = forwardRef((props, ref) => {
             return (
                 <div className="col-span-1 flex h-[24px] items-center space-x-1 ml-auto mr-2">
                     <button onClick={handleClickPlay} className="w-[20px] h-[20px]">
-                        <FaPlay />
+                        <IconContext.Provider
+                            value={{ color: 'green', }}
+                        >
+                            <FaPlay />
+                        </IconContext.Provider>
                     </button>
                     <button onClick={(e) => handleClickClone(e, patternData)} className="w-[20px] h-[20px]">
                         <Image src={CloneIcon} alt="Clone icon" className="w-auto h-auto"/>
