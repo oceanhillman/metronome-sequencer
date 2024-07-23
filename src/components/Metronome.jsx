@@ -11,25 +11,33 @@ export default function Metronome(props) {
     const [playing, setPlaying] = useState(false);
     const [rotation, setRotation] = useState(-45);
     const [tapTimes, setTapTimes] = useState([]);
-    
-    const audioHi = useRef(null);
-    const audioLo = useRef(null);
+
+    const audioContext = useRef(null);
+    const audioHiBuffer = useRef(null);
+    const audioLoBuffer = useRef(null);
     const intervalIdRef = useRef(null);
     const lastClickTimeRef = useRef(null);
     const playlistTimerRef = useRef(null);
 
-    // Initialize the audio objects on the client side
     useEffect(() => {
-        audioHi.current = new Audio("/sfx/click_hi.wav");
-        audioLo.current = new Audio("/sfx/click_lo.wav");
+        audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
+
+        const loadAudio = async () => {
+            const hiResponse = await fetch('/sfx/click_hi.mp3');
+            const hiArrayBuffer = await hiResponse.arrayBuffer();
+            audioHiBuffer.current = await audioContext.current.decodeAudioData(hiArrayBuffer);
+            
+            const loResponse = await fetch('/sfx/click_lo.mp3');
+            const loArrayBuffer = await loResponse.arrayBuffer();
+            audioLoBuffer.current = await audioContext.current.decodeAudioData(loArrayBuffer);
+        };
+        loadAudio();
     }, []);
 
-    // Returns the number of milliseconds between clicks
     function getInterval(bpm) {
         return 60 / bpm * 1000;
     }
 
-    // Handle starting and stopping metronome
     useEffect(() => {
         if (playing) {
             lastClickTimeRef.current = performance.now();
@@ -43,12 +51,11 @@ export default function Metronome(props) {
         };
     }, [playing]);
 
-    // Dynamically adjust time between clicks as it is changed by the user
     useEffect(() => {
         if (playing) {
             const elapsedTime = performance.now() - lastClickTimeRef.current;
             const remainingTime = getInterval(bpm) - elapsedTime;
-            
+
             if (remainingTime <= 0) {
                 playMetronome();
             } else {
@@ -58,16 +65,14 @@ export default function Metronome(props) {
         }
     }, [bpm, beatsPerMeasure]);
 
-    // Stop metronome to prevent division by 0
     useEffect(() => {
         if(bpm <= 0 || beatsPerMeasure <= 0)
             setPlaying(false);
     }, [bpm, beatsPerMeasure, playing]);
-    
-    // Play basic metronome
+
     const playMetronome = () => {
-        const now = performance.now();
-        lastClickTimeRef.current = now;
+        const now = audioContext.current.currentTime;
+        lastClickTimeRef.current = performance.now();
 
         if (intervalIdRef.current) {
             clearTimeout(intervalIdRef.current);
@@ -77,27 +82,30 @@ export default function Metronome(props) {
 
         setCurrentBeat((prevBeat) => {
             const newBeat = prevBeat % beatsPerMeasure;
-            if (newBeat === 0) {
-                audioHi.current.currentTime = 0; // Reset audio
-                audioHi.current.play();
-            } else {
-                audioLo.current.currentTime = 0; // Reset audio
-                audioLo.current.play();
+            const buffer = newBeat === 0 ? audioHiBuffer.current : audioLoBuffer.current;
+
+            if (buffer) {
+                const source = audioContext.current.createBufferSource();
+                source.buffer = buffer;
+                source.connect(audioContext.current.destination);
+                source.start(now);
             }
+
             return newBeat + 1;
         });
 
         intervalIdRef.current = setTimeout(playMetronome, getInterval(bpm));
     };
 
-    // Handle tap tempo input
     const handleTap = () => {
         setPlaying(false);
         const now = performance.now();
 
-        audioHi.current.currentTime = 0; // Reset audio
-        audioHi.current.play();
-        
+        const source = audioContext.current.createBufferSource();
+        source.buffer = audioHiBuffer.current;
+        source.connect(audioContext.current.destination);
+        source.start(audioContext.current.currentTime);
+
         setTapTimes((prev) => {
             const updatedTaps = [...prev, now];
             if (updatedTaps.length > 5) {
@@ -115,50 +123,46 @@ export default function Metronome(props) {
         });
     };
 
-    // Handle trigger and callback for playlist beginning and end
     useEffect(() => {
         if (props.performing === true) {
             performPlaylist(props.playlist);
-        }
-        else {
+        } else {
             stopPerformance();
         }
     }, [props.performing]);
 
-    // Helper function for concluding playlist performance
     function stopPerformance() {
         clearTimeout(playlistTimerRef.current);
         props.onNextPattern("");
     };
 
-    // Perform the playlist
     function performPlaylist(playlist) {
         let patternIndex = 0;
         let measureIndex = 0;
         let beatIndex = 0;
-    
+
         function playClick() {
             const currentPattern = playlist[patternIndex];
             props.onNextPattern(playlist[patternIndex].id)
-    
+
             if (beatIndex === 0) {
                 setBpm(currentPattern.bpm);
                 setBeatsPerMeasure(currentPattern.beatsPerMeasure);
                 setNumMeasures(currentPattern.numMeasures);
             }
-    
+
             setRotation((prev) => (prev === -45 ? 45 : -45));
-    
-            if (beatIndex % currentPattern.beatsPerMeasure === 0) {
-                audioHi.current.currentTime = 0; // Reset audio
-                audioHi.current.play();
-            } else {
-                audioLo.current.currentTime = 0; // Reset audio
-                audioLo.current.play();
+
+            const buffer = beatIndex % currentPattern.beatsPerMeasure === 0 ? audioHiBuffer.current : audioLoBuffer.current;
+            if (buffer) {
+                const source = audioContext.current.createBufferSource();
+                source.buffer = buffer;
+                source.connect(audioContext.current.destination);
+                source.start(audioContext.current.currentTime);
             }
-    
+
             beatIndex++;
-    
+
             if (beatIndex >= currentPattern.beatsPerMeasure) {
                 beatIndex = 0;
                 measureIndex++;
@@ -173,9 +177,9 @@ export default function Metronome(props) {
                     }
                 }
             }
-    
+
             playlistTimerRef.current = setTimeout(playClick, getInterval(currentPattern.bpm));
-        };
+        }
         playClick();
     }
 
