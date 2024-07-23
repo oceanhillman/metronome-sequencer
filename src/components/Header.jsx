@@ -40,15 +40,15 @@ export default function Header() {
             return null;
         } else {
             return (
-                <div className="flex flex-row items-center">
+                <div className="flex lg:flex-row items-center">
                     <div className="mr-4 text-cultured font-sans">
                         Hello, {user.name}!
                     </div>
                     <Link href="/">
-                        <Button className="bg-cultured text-eerie-black border-none mr-4 font-sans">Song Editor</Button>
+                        <Button className="bg-cultured text-eerie-black border-none lg:mr-4 font-sans">Song Editor</Button>
                     </Link>
                     <Link href="/my-songs">
-                        <Button className="bg-persian-pink text-eerie-black border-none mr-4 font-sans">My Songs</Button>
+                        <Button className="bg-persian-pink text-eerie-black border-none lg:mr-4 font-sans">My Songs</Button>
                     </Link>
                 </div>
             );
@@ -56,17 +56,18 @@ export default function Header() {
     }
             
     return (
-        <Navbar className="w-full h-[80px] bg-eerie-black">
+        <Navbar variant="dark" className="w-full bg-eerie-black" expand="lg">
             <Container>
-                <Link href="/" className="text-cultured font-orbitron font-medium text-4xl">
+                <Link href="/" className="text-cultured font-orbitron font-medium text-xl lg:text-4xl">
                     Metronome Sequencer
                 </Link>
-                <Nav className="flex flex-row items-center">
-                    
-                    <ProfileSection />
-                    
-                    <AuthSection />
-                </Nav>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="ml-auto flex flex-col lg:flex-row items-center">
+                        <ProfileSection />
+                        <AuthSection />
+                    </Nav>
+                </Navbar.Collapse>
             </Container>
         </Navbar>
     );

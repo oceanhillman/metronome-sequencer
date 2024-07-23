@@ -36,7 +36,7 @@ export default function NumberInput( {name, value, min, max, onChange, disabled,
             <input
               name={name}
               className={`${disabled ? (currentPattern ? "bg-subtle-gray border-none" : "bg-eerie-black border-none") : "bg-eerie-black"} 
-                no-spinner mx-2 w-16 border-2 border-subtle-gray rounded-md text-center py-1
+                no-spinner lg:mx-2 w-12 lg:w-16 border-2 border-subtle-gray rounded-md text-center py-1
                 focus:border-arsenic focus:ring-2 focus:ring-subtle-gray focus:outline-none`}
               type="number" 
               value={value} 

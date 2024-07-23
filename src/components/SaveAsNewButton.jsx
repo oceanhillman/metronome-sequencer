@@ -17,7 +17,7 @@ export default function SaveAsNewButton(props) {
   
     return (
       <>
-        <Button className="bg-gunmetal text-cultured border-none ml-4" onClick={handleShow}>
+        <Button className="bg-gunmetal text-cultured border-none" onClick={handleShow}>
           Save as new
         </Button>
   

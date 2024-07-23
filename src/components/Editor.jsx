@@ -311,7 +311,7 @@ export default function Editor(props) {
     const [currentSection, setCurrentSection] = useState();
 
     return (
-        <div className="w-full mt-16">
+        <div className="w-full mt-6 lg:mt-16">
             <div className="pb-16">
                 <Metronome
                     playlist={currentSection}
@@ -319,11 +319,11 @@ export default function Editor(props) {
                     onPlaylistEnd={handlePlaylistEnd}
                     onNextPattern={handleGetNextPattern}
                 />
-                <div className="flex flex-col justify-center mt-8">
+                <div className="flex flex-col justify-center mt-4 lg:mt-8">
                     <div className="flex flex-col items-center justify-center">
                         <div className="flex flex-col w-[100%] md:w-[80%] justify-center">
-                            <Form.Control className="w-[400px] self-center border-2 bg-chinese-black border-muted-blue text-cultured font-poppins text-lg rounded-md text-center
-                            focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-subtle-gray focus:outline-none"
+                            <Form.Control className="w-full self-center border-2 bg-chinese-black border-arsenic text-cultured font-poppins text-lg rounded-md text-center
+                            focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-muted-blue focus:outline-none"
                                 type="text"
                                 value={songTitle}
                                 onChange={(e) => updateSongTitle(e.target.value)}
@@ -357,15 +357,15 @@ export default function Editor(props) {
                         <SaveButton />
                     </div>
                     <div className="col-span-1 grid grid-cols-3 items-center justify-center">
-                        <div className="col-span-1 flex w-full h-full items-center justify-center">
+                        {/* <div className="col-span-1 flex w-full h-full items-center justify-center">
                         
-                        </div>
-                        <div className="col-span-1 flex w-full h-full items-center justify-center">
+                        </div> */}
+                        <div className="col-span-3 flex items-center justify-center">
                             <button onClick={handleClickPlay} className="mt-2 mx-2 bg-cultured text-black h-16 w-16 flex items-center justify-center rounded-full">
                                 {performing ? <FaStop className="h-8 w-8" /> : <FaPlay className="ml-[5px] h-8 w-8"/>}
                             </button>
                         </div>
-                        <div className="col-span-1 flex w-full h-full items-center justify-center">
+                        {/* <div className="col-span-1 flex w-full h-full items-center justify-center">
                             <Form>
                                 <Form.Check // prettier-ignore
                                     type="switch"
@@ -373,12 +373,12 @@ export default function Editor(props) {
                                     label="Count-in"
                                 />
                             </Form>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="col-span-1 flex w-full h-full items-center justify-center">
-                        <button onClick={handleClear} className="mt-2 mx-2 bg-red-700 text-white px-4 py-2 rounded">
+                        <Button onClick={handleClear} className="bg-red-700 text-cultured border-none">
                             Clear
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
