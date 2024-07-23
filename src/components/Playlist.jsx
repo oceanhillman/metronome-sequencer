@@ -49,13 +49,11 @@ export default function Playlist(props) {
     }
 
     // Delete a single pattern from playlist
-    function handleClickDelete(event, id) {
-        event.stopPropagation();
+    function handleClickDelete(id) {
         handleUpdatePlaylist((prevItems) => prevItems.filter(item => item.id !== id));
     }
 
-    function handleClickClone(event, pattern) {
-        event.stopPropagation();
+    function handleClickClone(pattern) {
         handleClonePattern(pattern);
     }
 
