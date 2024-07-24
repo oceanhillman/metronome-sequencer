@@ -97,16 +97,28 @@ export default function Editor(props) {
         setPlaylist((prev) => [...prev, newPattern]);
     }
 
-    function handleClonePattern(patternData) {
+    const handleClonePattern = (patternData) => {
         const clonedPattern = {
             id: generatePatternId(),
             name: `${patternData.name} (clone)`,
             bpm: patternData.bpm,
             beatsPerMeasure: patternData.beatsPerMeasure,
             numMeasures: patternData.numMeasures,
+        };
+    
+        const patternIndex = playlist.findIndex(pattern => pattern.id === patternData.id);
+    
+        if (patternIndex !== -1) {
+            setPlaylist((prev) => [
+                ...prev.slice(0, patternIndex + 1),
+                clonedPattern,
+                ...prev.slice(patternIndex + 1)
+            ]);
+        } else {
+            console.error('Pattern to clone not found');
         }
-        setPlaylist((prev) => [...prev, clonedPattern]);
-    }
+    };
+    
 
     async function handleSave() {
         if (user && song.id) {

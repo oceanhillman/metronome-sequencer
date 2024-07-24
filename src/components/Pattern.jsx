@@ -47,16 +47,14 @@ const Pattern = forwardRef((props, ref) => {
             return (
                 <div className="col-span-1 flex h-[24px] items-center space-x-1 ml-auto mr-2">
                     <button onClick={handleClickPlay} className="w-[20px] h-[20px]">
-                        <IconContext.Provider
-                            value={{ color: 'green', }}
-                        >
+                        <IconContext.Provider value={{ color: 'green', }}>
                             <FaPlay />
                         </IconContext.Provider>
                     </button>
-                    <button onClick={(e) => handleClickClone(e, patternData)} className="w-[20px] h-[20px]">
+                    <button onClick={() => handleClickClone(patternData)} className="w-[20px] h-[20px]">
                         <Image src={CloneIcon} alt="Clone icon" className="w-auto h-auto"/>
                     </button>
-                    <button onClick={(e) => handleClickDelete(e, patternData.id)} className="w-[20px] h-[20px]">
+                    <button onClick={() => handleClickDelete(patternData.id)} className="w-[20px] h-[20px]">
                         <Image src={DeleteIcon} alt="Delete icon" className="w-auto h-auto"/>
                     </button>
                 </div>
