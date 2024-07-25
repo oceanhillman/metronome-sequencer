@@ -1,61 +1,52 @@
-'use client'
-
-import "../app/globals.css";
-import { useState } from "react"
-import { WidthProvider, Responsive } from 'react-grid-layout';
-import Pattern from "@/components/Pattern"
+import { useEffect, useState } from 'react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import Pattern from './Pattern';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-export default function Playlist(props) {
-    const { playlistData, handleUpdatePlaylist, handleClonePattern, currentPatternId, onUpdateLayout, performing, startFromPattern } = props;
-    const [layoutData, setLayoutData] = useState([]);
+const Playlist = ({ isUndoingRef, undoing, song, handleUpdatePlaylist, handleUpdateLayout, handleUpdatePattern, handleClickDelete, handleClickClone, currentPatternId, performing, startFromPattern }) => {
+    const [gridLayout, setGridLayout] = useState([]);
+    const [settingFromHere, setSettingFromHere] = useState(false);
 
-    // Sort the layout by the y value (and x if necessary)
-    function sortLayout(layout) {
-        const sortedLayout = layout.sort((a, b) => {
-            if (a.y === b.y) {
-                return a.x - b.x; // Secondary sort by x if y values are the same
-            }
-            return a.y - b.y;
-        });
-        return sortedLayout;
-    }
+    useEffect(() => {
+        if (!settingFromHere) {
+            setGridLayout(song.layout);
+        }
+      }, [song.layout]);
 
-    // Reorder playlist to match layout order
-    function reorderPlaylist(newLayout) {
-        const newPlaylistOrder = newLayout.map(item =>
-            playlistData.find(pattern => pattern.id === item.i)
-        ).filter(Boolean);
+      useEffect(() => {
+        setSettingFromHere(false);
+      }, [settingFromHere]);
+
+    // // Sort the layout by the y value (and x if necessary)
+    // function sortLayout(layout) {   
+    //     const sortedLayout = layout.sort((a, b) => {
+    //         if (a.y === b.y) {
+    //             return a.x - b.x; // Secondary sort by x if y values are the same
+    //         }
+    //         return a.y - b.y;
+    //     });
+    //     return sortedLayout;
+    // }
+
+    // // Reorder playlist to match layout order
+    // function reorderPlaylist(newLayout) {
+    //     const newPlaylistOrder = newLayout.map(item =>
+    //         song.playlist.find(pattern => pattern.id === item.i)
+    //     ).filter(Boolean);
         
-        handleUpdatePlaylist(newPlaylistOrder);
-    }
+    //     handleUpdatePlaylist(newPlaylistOrder);
+    // }
 
-    // Callback function for onLayoutChange 
-    function handleLayoutChange(layout) {
-        const sortedLayout = sortLayout(layout);
-        setLayoutData(sortedLayout);
-        onUpdateLayout(sortedLayout);
-        reorderPlaylist(sortedLayout);
-    }
-
-    // Callback function for Pattern component
-    function handleUpdatePattern(id, attribute, value) {
-        handleUpdatePlaylist((prev) =>
-            prev.map((pattern) =>
-                pattern.id === id ? { ...pattern, [attribute]: value } : pattern
-            )
-        );
-    }
-
-    // Delete a single pattern from playlist
-    function handleClickDelete(id) {
-        handleUpdatePlaylist((prevItems) => prevItems.filter(item => item.id !== id));
-    }
-
-    function handleClickClone(pattern) {
-        handleClonePattern(pattern);
-    }
+    const handleLayoutChange = (layout) => {
+        if (isUndoingRef.current) {
+            return;
+        }
+        setSettingFromHere(true);
+        setGridLayout(layout);
+        handleUpdateLayout(layout);
+    };
+    
 
     function handleDragStart () {
         document.body.classList.add('disable-select');
@@ -64,37 +55,44 @@ export default function Playlist(props) {
     function handleDragStop () {
         document.body.classList.remove('disable-select');
     };
-
-    return (
+    
+    return song && song.playlist ? (
         <ResponsiveGridLayout
             className="layout bg-black border-2 border-arsenic rounded-xl px-[2px] lg:px-4 mt-2 lg:mt-4"
-            layout={layoutData}
-            cols={{xxl:1, xl:1, lg:1, md:1, sm:1, xs:1, xxs:1}}
+            layouts={{xxl: gridLayout, xl: gridLayout, lg: gridLayout, md: gridLayout, sm: gridLayout, xs: gridLayout, xxs: gridLayout}}
+            cols={{xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1, xxs: 1}}
             rowHeight={120}
             margin={[0, 20]}
             width={"100%"}
-            onLayoutChange={(layout) => handleLayoutChange(layout)}
-            draggableHandle=".handle" // This makes the first div draggable
-            draggableCancel=".no-drag" // This makes the second div non-draggable
+            onLayoutChange={(layout, layouts) => handleLayoutChange(layout)}
+            draggableHandle=".handle"
+            draggableCancel=".no-drag"
             onDragStart={handleDragStart}
             onDragStop={handleDragStop}
             transitionDuration={0}
         >
-            {playlistData.map(pattern => (
-                <div key={pattern.id} className="h-full">
-                    <Pattern
-                        key={pattern.id}
-                        dataGrid={layoutData.find(layout => layout.i === pattern.id)}
-                        patternData={pattern}
-                        handleUpdatePattern={handleUpdatePattern}
-                        handleClickDelete={handleClickDelete}
-                        handleClickClone={handleClickClone}
-                        currentPatternId={currentPatternId}
-                        performing={performing}
-                        startFromPattern={startFromPattern}
-                    />
-                </div>
-            ))}
-        </ResponsiveGridLayout>          
-    )
-}
+            {song.playlist.map(pattern => {
+                const patternLayout = gridLayout.find(layout => layout.i === pattern.id);
+                return (
+                    <div key={pattern.id} className="h-full">
+                        <Pattern
+                            key={pattern.id}
+                            dataGrid={patternLayout}
+                            patternData={pattern}
+                            handleUpdatePattern={handleUpdatePattern}
+                            handleClickDelete={handleClickDelete}
+                            handleClickClone={handleClickClone}
+                            currentPatternId={currentPatternId}
+                            performing={performing}
+                            startFromPattern={startFromPattern}
+                        />
+                    </div>
+                );
+            })}
+        </ResponsiveGridLayout>
+    ) : (
+        <p>Loading...</p>
+    );
+};
+
+export default Playlist;

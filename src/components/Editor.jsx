@@ -1,5 +1,6 @@
 'use client'
-import { useEffect, useState } from "react";
+import _ from 'lodash';
+import { useEffect, useState, useRef } from "react";
 import { Form, Button } from "react-bootstrap";
 import Image from "next/image";
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -12,92 +13,207 @@ import UndoRedoButtons from "@/components/UndoRedoButtons";
 import PlusIcon from "/public/plus.svg";
 
 import { saveSong, addSong } from '@lib/api';
+import { useWarnOnUnsavedChanges } from '@lib/utils';
 
 import { FaPlay, FaStop } from "react-icons/fa6";
 
 const generatePatternId = () => String(Math.round(Date.now() + Math.random()));
-
+//                                                                                  TO DO: now that I understand how gridLayout works in Playlist.jsx, strip 'layout' from Editor.jsx
+//                                                                                      so that it is not a separate entity from song.layout
+//                                                                                  Then, continue debugging the infinite loop when loading an existing song.
 export default function Editor(props) {
     const { songPayload } = props;
     const { user, error, isLoading } = useUser();
-
-    const [songTitle, setSongTitle] = useState('Untitled Song');
-    const [playlist, setPlaylist] = useState([{
-        id: generatePatternId(),
-        name: 'Pattern #1',
-        bpm: 120,
-        beatsPerMeasure: 4,
-        numMeasures: 4,
-    }]);
-    const [layout, setLayout] = useState([]);
     const [song, setSong] = useState({
         id: '',
-        title: songTitle,
-        playlist: playlist,
-        layout: layout,
+        title: 'Untitled Song',
+        playlist: [{
+            id: generatePatternId(),
+            name: 'Pattern #1',
+            bpm: 120,
+            beatsPerMeasure: 4,
+            numMeasures: 4,
+        }],
+        layout: [{
+            i: generatePatternId(),
+            x: 0,
+            y: 0,
+            w: 1,
+            h: 1,
+        }],
     });
     const [performing, setPerforming] = useState(false);
     const [currentSection, setCurrentSection] = useState();
     const [currentPattern, setCurrentPattern] = useState();
-    
-    // Preload any incoming song data
+    const [unsavedChanges, setUnsavedChanges] = useState(false);
+
+    const [history, setHistory] = useState([]);
+    const prevSongRef = useRef(null);
+    const hasMadeChanges = useRef(false); 
+    const [songReady, setSongReady] = useState(true);
+
+    useWarnOnUnsavedChanges(unsavedChanges);
+
+    useEffect(() => {
+        if (history.length === 0) {
+            setUnsavedChanges(false);
+        } else if (user) {
+            setUnsavedChanges(true);
+        }
+    }, [history, user]);
+
+    // Update history when:
+    // layout and playlist are in sync AND
+    // history is out of date AND
+    // song.prev != song
+    // Update prevSongRef with the previous song state before updating
+    const [undoing, setUndoing] = useState(false);
+    const isUndoingRef = useRef(false); 
+
     useEffect(() => {
         if (songPayload) {
-            setLayout(songPayload.layout);
-            setPlaylist(songPayload.playlist);
-            setSongTitle(songPayload.title);
+            setSongReady(false);
             setSong((prev => ({
                 ...prev,
-                id: songPayload.id
+                id: songPayload.id,
+                title: songPayload.title,
+                playlist: songPayload.playlist || [],
+                layout: songPayload.layout
             })));
         }
-    }, [songPayload])
+        setHistory([]);
+        hasMadeChanges.current = false;
+        setSongReady(true);
+    }, [songPayload]);
 
-    // Keep song up to date
+
     useEffect(() => {
-        setSong(prev => ({
-            ...prev,
-            title: songTitle,
-            layout: layout,
-            playlist: playlist
-        }));
-    }, [songTitle, layout, playlist]);
+        if (prevSongRef.current === null) {
+            // Initialize prevSongRef on first render
+            prevSongRef.current = song;
+        }
+    }, []);
+
+    const tempSongRef = useRef(null);
+    const useTempRef = useRef(false);
+
+
+
+    useEffect(() => {
+        if (songReady && song.playlist.length === song.layout.length && !isUndoingRef.current) {
+            const prevSong = prevSongRef.current;
+            const tempSong = tempSongRef.current;
+            const useTemp = (tempSongRef.current !== null ? useTempRef.current : false);
+            console.log("usetemp?", useTempRef.current, tempSongRef.current);
+            console.log("prevsong", prevSong);
+
+            if (hasMadeChanges.current && !_.isEqual(prevSong, song)) {
+                
+                setHistory(prevHistory => {
+                    const correctSong = (useTemp ? tempSong : prevSong);
+                    if (prevHistory.length === 0 && !_.isEqual(prevHistory[prevHistory.length - 1], correctSong)) {
+                        useTempRef.current = true;
+                        console.log("Adding to history:", correctSong);
+                        return [...prevHistory, correctSong];
+                    }
+                    if (!_.isEqual(prevHistory[prevHistory.length - 1], prevSong)) {
+                        console.log("Adding to history:", prevSong);
+                        useTempRef.current = false;
+                        return [...prevHistory, prevSong];
+                    }
+                    return prevHistory;
+                });
+            }
+            if (!hasMadeChanges) console.log("hasmadechanges becoming true");
+            hasMadeChanges.current = true;
+            prevSongRef.current = song;
+        }
+        setUndoing(false);
+    }, [song.title, song.playlist, song.layout, undoing, songReady]);
+
+    useEffect(() => {
+        isUndoingRef.current = undoing;
+    }, [undoing]);
+
+    const undo = () => {
+        isUndoingRef.current = true;
+        setUndoing(true);
+        setHistory(prevHistory => {
+            if (prevHistory.length === 0) {
+                console.log("No history to undo");
+                return prevHistory;
+            }
+
+            const newHistory = prevHistory.slice(0, -1);
+            const previousState = prevHistory[prevHistory.length - 1];
+
+            setSong(previousState);
+            tempSongRef.current = previousState;
+            console.log("Undoing to state:", previousState);
+
+            return newHistory;
+        });
+    };
+
+    useEffect(() => {
+        console.log("History:", history);
+        console.log("song:", song);
+    }, [history, song]);
+    
+    // Preload any incoming song data
+   
 
     // Load unsaved project from local storage
     useEffect(() => {
-        const unsavedProject = localStorage.getItem('unsavedProject');
-        if (unsavedProject) {
-            const unsavedProjectData = JSON.parse(unsavedProject);
+        const unsavedChanges = localStorage.getItem('unsavedChanges');
+        if (unsavedChanges) {
+            setUnsavedChanges(true);
+            const unsavedChangesData = JSON.parse(unsavedChanges);
 
-            setLayout(unsavedProjectData.layout);
-            setPlaylist(unsavedProjectData.playlist);
-            setSongTitle(unsavedProjectData.title);
-
-            setSong(JSON.parse(unsavedProject));
+            setSong((prev => ({
+                ...prev,
+                title: unsavedChangesData.title,
+                playlist: unsavedChangesData.playlist || [],
+                layout: unsavedChangesData.layout
+            })));
         }
     }, []);
 
     // Trigger metronome to play playlist
     function handleClickPlay() {
-        if (playlist.length > 0) {
-            setCurrentSection(playlist);
+        const currentPlaylist = song.playlist;
+        if (currentPlaylist.length > 0) {
+            setCurrentSection(currentPlaylist);
             setPerforming(!performing);
         }
     }
 
     // Add new pattern with default values
     function initializeNewPattern() {
+        const currentPlaylist = song.playlist;
+        const patternId = generatePatternId();
         const newPattern = {
-            id: generatePatternId(),
-            name: `Pattern #${playlist.length + 1}`,
+            id: patternId,
+            name: `Pattern #${currentPlaylist.length + 1}`,
             bpm: 120,
             beatsPerMeasure: 4,
             numMeasures: 4,
         };
-        setPlaylist((prev) => [...prev, newPattern]);
+        const patternLayout = {
+            i: patternId,
+            x: 0,
+            y: currentPlaylist.length,
+            w: 1,
+            h: 1,
+        }
+        setSong(prevSong => ({
+            ...prevSong,
+            playlist: [...prevSong.playlist, newPattern],
+            layout: [...prevSong.layout, patternLayout],
+        }));
     }
 
-    const handleClonePattern = (patternData) => {
+    const clonePattern = (patternData) => {
         const clonedPattern = {
             id: generatePatternId(),
             name: `${patternData.name} (clone)`,
@@ -106,47 +222,91 @@ export default function Editor(props) {
             numMeasures: patternData.numMeasures,
         };
     
-        const patternIndex = playlist.findIndex(pattern => pattern.id === patternData.id);
+        const patternIndex = song.playlist.findIndex(pattern => pattern.id === patternData.id);
     
         if (patternIndex !== -1) {
-            setPlaylist((prev) => [
-                ...prev.slice(0, patternIndex + 1),
-                clonedPattern,
-                ...prev.slice(patternIndex + 1)
-            ]);
+            setSong(prevSong => ({
+                ...prevSong,
+                playlist: [
+                    ...prevSong.playlist.slice(0, patternIndex + 1),
+                    clonedPattern,
+                    ...prevSong.playlist.slice(patternIndex + 1)
+                ]
+            }));
         } else {
             console.error('Pattern to clone not found');
         }
     };
     
-
     async function handleSave() {
-        if (user && song.id) {
-            await saveSong(song.id, user?.sub, songTitle, playlist, layout);
+        const currentSong = song;
+        if (user && currentSong.id) {
+            await saveSong(currentSong.id, user?.sub, currentSong.title, currentSong.playlist, currentSong.layout);
         };
     }
 
     async function handleSaveAsNew() {
         if (user) {
             try {
-                const id = await addSong(user?.sub, songTitle, playlist, layout);
-                localStorage.removeItem('unsavedProject');
+                const id = await addSong(user?.sub, song.title, song.playlist, song.layout);
+                localStorage.removeItem('unsavedChanges');
                 window.location.href = `/song/${id}`;
             } catch (error) {
                 console.error("Error adding song:", error.message);
             }
         } else {
-            localStorage.setItem('unsavedProject', JSON.stringify(song));
+            localStorage.setItem('unsavedChanges', JSON.stringify(song));
             window.location.href = '/api/auth/login';
         }
     }
 
     function handleStartFromPattern(patternId) {
-        const leadingPatternIndex = playlist.findIndex(pattern => pattern.id === patternId);
-        setCurrentSection(playlist.slice(leadingPatternIndex));
+        const leadingPatternIndex = song.playlist.findIndex(pattern => pattern.id === patternId);
+        setCurrentSection(song.playlist.slice(leadingPatternIndex));
         setPerforming(true);
     }
 
+   function updatePlaylist(playlist) {
+    setSong(prev => ({
+        ...prev,
+        playlist: playlist
+    }));
+   }
+
+   function updateLayout(layout) {
+    setSong(prev => ({
+        ...prev,
+        layout: layout
+    }));
+   }
+
+   function updateTitle(title) {
+    setSong(prev => ({
+        ...prev,
+        title: title
+    }));
+   }
+
+    function clearPlaylist() {
+        setSong(prevSong => ({
+            ...prevSong,
+            playlist: []
+        }));
+    }
+
+    function deletePattern(id) {
+        updatePlaylist((prevItems) => prevItems.filter(item => item.id !== id));
+    }
+
+    const updatePattern = (id, attribute, value) => {
+        setSong((prevSong) => ({
+            ...prevSong,
+            playlist: prevSong.playlist.map((pattern) =>
+                pattern.id === id ? { ...pattern, [attribute]: value } : pattern
+            ),
+        }));
+    };
+    
     return (
         <div className="w-full mt-6 lg:mt-16">
             <div className="pb-16">
@@ -162,16 +322,20 @@ export default function Editor(props) {
                             <Form.Control className="w-full self-center border-2 bg-black border-arsenic text-cultured font-poppins text-lg rounded-md text-center
                             focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-muted-blue focus:outline-none"
                                 type="text"
-                                value={songTitle}
-                                onChange={(e) => setSongTitle(e.target.value)}
+                                value={song.title}
+                                onChange={(e) => updateTitle(e.target.value)}
                                 placeholder={"Song Title"}
                             />
                             <Playlist 
-                                playlistData={playlist}
-                                handleUpdatePlaylist={(newPlaylist) => setPlaylist(newPlaylist)}
-                                handleClonePattern={handleClonePattern}
+                                isUndoingRef={isUndoingRef}
+                                undoing={undoing}
+                                song={song || {playlist: []}}
+                                handleUpdateLayout={updateLayout}
+                                handleUpdatePlaylist={updatePlaylist}
+                                handleUpdatePattern={updatePattern}
+                                handleClickDelete={deletePattern}
+                                handleClickClone={clonePattern}
                                 currentPatternId={currentPattern}
-                                onUpdateLayout={(newLayout) => setLayout(newLayout)}
                                 performing={performing}
                                 startFromPattern={handleStartFromPattern}
                             />
@@ -187,8 +351,8 @@ export default function Editor(props) {
                 <div className="grid grid-cols-3 items-center justify-center">
                     <div className="col-span-1 flex w-full h-full items-center justify-center">
                         <SaveAsNewButton 
-                            songTitle={songTitle}
-                            updateSongTitle={(newTitle) => setSongTitle(newTitle)}
+                            songTitle={song.title}
+                            updateSongTitle={(newTitle) => updateTitle(newTitle)}
                             onSave={handleSaveAsNew}
                         />
                         <Button onClick={handleSave} disabled={user && song.id ? false : true} className="bg-gunmetal text-cultured border-none ml-4">
@@ -215,14 +379,14 @@ export default function Editor(props) {
                         </div> */}
                     </div>
                     <div className="col-span-1 flex w-full h-full items-center justify-center">
-                        {/* <UndoRedoButtons 
+                        <UndoRedoButtons 
                             song={song}
-                            updatePlaylist={(updatedPlaylist) => setPlaylist(updatedPlaylist)}
-                            updateLayout={(updatedLayout) => setLayout(updatedLayout)}
-                            updateTitle={(updatedTitle) => setSongTitle(updatedTitle)}
-                        /> */}
-                        <Button onClick={() => setPlaylist([])} className="bg-red-700 text-cultured border-none">
-                            Clear
+                            history={history}
+                            undo={undo}
+                            hasChanges={hasMadeChanges}
+                        />
+                        <Button onClick={clearPlaylist} className="bg-red-700 text-cultured border-none">
+                            Start Over
                         </Button>
                     </div>
                 </div>
