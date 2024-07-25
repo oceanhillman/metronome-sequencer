@@ -48,9 +48,6 @@ export default function Editor(props) {
     const [unsavedChanges, setUnsavedChanges] = useState(false);
 
     const [history, setHistory] = useState([]);
-    const prevSongRef = useRef(null);
-    const hasMadeChanges = useRef(false); 
-    const [songReady, setSongReady] = useState(true);
 
     useWarnOnUnsavedChanges(unsavedChanges);
 
@@ -67,12 +64,10 @@ export default function Editor(props) {
     // history is out of date AND
     // song.prev != song
     // Update prevSongRef with the previous song state before updating
-    const [undoing, setUndoing] = useState(false);
-    const isUndoingRef = useRef(false); 
+
 
     useEffect(() => {
         if (songPayload) {
-            setSongReady(false);
             setSong((prev => ({
                 ...prev,
                 id: songPayload.id,
@@ -82,77 +77,14 @@ export default function Editor(props) {
             })));
         }
         setHistory([]);
-        hasMadeChanges.current = false;
-        setSongReady(true);
     }, [songPayload]);
 
 
-    useEffect(() => {
-        if (prevSongRef.current === null) {
-            // Initialize prevSongRef on first render
-            prevSongRef.current = song;
-        }
-    }, []);
-
-    const tempSongRef = useRef(null);
-    const useTempRef = useRef(false);
 
 
-
-    useEffect(() => {
-        if (songReady && song.playlist.length === song.layout.length && !isUndoingRef.current) {
-            const prevSong = prevSongRef.current;
-            const tempSong = tempSongRef.current;
-            const useTemp = (tempSongRef.current !== null ? useTempRef.current : false);
-            console.log("usetemp?", useTempRef.current, tempSongRef.current);
-            console.log("prevsong", prevSong);
-
-            if (hasMadeChanges.current && !_.isEqual(prevSong, song)) {
-                
-                setHistory(prevHistory => {
-                    const correctSong = (useTemp ? tempSong : prevSong);
-                    if (prevHistory.length === 0 && !_.isEqual(prevHistory[prevHistory.length - 1], correctSong)) {
-                        useTempRef.current = true;
-                        console.log("Adding to history:", correctSong);
-                        return [...prevHistory, correctSong];
-                    }
-                    if (!_.isEqual(prevHistory[prevHistory.length - 1], prevSong)) {
-                        console.log("Adding to history:", prevSong);
-                        useTempRef.current = false;
-                        return [...prevHistory, prevSong];
-                    }
-                    return prevHistory;
-                });
-            }
-            if (!hasMadeChanges) console.log("hasmadechanges becoming true");
-            hasMadeChanges.current = true;
-            prevSongRef.current = song;
-        }
-        setUndoing(false);
-    }, [song.title, song.playlist, song.layout, undoing, songReady]);
-
-    useEffect(() => {
-        isUndoingRef.current = undoing;
-    }, [undoing]);
 
     const undo = () => {
-        isUndoingRef.current = true;
-        setUndoing(true);
-        setHistory(prevHistory => {
-            if (prevHistory.length === 0) {
-                console.log("No history to undo");
-                return prevHistory;
-            }
 
-            const newHistory = prevHistory.slice(0, -1);
-            const previousState = prevHistory[prevHistory.length - 1];
-
-            setSong(previousState);
-            tempSongRef.current = previousState;
-            console.log("Undoing to state:", previousState);
-
-            return newHistory;
-        });
     };
 
     useEffect(() => {
@@ -327,8 +259,6 @@ export default function Editor(props) {
                                 placeholder={"Song Title"}
                             />
                             <Playlist 
-                                isUndoingRef={isUndoingRef}
-                                undoing={undoing}
                                 song={song || {playlist: []}}
                                 handleUpdateLayout={updateLayout}
                                 handleUpdatePlaylist={updatePlaylist}
@@ -383,7 +313,6 @@ export default function Editor(props) {
                             song={song}
                             history={history}
                             undo={undo}
-                            hasChanges={hasMadeChanges}
                         />
                         <Button onClick={clearPlaylist} className="bg-red-700 text-cultured border-none">
                             Start Over

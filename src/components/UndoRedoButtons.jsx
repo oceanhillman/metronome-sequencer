@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 import { isEqual } from 'lodash';
 
 export default function UndoRedoButtons(props) {
-    const { history, undo, hasChanges } = props;
+    const { history, undo } = props;
 
     const [redos, setRedos] = useState([]);
     const [redoing, setRedoing] = useState(false);
@@ -27,7 +27,7 @@ export default function UndoRedoButtons(props) {
 
     return (
         <div>
-            <Button onClick={undo} disabled={history.length === 0 && hasChanges} variant="primary">
+            <Button onClick={undo} disabled={history.length === 0} variant="primary">
                 Undo
             </Button>
             <Button onClick={() => setRedoing(true)} disabled={true} variant="primary">

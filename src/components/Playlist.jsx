@@ -4,7 +4,7 @@ import Pattern from './Pattern';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const Playlist = ({ isUndoingRef, undoing, song, handleUpdatePlaylist, handleUpdateLayout, handleUpdatePattern, handleClickDelete, handleClickClone, currentPatternId, performing, startFromPattern }) => {
+const Playlist = ({ undoing, song, handleUpdatePlaylist, handleUpdateLayout, handleUpdatePattern, handleClickDelete, handleClickClone, currentPatternId, performing, startFromPattern }) => {
     const [gridLayout, setGridLayout] = useState([]);
     const [settingFromHere, setSettingFromHere] = useState(false);
 
@@ -18,35 +18,32 @@ const Playlist = ({ isUndoingRef, undoing, song, handleUpdatePlaylist, handleUpd
         setSettingFromHere(false);
       }, [settingFromHere]);
 
-    // // Sort the layout by the y value (and x if necessary)
-    // function sortLayout(layout) {   
-    //     const sortedLayout = layout.sort((a, b) => {
-    //         if (a.y === b.y) {
-    //             return a.x - b.x; // Secondary sort by x if y values are the same
-    //         }
-    //         return a.y - b.y;
-    //     });
-    //     return sortedLayout;
-    // }
+    // Sort the layout by the y value (and x if necessary)
+    function sortLayout(layout) {   
+        const sortedLayout = layout.sort((a, b) => {
+            if (a.y === b.y) {
+                return a.x - b.x; // Secondary sort by x if y values are the same
+            }
+            return a.y - b.y;
+        });
+        return sortedLayout;
+    }
 
-    // // Reorder playlist to match layout order
-    // function reorderPlaylist(newLayout) {
-    //     const newPlaylistOrder = newLayout.map(item =>
-    //         song.playlist.find(pattern => pattern.id === item.i)
-    //     ).filter(Boolean);
+    // Reorder playlist to match layout order
+    function reorderPlaylist(newLayout) {
+        const newPlaylistOrder = newLayout.map(item =>
+            song.playlist.find(pattern => pattern.id === item.i)
+        ).filter(Boolean);
         
-    //     handleUpdatePlaylist(newPlaylistOrder);
-    // }
+        handleUpdatePlaylist(newPlaylistOrder);
+    }
 
+    // happens when grid layout changes
     const handleLayoutChange = (layout) => {
-        if (isUndoingRef.current) {
-            return;
-        }
         setSettingFromHere(true);
         setGridLayout(layout);
         handleUpdateLayout(layout);
     };
-    
 
     function handleDragStart () {
         document.body.classList.add('disable-select');
