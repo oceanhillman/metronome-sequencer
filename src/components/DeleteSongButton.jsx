@@ -20,22 +20,22 @@ export default function DeleteSongButton(props) {
   
     return (
       <>
-        <button onClick={handleShow} className="w-[25px] h-[25px] bg-red-500 rounded-sm">
-            <Image src={DeleteIcon} alt="Delete icon" className="w-auto h-auto"/>
+        <button onClick={handleShow} className="w-[25px] h-[25px] mx-auto">
+            <Image src={DeleteIcon} alt="Delete icon" className="w-auto h-auto" draggable={false}/>
         </button>
   
         <Modal show={show} onHide={handleClose} centered data-bs-theme="dark">
-          <Modal.Header closeButton>
-            <Modal.Title className="text-red-500">
-                Confirm Delete
-                <p className="text-lg text-white">"{songTitle}"</p>
+          <Modal.Header className="mx-auto w-full" closeButton>
+            <Modal.Title className="!text-red-500 break-words w-full">
+                Confirm Deletion
+                <p className="text-lg text-white m-0 break-words">"{songTitle}"</p>
             </Modal.Title>
           </Modal.Header>
             <Modal.Body>
                 
-                <p>Are you sure you want to delete this song?</p>
+                <p className="text-cultured m-0">Are you sure you want to delete this song?</p>
                 
-                <p className="text-red-500">This can not be reversed.</p>
+                <p className="text-red-500 m-0">This can not be reversed.</p>
             </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>

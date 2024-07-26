@@ -21,6 +21,30 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#__next {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+body > #__next {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
 body { 
     @apply text-cultured;
 }

@@ -1,13 +1,9 @@
-import Editor from "@/components/Editor";
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
+import Editor from "@/components/Editor"
 
 export default function Home() {
     return (
-        <main className="flex min-h-screen flex-col items-center">
-            <Header />
+        <div className="flex min-h-screen flex-col items-center">
             <Editor />
-            <Footer />
-        </main>
+        </div>
     );
 }

@@ -90,13 +90,14 @@ const Pattern = forwardRef((props, ref) => {
     }
 
     return (
-        <div ref={patternRef} data-grid={{ ...dataGrid, isResizable: false }} key={ref} className={`flex flex-row rounded-md h-full w-full content-between justify-center 
+        <div ref={patternRef} data-grid={{ ...dataGrid, isResizable: false }} key={ref} id={patternData.id}
+        className={`flex flex-row rounded-md h-full w-full content-between justify-center 
             ${currentPatternId === patternData?.id ? "bg-arsenic" : "bg-muted-blue"} text-black`}>
 
             <div className="grid grid-cols-3 md:grid-cols-5 w-full">
                 <div className="col-span-1 ml-2">
                     <input
-                        className="bg-inherit text-cultured font-poppins text-sm mt-[2px] self-start mr-auto w-full"
+                        className="bg-inherit text-cultured  text-sm mt-[2px] self-start mr-auto w-full"
                         type="text"
                         placeholder="Pattern Name"
                         value={inputData.name}
@@ -105,11 +106,11 @@ const Pattern = forwardRef((props, ref) => {
                         onChange={(e) => handleUpdate('name', e.target.value)}
                     />
                 </div>
-                <div className="handle col-span-1 md:col-span-3 flex flex-row w-full h-[24px] border-x-2 border-dark-gunmetal cursor-move justify-center">
-                    <Image src={DragHandleIcon} alt="Drag handle icon" className="w-auto h-auto" />
+                <div className={` ${performing ? "" : "handle cursor-move" } col-span-1 md:col-span-3 flex flex-row w-full h-[24px] border-x-2 border-dark-gunmetal justify-center`}>
+                    <Image src={DragHandleIcon} alt="Drag handle icon" className={`${performing ? "hidden" : ""} w-auto h-auto`} />
                 </div>
                 <div className="col-span-1 flex justify-between mx-2">
-                    <p className="mt-[2px] text-gray-400 text-sm font-sans">{duration}</p>
+                    <p className="mt-[2px] text-gray-400 text-sm ">{duration}</p>
                     <Buttons />
                 </div>
             </div>
@@ -117,9 +118,9 @@ const Pattern = forwardRef((props, ref) => {
             <div className={`no-drag cursor-auto absolute w-full h-[80%] rounded-b-md bottom-0 
                 ${currentPatternId === patternData?.id ? "bg-subtle-gray" : "bg-eerie-black"}`}>
 
-                <div className="grid grid-cols-3 grid-rows-2 font-sans text-xl text-cultured">
-                    <div className="flex flex-col justify-center items-center col-span-1 row-span-2 py-2">
-                        <p>BPM</p>
+                <div className="flex flex-row justify-center text-xl text-cultured">
+                    <div className="flex flex-col justify-center items-center py-2">
+                        <p className="m-0">BPM</p>
                         <NumberInput
                             name="bpm"
                             value={inputData.bpm}
@@ -130,8 +131,8 @@ const Pattern = forwardRef((props, ref) => {
                             currentPattern={currentPatternId === patternData?.id}
                         />
                     </div>
-                    <div className="flex flex-col justify-center items-center col-span-1 row-span-2">
-                        <p>Beats</p>
+                    <div className="flex flex-col justify-center items-center px-2 lg:px-4">
+                        <p className="m-0">Beats</p>
                         <NumberInput
                             name="beatsPerMeasure"
                             value={inputData.beatsPerMeasure}
@@ -142,8 +143,8 @@ const Pattern = forwardRef((props, ref) => {
                             currentPattern={currentPatternId === patternData?.id}
                         />
                     </div>
-                    <div className="flex flex-col justify-center items-center col-span-1 row-span-2">
-                        <p>Measures</p>
+                    <div className="flex flex-col justify-center items-center">
+                        <p className="m-0">Measures</p>
                         <NumberInput
                             name="numMeasures"
                             value={inputData.numMeasures}

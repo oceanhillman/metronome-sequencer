@@ -184,7 +184,7 @@ export default function Metronome(props) {
     }
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center text-cultured">
             <div className="flex flex-col items-center">
                 <div className="relative bg-persian-pink w-12 h-32 flex items-center justify-center"
                     style={{
@@ -200,9 +200,9 @@ export default function Metronome(props) {
                     }}
                 ></div>
             </div>
-            <div className="flex flex-row font-sans mt-3">
+            <div className="flex flex-row mt-3">
                 <div className="flex flex-col justify-center items-center mx-2">
-                    <p className="text-white">BPM</p>
+                    <p className="text-cultured m-0">BPM</p>
                     <NumberInput
                         name="metronomeBpm"
                         value={bpm}
@@ -212,7 +212,7 @@ export default function Metronome(props) {
                     />
                 </div>
                 <div className="flex flex-col justify-center items-center mx-2">
-                    <p className="text-white">Beats per measure</p>
+                    <p className="text-cultured m-0">Beats per measure</p>
                     <NumberInput
                         name="metronomeBeatsPerMeasure"
                         value={beatsPerMeasure}
@@ -222,7 +222,7 @@ export default function Metronome(props) {
                     />
                 </div>
             </div>
-            <div className="flex flex-row font-sans">
+            <div className="flex flex-row ">
                 <button onClick={() => setPlaying(!playing)} className="mt-2 bg-muted-blue text-white px-2 py-1 rounded mx-2">
                     {playing ? 'Stop Click' : 'Play Click'}
                 </button>

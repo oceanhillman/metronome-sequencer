@@ -90,9 +90,9 @@ export default function SongLibrary() {
   if (fetchError) return <div>{fetchError}</div>;
 
   return (
-    <div className="flex flex-col justify-center items-center w-[100%] md:w-[80%] my-16">
-        <h1 className="text-cultured text-4xl font-poppins font-bold">Your Song Library</h1>
-        <ul className="m-0 w-[100%] md:w-[80%] grid grid-cols-1 bg-black border-2 border-arsenic rounded-xl p-4 mt-4 space-y-4">
+    <div className="flex flex-col justify-center items-center w-full mx-auto my-10">
+        <h1 className="text-cultured text-4xl">Your Song Library</h1>
+        <ul className="grid grid-cols-1 bg-black border-2 border-arsenic rounded-xl p-4 mt-4 space-y-4">
             <SongLibraryContent />
         </ul>
     </div>

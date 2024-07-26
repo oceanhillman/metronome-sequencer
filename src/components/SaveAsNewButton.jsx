@@ -17,9 +17,9 @@ export default function SaveAsNewButton(props) {
   
     return (
       <>
-        <Button className="bg-gunmetal text-cultured border-none" onClick={handleShow}>
+        <button className="disabled:text-gray-400" onClick={handleShow}>
           Save as new
-        </Button>
+        </button>
   
         <Modal show={show} onHide={handleClose} centered data-bs-theme="dark">
           <Modal.Header closeButton>

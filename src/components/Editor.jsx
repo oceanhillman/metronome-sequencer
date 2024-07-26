@@ -1,7 +1,7 @@
 'use client'
 import _ from 'lodash';
 import { useEffect, useState, useRef } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Dropdown } from "react-bootstrap";
 import Image from "next/image";
 import { useUser } from '@auth0/nextjs-auth0/client';
 
@@ -15,6 +15,7 @@ import PlusIcon from "/public/plus.svg";
 import { saveSong, addSong } from '@lib/api';
 
 import { FaPlay, FaStop } from "react-icons/fa6";
+import { IoIosSave } from "react-icons/io";
 
 const generatePatternId = () => String(Math.round(Date.now() + Math.random()));
 
@@ -34,7 +35,9 @@ export default function Editor(props) {
     const [performing, setPerforming] = useState(false);
     const [currentSection, setCurrentSection] = useState();
     const [currentPattern, setCurrentPattern] = useState();
+    const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
     const patternInitialized = useRef(false);
+    const bottomRef = useRef(null);
     
     // Preload any incoming song data
     useEffect(() => {
@@ -107,18 +110,19 @@ export default function Editor(props) {
             playlist: [...prev.playlist, newPattern],
             layout: [...prev.layout, patternLayout],
         }));
+        return patternId;
     }
 
-    const handleClickClonePattern = (pattern) => {
+    const handleClickClonePattern = (originalPattern) => {
         const clonedPattern = {
             id: generatePatternId(),
-            name: `${pattern.name} (clone)`,
-            bpm: pattern.bpm,
-            beatsPerMeasure: pattern.beatsPerMeasure,
-            numMeasures: pattern.numMeasures,
+            name: `${originalPattern.name} (clone)`,
+            bpm: originalPattern.bpm,
+            beatsPerMeasure: originalPattern.beatsPerMeasure,
+            numMeasures: originalPattern.numMeasures,
         };
     
-        const patternIndex = song.playlist.findIndex(pattern => pattern.id === pattern.id);
+        const patternIndex = song.playlist.findIndex(pattern => pattern.id === originalPattern.id);
     
         if (patternIndex !== -1) {
             addToUndoHistory(song);
@@ -129,7 +133,11 @@ export default function Editor(props) {
                     clonedPattern,
                     ...prev.playlist.slice(patternIndex + 1)
                 ],
-            }))
+            }));
+            setTimeout(() => {
+                const newPatternElement = document.getElementById(clonedPattern.id);
+                newPatternElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 0);
         } else {
             console.error('Pattern to clone not found');
         }
@@ -205,7 +213,11 @@ export default function Editor(props) {
 
     function handleClickNewPattern() {
         addToUndoHistory(song);
-        initializeNewPattern();
+        const newPatternId = initializeNewPattern();
+        setTimeout(() => {
+            const newPatternElement = document.getElementById(newPatternId);
+            newPatternElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 0);
     }
 
     function handleClickClear() {
@@ -218,6 +230,15 @@ export default function Editor(props) {
     }
 
     function handleClickDeletePattern(id) {
+        
+        
+
+        setTimeout(() => {
+            if (bottomRef.current) {
+                bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
+        }, 0);
+        
         addToUndoHistory(song);
         setSong(prev => ({
             ...prev,
@@ -237,9 +258,15 @@ export default function Editor(props) {
         }));
     }
 
+    function toggleDropdown(isOpen) {
+        setDropdownIsOpen(isOpen);
+    }
+
+
     return (
-        <div className="w-full mt-6 lg:mt-16">
-            <div className="pb-16">
+    <div className="flex flex-col min-h-screen w-full">
+        <div className="flex-grow pt-6 lg:pt-12 d-flex flex-col pb-16">
+            <div className="w-full h-full d-flex flex-col">
                 <Metronome
                     playlist={currentSection}
                     performing={performing}
@@ -248,14 +275,17 @@ export default function Editor(props) {
                 />
                 <div className="flex flex-col justify-center mt-4 lg:mt-8">
                     <div className="flex flex-col items-center justify-center">
-                        <div className="flex flex-col w-[100%] md:w-[80%] justify-center">
-                            <Form.Control className="w-full self-center border-2 bg-black border-arsenic text-cultured font-poppins text-lg rounded-md text-center
-                            focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-muted-blue focus:outline-none"
-                                type="text"
-                                value={song.title}
-                                onChange={(e) => handleEditTitle(e.target.value)}
-                                placeholder={"Song Title"}
-                            />
+                        <div className="flex flex-col w-[100%] lg:w-[65%] xl:w-1/2 justify-center">
+                            <div className="flex flex-col">
+                                <input className="w-full self-center border-2 bg-black border-1 border-muted-blue text-cultured  text-lg rounded-md text-center
+                                focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-muted-blue focus:outline-none"
+                                    type="text"
+                                    value={song.title}
+                                    onChange={(e) => handleEditTitle(e.target.value)}
+                                    placeholder={"Song Title"}
+                                />
+                            </div>
+
                             <Playlist 
                                 addToHistory={addToUndoHistory}
                                 song={song}
@@ -271,62 +301,66 @@ export default function Editor(props) {
                             />
                         </div>
                         <button onClick={handleClickNewPattern} className="mt-2 bg-muted-blue hover:bg-arsenic border-2 border-arsenic p-3 rounded-full">
-                            <Image src={PlusIcon} alt="Plus icon" className="w-auto h-auto"/>
+                            <Image src={PlusIcon} alt="Plus icon" draggable={false} className="w-auto h-auto"/>
                         </button>
                     </div>     
                 </div>
             </div>
+        </div>
 
-            <div className="sticky bottom-0 bg-eerie-black border-t-2 border-arsenic text-cultured py-4">
-                <div className="grid grid-cols-3 items-center justify-center">
-                    <div className="col-span-1 flex w-full h-full items-center justify-center">
-                        <SaveAsNewButton 
-                            songTitle={song.title}
-                            updateSongTitle={(newTitle) => setSong(prev => ({...prev, title: newTitle}))}
-                            onSave={handleSaveAsNew}
-                        />
-                        <Button onClick={handleSave} disabled={user && song.id ? false : true} className="bg-gunmetal text-cultured border-none ml-4">
-                            Save
-                        </Button>
-                    </div>
-                    <div className="col-span-1 grid grid-cols-3 items-center justify-center">
-                        {/* <div className="col-span-1 flex w-full h-full items-center justify-center">
-                        
-                        </div> */}
-                        <div className="col-span-3 flex items-center justify-center">
-                            <button onClick={handleClickPlay} className="mt-2 mx-2 bg-cultured text-black h-16 w-16 flex items-center justify-center rounded-full">
-                                {performing ? <FaStop className="h-8 w-8" /> : <FaPlay className="ml-[5px] h-8 w-8"/>}
-                            </button>
-                        </div>
-                        {/* <div className="col-span-1 flex w-full h-full items-center justify-center">
-                            <Form>
-                                <Form.Check // prettier-ignore
-                                    type="switch"
-                                    id="custom-switch"
-                                    label="Count-in"
+        <div ref={bottomRef} className="sticky bottom-0 bg-eerie-black border-t-2 border-arsenic text-cultured py-4">
+            <div className="flex flex-row items-center justify-center w-full">
+                <div className="flex w-full h-full items-center justify-center">
+                    <Dropdown
+                        show={dropdownIsOpen}
+                        onToggle={toggleDropdown}
+                    >
+                        <Dropdown.Toggle variant="success" id="dropdown-basic" className="d-flex items-center justify-center">
+                            <IoIosSave />
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu className="flex flex-col">
+                            <Dropdown.Item disabled={user && song.id ? false : true}>
+                                <button onClick={handleSave} className="disabled:text-gray-400">
+                                    Save
+                                </button>
+                            </Dropdown.Item>
+
+                            <Dropdown.Item>
+                                <SaveAsNewButton 
+                                    songTitle={song.title}
+                                    updateSongTitle={(newTitle) => setSong(prev => ({...prev, title: newTitle}))}
+                                    onSave={handleSaveAsNew}
                                 />
-                            </Form>
-                        </div> */}
-                    </div>
-                    <div className="col-span-1 flex w-full h-full items-center justify-center">
-                        {/* <UndoRedoButtons 
-                            song={song}
-                            updatePlaylist={(updatedPlaylist) => setPlaylist(updatedPlaylist)}
-                            updateLayout={(updatedLayout) => setLayout(updatedLayout)}
-                            updateTitle={(updatedTitle) => setSongTitle(updatedTitle)}
-                        /> */}
-                        <Button onClick={undo} disabled={undoHistory.length === 0} variant="primary" className="text-cultured border-none">
+                            </Dropdown.Item>                                
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </div>
+                <div className="flex flex-row items-center justify-center">
+                    <div className="flex flex-row w-full h-full items-center justify-center">
+                        <button onClick={undo} disabled={undoHistory.length === 0} className="text-cultured disabled:text-arsenic text-xl">
                             Undo
-                        </Button>
-                        <Button onClick={redo} disabled={redoHistory.length === 0} variant="primary" className="text-cultured border-none">
-                            Redo
-                        </Button>
-                        <Button onClick={handleClickClear} className="bg-red-700 text-cultured border-none">
-                            Clear
-                        </Button>
+                        </button>
                     </div>
+                    <div className="flex items-center justify-center mx-4">
+                        <button onClick={handleClickPlay} className="mt-2 mx-2 bg-cultured text-black h-16 w-16 flex items-center justify-center rounded-full">
+                            {performing ? <FaStop className="h-8 w-8" /> : <FaPlay className="ml-[5px] h-8 w-8"/>}
+                        </button>
+                    </div>
+                    <div className="flex w-full h-full items-center justify-center">
+                        <button onClick={redo} disabled={redoHistory.length === 0} className="text-cultured disabled:text-arsenic text-xl">
+                            Redo
+                        </button>
+                    </div>
+                </div>
+                <div className="col-span-1 flex w-full h-full items-center justify-center">
+                    <Button onClick={handleClickClear} variant="danger" className="text-cultured border-none">
+                        Clear
+                    </Button>
                 </div>
             </div>
         </div>
+    </div>
+
     )
 }

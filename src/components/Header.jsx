@@ -22,15 +22,13 @@ export default function Header() {
 
     function AuthSection() {
         if (isLoading) {
-            return <div>Loading...</div>
+            return <Nav.Link disabled className="!text-cultured">Loading...</Nav.Link>
         } else if (error) {
             return <div>{error.message}</div>
         } else if (!user) {
-            return <Button variant="primary"><a href="/api/auth/login" className="mx-1 font-sans">Login</a></Button>
+            return <Nav.Link href="/api/auth/login" className="!text-cultured">Login</Nav.Link>;
         } else {
-            return (
-                <Button onClick={handleLogout} className="bg-gunmetal text-cultured border-none font-sans">Logout</Button>
-            );
+            return <Nav.Link onClick={handleLogout} className="">Logout</Nav.Link>;
         };
     }
 
@@ -41,15 +39,8 @@ export default function Header() {
         } else {
             return (
                 <div className="flex lg:flex-row items-center">
-                    <div className="mr-4 text-cultured font-sans">
-                        Hello, {user.name}!
-                    </div>
-                    <Link href="/">
-                        <Button className="bg-cultured text-eerie-black border-none lg:mr-4 font-sans">Song Editor</Button>
-                    </Link>
-                    <Link href="/my-songs">
-                        <Button className="bg-persian-pink text-eerie-black border-none lg:mr-4 font-sans">My Songs</Button>
-                    </Link>
+                    <Nav.Link href="/" className="!text-cultured">Song Editor</Nav.Link>
+                    <Nav.Link href="/my-songs" className="!text-cultured">My Songs</Nav.Link>
                 </div>
             );
         };
@@ -58,9 +49,9 @@ export default function Header() {
     return (
         <Navbar variant="dark" className="w-full bg-eerie-black" expand="lg">
             <Container>
-                <Link href="/" className="text-cultured font-orbitron font-medium text-xl lg:text-4xl">
+                <Navbar.Brand href="/" className="text-cultured font-orbitron">
                     Metronome Sequencer
-                </Link>
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto flex flex-col lg:flex-row items-center">

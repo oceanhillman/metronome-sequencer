@@ -17,22 +17,22 @@ export default function SongCard(props) {
 
     function ShareButton() {
         return (
-            <button className="w-[25px] h-[25px] rounded-md bg-gray-500 mr-4">
-                <Image className="w-auto h-auto" src={ShareIcon} alt="Share icon"/>
+            <button className="w-[25px] h-[25px] mx-auto">
+                <Image className="w-auto h-auto mx-auto" src={ShareIcon} alt="Share icon" draggable={false}/>
             </button>
         );
     }
 
     return (
         <div className="grid grid-cols-12 rounded-xl min-h-[100px] bg-muted-blue hover:border-arsenic">
-            <Link href={`/song/${id}`} className="col-span-11 p-2 rounded-xl bg-eerie-black border-2 border-muted-blue hover:bg-subtle-gray hover:border-arsenic">
-                <h5 className="text-cultured text-lg font-sans">
+            <Link href={`/song/${id}`} className="col-span-10 sm:col-span-11 p-2 rounded-xl bg-eerie-black border-2 border-muted-blue hover:bg-subtle-gray hover:border-arsenic no-underline">
+                <h5 className="text-cultured text-lg break-words">
                     {title}
                 </h5>
-                <p className="m-0 text-sm text-gray-400 font-sans">Created: {created}</p>
-                <p className="m-0 text-sm text-gray-400 font-sans">Last saved: {saved}</p>
+                <p className="m-0 text-sm text-gray-400 ">Created: {created}</p>
+                <p className="m-0 text-sm text-gray-400 ">Last saved: {saved}</p>
             </Link>
-            <div className="col-span-1 flex justify-center items-center bg-muted-blue rounded-xl p-2">
+            <div className="col-span-2 sm:col-span-1 grid grid-cols-1 justify-center items-center bg-muted-blue rounded-xl p-2">
                 <ShareButton />
                 <DeleteSongButton
                     songId={id}
