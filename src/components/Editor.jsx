@@ -21,7 +21,8 @@ const generatePatternId = () => String(Math.round(Date.now() + Math.random()));
 export default function Editor(props) {
     const { songPayload } = props;
     const { user, error, isLoading } = useUser();
-    const [history, setHistory] = useState([]);
+    const [undoHistory, setUndoHistory] = useState([]);
+    const [redoHistory, setRedoHistory] = useState([]);
     const [song, setSong] = useState({
         id: '',
         title: 'Untitled Song',
@@ -49,7 +50,7 @@ export default function Editor(props) {
             if (!patternInitialized.current) {
                 console.log("trigger");
                 initializeNewPattern();
-                setHistory([]);
+                setUndoHistory([]);
                 patternInitialized.current = true;
             }
         }
@@ -72,8 +73,8 @@ export default function Editor(props) {
 
     useEffect(() => {
         console.log("Song:", song);
-        console.log("History:", history)
-    }, [song, history]);
+        console.log("History:", undoHistory)
+    }, [song, undoHistory]);
 
     // Trigger metronome to play playlist
     function handleClickPlay() {
@@ -120,7 +121,7 @@ export default function Editor(props) {
         const patternIndex = song.playlist.findIndex(pattern => pattern.id === pattern.id);
     
         if (patternIndex !== -1) {
-            addToHistory(song);
+            addToUndoHistory(song);
             setSong(prev => ({
                 ...prev,
                 playlist: [
@@ -171,29 +172,44 @@ export default function Editor(props) {
         }));
     };
 
-    function addToHistory(songVersion) {
-        const latestVersion = history[history.length - 1];
+    function addToRedoHistory(songVersion) {
+        setRedoHistory(prev => [...prev, songVersion]);
+    }
+
+    function addToUndoHistory(songVersion) {
+        const latestVersion = undoHistory[undoHistory.length - 1];
         if ((history.length === 0 || !_.isEqual(songVersion, latestVersion)) && (song.layout.length === song.playlist.length)) {
             console.log("Setting history: song version:", songVersion, "Latest history:", latestVersion);
-            setHistory(prev => ([...prev, songVersion]));
+            setUndoHistory(prev => ([...prev, songVersion]));
+            setRedoHistory([]);
+        }
+    }
+
+    function redo() {
+        if (redoHistory.length > 0) {
+            const nextState = redoHistory[redoHistory.length - 1];
+            addToUndoHistory(song);
+            setSong(nextState);
+            setRedoHistory(redoHistory.slice(0, -1));
         }
     }
 
     function undo() {
-        if (history.length > 0) {
-            const previousState = history[history.length - 1];
+        if (undoHistory.length > 0) {
+            const previousState = undoHistory[undoHistory.length - 1];
+            addToRedoHistory(song);
             setSong(previousState);
-            setHistory(history.slice(0, -1));
+            setUndoHistory(undoHistory.slice(0, -1));
         }
     }
 
     function handleClickNewPattern() {
-        addToHistory(song);
+        addToUndoHistory(song);
         initializeNewPattern();
     }
 
     function handleClickClear() {
-        addToHistory(song);
+        addToUndoHistory(song);
         setSong(prev => ({
             ...prev,
             playlist: [],
@@ -202,7 +218,7 @@ export default function Editor(props) {
     }
 
     function handleClickDeletePattern(id) {
-        addToHistory(song);
+        addToUndoHistory(song);
         setSong(prev => ({
             ...prev,
             playlist: prev.playlist.filter(item => item.id !== id),
@@ -214,7 +230,7 @@ export default function Editor(props) {
     }, [song.layout]);
     
     function handleEditTitle(value) {
-        addToHistory(song);
+        addToUndoHistory(song);
         setSong(prev => ({
             ...prev,
             title: value,
@@ -241,7 +257,7 @@ export default function Editor(props) {
                                 placeholder={"Song Title"}
                             />
                             <Playlist 
-                                addToHistory={addToHistory}
+                                addToHistory={addToUndoHistory}
                                 song={song}
                                 playlistData={song.playlist}
                                 handleUpdatePlaylist={(newPlaylist) => setSong(prev => ({...prev, playlist: newPlaylist}))}
@@ -299,8 +315,11 @@ export default function Editor(props) {
                             updateLayout={(updatedLayout) => setLayout(updatedLayout)}
                             updateTitle={(updatedTitle) => setSongTitle(updatedTitle)}
                         /> */}
-                        <Button onClick={undo} disabled={history.length === 0} variant="primary" className="text-cultured border-none">
+                        <Button onClick={undo} disabled={undoHistory.length === 0} variant="primary" className="text-cultured border-none">
                             Undo
+                        </Button>
+                        <Button onClick={redo} disabled={redoHistory.length === 0} variant="primary" className="text-cultured border-none">
+                            Redo
                         </Button>
                         <Button onClick={handleClickClear} className="bg-red-700 text-cultured border-none">
                             Clear
