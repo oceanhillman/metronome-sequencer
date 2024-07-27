@@ -62,43 +62,46 @@ const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout
     };
     
     return song && song.playlist ? (
-        <ResponsiveGridLayout
-            className="layout bg-black border-2 border-muted-blue rounded-xl px-[2px] lg:px-4 mt-2 lg:mt-4"
-            layouts={{xxl: gridLayout, xl: gridLayout, lg: gridLayout, md: gridLayout, sm: gridLayout, xs: gridLayout, xxs: gridLayout}}
-            cols={{xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1, xxs: 1}}
-            rowHeight={120}
-            margin={[0, 20]}
-            width={"100%"}
-            onLayoutChange={(layout, layouts) => handleLayoutChange(layout)}
-            draggableHandle=".handle"
-            draggableCancel=".no-drag"
-            onDragStart={handleDragStart}
-            onDragStop={handleDragStop}
-            transitionDuration={0}
-        >
-            {song.playlist.map(pattern => {
-                const patternLayout = gridLayout.find(layout => layout.i === pattern.id);
-                return (
-                    <div key={pattern.id} className="h-full">
-                        <Pattern
-                            key={pattern.id}
-                            song={song}
-                            dataGrid={patternLayout}
-                            addToHistory={addToHistory}
-                            patternData={pattern}
-                            handleUpdatePattern={handleUpdatePattern}
-                            handleClickDelete={handleClickDelete}
-                            handleClone={handleClone}
-                            currentPatternId={currentPatternId}
-                            performing={performing}
-                            startFromPattern={startFromPattern}
-                        />
-                    </div>
-                );
-            })}
-        </ResponsiveGridLayout>
+        <div className={`bg-black border-2 border-muted-blue rounded-xl px-[2px] lg:px-4 mt-2 lg:mt-4 ${song.playlist.length === 0 ? "py-3" : ""}`}>
+            {song.playlist.length === 0 ? <div key="tutorial" className="text-center text-cultured">Click + to create a new pattern.</div> : null}
+            <ResponsiveGridLayout
+                className="layout"
+                layouts={{xxl: gridLayout, xl: gridLayout, lg: gridLayout, md: gridLayout, sm: gridLayout, xs: gridLayout, xxs: gridLayout}}
+                cols={{xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1, xxs: 1}}
+                rowHeight={120}
+                margin={song.playlist.length === 0 ? [0, 0] : [0, 20]}
+                width={"100%"}
+                onLayoutChange={(layout, layouts) => handleLayoutChange(layout)}
+                draggableHandle=".handle"
+                draggableCancel=".no-drag"
+                onDragStart={handleDragStart}
+                onDragStop={handleDragStop}
+                transitionDuration={0}
+            >
+                {song.playlist.map(pattern => {
+                    const patternLayout = gridLayout.find(layout => layout.i === pattern.id);
+                    return (
+                        <div key={pattern.id} className="h-full">
+                            <Pattern
+                                key={pattern.id}
+                                song={song}
+                                dataGrid={patternLayout}
+                                addToHistory={addToHistory}
+                                patternData={pattern}
+                                handleUpdatePattern={handleUpdatePattern}
+                                handleClickDelete={handleClickDelete}
+                                handleClone={handleClone}
+                                currentPatternId={currentPatternId}
+                                performing={performing}
+                                startFromPattern={startFromPattern}
+                            />
+                        </div>
+                    );
+                })}
+            </ResponsiveGridLayout>
+        </div>
     ) : (
-        <p>Loading...</p>
+        <p key="loading">Loading...</p>
     );
 };
 

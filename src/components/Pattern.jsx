@@ -104,6 +104,7 @@ const Pattern = forwardRef((props, ref) => {
                         onMouseDown={(e) => e.stopPropagation()}
                         onTouchStart={(e) => e.stopPropagation()}
                         onChange={(e) => handleUpdate('name', e.target.value)}
+                        disabled={performing}
                     />
                 </div>
                 <div className={` ${performing ? "" : "handle cursor-move" } col-span-1 md:col-span-3 flex flex-row w-full h-[24px] border-x-2 border-dark-gunmetal justify-center`}>

@@ -283,6 +283,7 @@ export default function Editor(props) {
                                     value={song.title}
                                     onChange={(e) => handleEditTitle(e.target.value)}
                                     placeholder={"Song Title"}
+                                    disabled={performing}
                                 />
                             </div>
 
@@ -300,9 +301,10 @@ export default function Editor(props) {
                                 startFromPattern={handleStartFromPattern}
                             />
                         </div>
+                        {!performing ? 
                         <button onClick={handleClickNewPattern} className="mt-2 bg-muted-blue hover:bg-arsenic border-2 border-arsenic p-3 rounded-full">
                             <Image src={PlusIcon} alt="Plus icon" draggable={false} className="w-auto h-auto"/>
-                        </button>
+                        </button> : null}
                     </div>     
                 </div>
             </div>

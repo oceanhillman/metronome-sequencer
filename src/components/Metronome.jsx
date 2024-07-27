@@ -199,6 +199,11 @@ export default function Metronome(props) {
                         transitionDuration: `${getInterval(bpm)}ms`,
                     }}
                 ></div>
+                {/* <div className="flex flex-row mt-4 flex-wrap">
+                    {Array.from({ length: beatsPerMeasure }, (_, index) => (
+                        <div key={index} className={`${beatIndex === index ? "bg-red-500" : "bg-white" } h-4 w-4 rounded-full mx-1`}></div>
+                    ))}
+                </div> */}
             </div>
             <div className="flex flex-row mt-3">
                 <div className="flex flex-col justify-center items-center mx-2">

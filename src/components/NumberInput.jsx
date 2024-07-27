@@ -35,7 +35,7 @@ export default function NumberInput( {name, value, min, max, onChange, disabled,
 
             <input
               name={name}
-              className={`${disabled ? (currentPattern ? "bg-subtle-gray border-none" : "bg-black border-none") : "bg-black"} 
+              className={`${disabled ? (currentPattern ? "bg-subtle-gray border-none" : "bg-inherit border-none") : "bg-black"} 
                 no-spinner lg:mx-1 w-12 lg:w-16 border-2 border-subtle-gray rounded-md text-center py-1
                 focus:border-arsenic focus:ring-2 focus:ring-subtle-gray focus:outline-none`}
               type="number" 
