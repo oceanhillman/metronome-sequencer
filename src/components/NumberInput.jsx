@@ -5,14 +5,14 @@ import MinusIcon from "/public/minus.svg";
 import PlusIcon from "/public/plus.svg";
 
 export default function NumberInput( props ) {
-    const {name, value: initialValue, min, max, onChange, disabled, currentPattern, onBlur} = props;
+    const {name, value: initialValue, min, max, disabled, currentPattern, onBlur} = props;
 
     const [value, setValue] = useState(initialValue);
     const inputRef = useRef(null);
 
     useEffect(() => {
         setValue(initialValue);
-      }, [initialValue]);
+    }, [initialValue]);
 
       const handleClickIncrement = (event) => {
         event.preventDefault();
@@ -60,10 +60,7 @@ export default function NumberInput( props ) {
                     inputRef.current.focus();
                     return newValue;
                 });
-            } else {
-
             }
-            
         });
     };
 
@@ -83,7 +80,7 @@ export default function NumberInput( props ) {
     
   return (
     <div className="flex items-center justify-center">
-      <button onMouseDown={handleClickDecrement} onTouchEnd={handleTouchDecrement} className={`${disabled ? "hidden" : ""} 
+      <button onMouseDown={handleClickDecrement} onTouchEnd={handleTouchDecrement} className={`${disabled ? "hidden" : ""}  ${value === min ? "bg-subtle-gray hover:bg-subtle-gray" : "bg-muted-blue"}
         bg-muted-blue hover:bg-arsenic w-8 h-8 flex justify-center items-center rounded-full`}>
         <Image src={MinusIcon} alt="Minus icon" className="w-4 h-4"/>
       </button>
@@ -103,7 +100,7 @@ export default function NumberInput( props ) {
         disabled={disabled}
       />
 
-      <button onMouseDown={handleClickIncrement} onTouchEnd={handleTouchIncrement} className={`${disabled ? "hidden" : ""} 
+      <button onMouseDown={handleClickIncrement} onTouchEnd={handleTouchIncrement} className={`${disabled ? "hidden" : ""} ${value === max ? "bg-subtle-gray hover:bg-subtle-gray" : "bg-muted-blue"}
         bg-muted-blue hover:bg-arsenic w-8 h-8 flex justify-center items-center rounded-full`}>
         <Image src={PlusIcon} alt="Plus icon" className="w-4 h-4"/>
       </button>

@@ -11,21 +11,13 @@ import { IconContext } from "react-icons";
 const Pattern = forwardRef((props, ref) => {
     const { dataGrid, song, addToHistory, patternData, handleUpdatePattern, handleClone, handleClickDelete, currentPatternId, performing, startFromPattern } = props;
 
-    const initialData = patternData || {
-        name: "",
-        beatsPerMeasure: 4,
-        bpm: 120,
-        numMeasures: 4,
-        duration: "00:00",
-        id: ""
-    };
     const [inputData, setInputData] = useState({
         name: patternData.name,
         beatsPerMeasure: patternData.beatsPerMeasure,
         bpm: patternData.bpm,
         numMeasures: patternData.numMeasures,
     });
-    const [duration, setDuration] = useState(initialData.duration);
+    const [duration, setDuration] = useState("00:00");
     const patternRef = useRef(null);
 
     useEffect(() => {
@@ -49,7 +41,17 @@ const Pattern = forwardRef((props, ref) => {
         return `${minutes.toString().padStart(1, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
-    function handleUpdate(attribute, value) {
+    function validateNumber(value, min, max) {
+        if (value < min) {
+            return min;
+        } else if (value > max) {
+            return max;
+        } else {
+            return value;
+        }
+    }
+
+    function handleUpdateNumber(attribute, value, min, max) {
         setInputData((prev) => ({
             ...prev,
             [attribute]: value,
@@ -57,13 +59,34 @@ const Pattern = forwardRef((props, ref) => {
         handleUpdatePattern(patternData.id, attribute, value);
     }
 
-    function handleBlur(attribute, value) {
-        addToHistory(song);
-        handleUpdate(attribute, value);
+    function handleUpdateName(newTitle) {
+        setInputData((prev) => ({
+            ...prev,
+            name: newTitle,
+        }));
+    }
+
+    function handleBlur(attribute, value, min, max) {
+        const validatedNumber = validateNumber(value, min, max)
+        if (patternData[attribute] !== validatedNumber) {
+            addToHistory(song);
+            handleUpdateNumber(attribute, validatedNumber, min, max)
+        }
+    }
+
+    function handleBlurName(newTitle) {
+        if (patternData.name !== newTitle) {
+            addToHistory(song);
+            handleUpdatePattern(patternData.id, 'name', newTitle);
+        }
     }
 
     function handleClickPlay() {
         startFromPattern(patternData.id);
+    }
+
+    function handleClickClone() {
+        handleClone(patternData);
     }
 
     function Buttons() {
@@ -75,7 +98,7 @@ const Pattern = forwardRef((props, ref) => {
                             <FaPlay />
                         </IconContext.Provider>
                     </button>
-                    <button onClick={() => handleClone(patternData)} className="w-[20px] h-[20px]">
+                    <button onClick={handleClickClone} className="w-[20px] h-[20px]">
                         <Image src={CloneIcon} alt="Clone icon" className="w-auto h-auto"/>
                     </button>
                     <button onClick={() => handleClickDelete(patternData.id)} className="w-[20px] h-[20px]">
@@ -94,16 +117,18 @@ const Pattern = forwardRef((props, ref) => {
             ${currentPatternId === patternData?.id ? "bg-arsenic" : "bg-muted-blue"} text-black`}>
 
             <div className="grid grid-cols-3 md:grid-cols-5 w-full">
-                <div className="col-span-1 ml-2">
+                <div className="col-span-1 mx-2">
                     <input
-                        className="bg-inherit text-cultured  text-sm mt-[2px] self-start mr-auto w-full"
+                        className="bg-inherit text-cultured  text-sm mt-[2px] self-start mr-auto w-full rounded-sm
+                        focus:bg-subtle-gray focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-arsenic focus:outline-none"
                         type="text"
                         placeholder="Pattern Name"
                         value={inputData.name}
                         onMouseDown={(e) => e.stopPropagation()}
                         onTouchStart={(e) => e.stopPropagation()}
-                        onChange={(e) => handleUpdate('name', e.target.value)}
                         disabled={performing}
+                        onChange={(e) => handleUpdateName(e.target.value)}
+                        onBlur={(e) => handleBlurName(e.target.value)}
                     />
                 </div>
                 <div className={` ${performing ? "" : "handle cursor-move" } col-span-1 md:col-span-3 flex flex-row w-full h-[24px] border-x-2 border-dark-gunmetal justify-center`}>
@@ -127,8 +152,8 @@ const Pattern = forwardRef((props, ref) => {
                             value={inputData.bpm}
                             min={1}
                             max={300}
-                            onChange={(e) => handleUpdate('bpm', Number(e.target.value))}
-                            onBlur={(e) => handleBlur('bpm', Number(e.target.value))}
+                            onChange={(e) => handleUpdateNumber('bpm', Number(e.target.value), 1, 300)}
+                            onBlur={(e) => handleBlur('bpm', Number(e.target.value), 1, 300)}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
                         />
@@ -141,8 +166,8 @@ const Pattern = forwardRef((props, ref) => {
                             value={inputData.beatsPerMeasure}
                             min={1}
                             max={64}
-                            onChange={(e) => handleUpdate('beatsPerMeasure', Number(e.target.value))}
-                            onBlur={(e) => handleBlur('beatsPerMeasure', Number(e.target.value))}
+                            onChange={(e) => handleUpdateNumber('beatsPerMeasure', Number(e.target.value))}
+                            onBlur={(e) => handleBlur('beatsPerMeasure', Number(e.target.value), 1, 64)}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
                         />
@@ -155,8 +180,8 @@ const Pattern = forwardRef((props, ref) => {
                             value={inputData.numMeasures}
                             min={1}
                             max={64}
-                            onChange={(e) => handleUpdate('numMeasures', Number(e.target.value))}
-                            onBlur={(e) => handleBlur('numMeasures', Number(e.target.value))}
+                            onChange={(e) => handleUpdateNumber('numMeasures', Number(e.target.value))}
+                            onBlur={(e) => handleBlur('numMeasures', Number(e.target.value), 1, 64)}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
                         />

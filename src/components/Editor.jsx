@@ -32,6 +32,7 @@ export default function Editor(props) {
         last_saved: '',
         created_at: '',
     });
+    const [songTitle, setSongTitle] = useState(song.title);
     const [performing, setPerforming] = useState(false);
     const [currentSection, setCurrentSection] = useState();
     const [currentPattern, setCurrentPattern] = useState();
@@ -86,6 +87,10 @@ export default function Editor(props) {
             setPerforming(!performing);
         }
     }
+
+    useEffect(() => {
+        setSongTitle(song.title);
+    }, [song.title])
 
     // Add new pattern with default values
     function initializeNewPattern() {
@@ -246,16 +251,18 @@ export default function Editor(props) {
         }));
     }
 
-    useEffect(() => {
-        console.log("Layout", song.layout);
-    }, [song.layout]);
-    
-    function handleEditTitle(value) {
-        addToUndoHistory(song);
-        setSong(prev => ({
-            ...prev,
-            title: value,
-        }));
+    function handleEditTitle(newTitle) {
+        setSongTitle(newTitle);
+    }
+
+    function handleBlurTitle(newTitle) {
+        if (song.title !== newTitle) {
+            addToUndoHistory(song);
+            setSong(prev => ({
+                ...prev,
+                title: newTitle,
+            }));
+        }
     }
 
     function toggleDropdown(isOpen) {
@@ -280,10 +287,11 @@ export default function Editor(props) {
                                 <input className="w-full self-center border-2 bg-black border-1 border-muted-blue text-cultured  text-lg rounded-md text-center
                                 focus:bg-eerie-black focus:text-cultured focus:border-arsenic focus:ring-2 focus:ring-muted-blue focus:outline-none"
                                     type="text"
-                                    value={song.title}
-                                    onChange={(e) => handleEditTitle(e.target.value)}
+                                    value={songTitle}
                                     placeholder={"Song Title"}
                                     disabled={performing}
+                                    onChange={(e) => handleEditTitle(e.target.value)}
+                                    onBlur={(e) => handleBlurTitle(e.target.value)}
                                 />
                             </div>
 
