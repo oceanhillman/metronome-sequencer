@@ -1,22 +1,73 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from "next/image"
 import MinusIcon from "/public/minus.svg";
 import PlusIcon from "/public/plus.svg";
 
-export default function NumberInput( {name, value, min, max, onChange, disabled, currentPattern} ) {
+export default function NumberInput( props ) {
+    const {name, value: initialValue, min, max, onChange, disabled, currentPattern, onBlur} = props;
 
-  const handleIncrement = () => {
-      if (value < max) {
-        onChange({ target: { value: value + 1 } });
-      }
-    };
-  
-    const handleDecrement = () => {
-      if (value > min) {
-        onChange({ target: { value: value - 1 } });
-      }
-    };
+    const [value, setValue] = useState(initialValue);
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        setValue(initialValue);
+      }, [initialValue]);
+
+      const handleClickIncrement = (event) => {
+        event.preventDefault();
+        if (value < max) {
+          setValue((prevValue) => {
+            const newValue = prevValue + 1;
+            inputRef.current.focus();
+            return newValue;
+          });
+        }
+      };
+    
+      const handleClickDecrement = (event) => {
+        event.preventDefault();
+        if (value > min) {
+          setValue((prevValue) => {
+            const newValue = prevValue - 1;
+            inputRef.current.focus();
+            return newValue;
+          });
+        }
+      };
+
+      const handleTouchIncrement = (event) => {
+        event.preventDefault();
+        // Use requestAnimationFrame to ensure focus management happens after the default touch action
+        requestAnimationFrame(() => {
+            if (value > min) {
+                setValue((prevValue) => {
+                  const newValue = prevValue + 1;
+                  inputRef.current.focus();
+                  return newValue;
+                });
+              }
+        });
+      };
+
+      const handleTouchDecrement = (event) => {
+        event.preventDefault();
+        // Use requestAnimationFrame to ensure focus management happens after the default touch action
+        requestAnimationFrame(() => {
+            if (value > min) {
+                setValue((prevValue) => {
+                  const newValue = prevValue - 1;
+                  inputRef.current.focus();
+                  return newValue;
+                });
+              }
+        });
+      };
+
+      const handleChange = (event) => {
+        const newValue = Number(event.target.value);
+        setValue(newValue);
+      };
 
     //value={value.toString().replace(/^0+/, '')}
 
@@ -26,30 +77,33 @@ export default function NumberInput( {name, value, min, max, onChange, disabled,
     // - doesn't allow non-numerical input to affect value (minus sign, equals sign, etc)
     // - doesn't allow decimals at all (for now)
 
-    return (
-        <div className="flex items-center justify-center">
-            <button onClick={handleDecrement} className={`${disabled ? "hidden" : ""} 
-            bg-muted-blue hover:bg-arsenic w-8 h-8 flex justify-center items-center rounded-full`}>
-                <Image src={MinusIcon} alt="Minus icon" className="w-4 h-4"/>
-            </button>
+    
+  return (
+    <div className="flex items-center justify-center">
+      <button onMouseDown={handleClickDecrement} onTouchEnd={handleTouchDecrement} className={`${disabled ? "hidden" : ""} 
+        bg-muted-blue hover:bg-arsenic w-8 h-8 flex justify-center items-center rounded-full`}>
+        <Image src={MinusIcon} alt="Minus icon" className="w-4 h-4"/>
+      </button>
 
-            <input
-              name={name}
-              className={`${disabled ? (currentPattern ? "bg-subtle-gray border-none" : "bg-inherit border-none") : "bg-black"} 
-                no-spinner lg:mx-1 w-12 lg:w-16 border-2 border-subtle-gray rounded-md text-center py-1
-                focus:border-arsenic focus:ring-2 focus:ring-subtle-gray focus:outline-none`}
-              type="number" 
-              value={value} 
-              min={min}
-              max={max}
-              onChange={onChange}
-              disabled={disabled}
-            />
+      <input
+        ref={inputRef}
+        name={name}
+        className={`${disabled ? (currentPattern ? "bg-subtle-gray border-none" : "bg-inherit border-none") : "bg-black"} 
+          no-spinner lg:mx-1 w-12 lg:w-16 border-2 border-subtle-gray rounded-md text-center py-1
+          focus:border-arsenic focus:ring-2 focus:ring-subtle-gray focus:outline-none`}
+        type="number" 
+        value={value} 
+        min={min}
+        max={max}
+        onChange={handleChange}
+        onBlur={onBlur}
+        disabled={disabled}
+      />
 
-            <button onClick={handleIncrement} className={`${disabled ? "hidden" : ""} 
-            bg-muted-blue hover:bg-arsenic w-8 h-8 flex justify-center items-center rounded-full`}>
-                <Image src={PlusIcon} alt="Plus icon" className="w-4 h-4"/>
-            </button>
-        </div>
-    );
+      <button onMouseDown={handleClickIncrement} onTouchEnd={handleTouchIncrement} className={`${disabled ? "hidden" : ""} 
+        bg-muted-blue hover:bg-arsenic w-8 h-8 flex justify-center items-center rounded-full`}>
+        <Image src={PlusIcon} alt="Plus icon" className="w-4 h-4"/>
+      </button>
+    </div>
+  );
 }

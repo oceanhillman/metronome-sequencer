@@ -19,7 +19,26 @@ const Pattern = forwardRef((props, ref) => {
         duration: "00:00",
         id: ""
     };
+    const [inputData, setInputData] = useState({
+        name: patternData.name,
+        beatsPerMeasure: patternData.beatsPerMeasure,
+        bpm: patternData.bpm,
+        numMeasures: patternData.numMeasures,
+    });
     const [duration, setDuration] = useState(initialData.duration);
+    const patternRef = useRef(null);
+
+    useEffect(() => {
+        const newDuration = calculateDuration(patternData.numMeasures, patternData.beatsPerMeasure, patternData.bpm);
+        setDuration(newDuration);
+        setInputData(patternData);
+    }, [patternData])
+    
+    useEffect(() => {
+        if (currentPatternId === patternData.id) {
+            patternRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [currentPatternId, patternData.id]);
 
     const calculateDuration = (numMeasures, beatsPerMeasure, bpm) => {
         const totalBeats = numMeasures * beatsPerMeasure;
@@ -30,37 +49,17 @@ const Pattern = forwardRef((props, ref) => {
         return `${minutes.toString().padStart(1, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
-    const [inputData, setInputData] = useState({
-        name: patternData.name,
-        beatsPerMeasure: patternData.beatsPerMeasure,
-        bpm: patternData.bpm,
-        numMeasures: patternData.numMeasures,
-    });
-
-    useEffect(() => {
-        const newDuration = calculateDuration(patternData.numMeasures, patternData.beatsPerMeasure, patternData.bpm);
-        setDuration(newDuration);
-
-        setInputData(patternData);
-    }, [patternData])
-
-    const patternRef = useRef(null);
-
-    useEffect(() => {
-        // Check if the current pattern ID matches the pattern's ID
-        if (currentPatternId === patternData.id) {
-            // Scroll into view when the component mounts or currentPatternId changes
-            patternRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    }, [currentPatternId, patternData.id]);
-
     function handleUpdate(attribute, value) {
         setInputData((prev) => ({
             ...prev,
             [attribute]: value,
         }));
-        addToHistory(song);
         handleUpdatePattern(patternData.id, attribute, value);
+    }
+
+    function handleBlur(attribute, value) {
+        addToHistory(song);
+        handleUpdate(attribute, value);
     }
 
     function handleClickPlay() {
@@ -124,10 +123,12 @@ const Pattern = forwardRef((props, ref) => {
                         <p className="m-0">BPM</p>
                         <NumberInput
                             name="bpm"
+                            key="bpm"
                             value={inputData.bpm}
                             min={1}
                             max={300}
                             onChange={(e) => handleUpdate('bpm', Number(e.target.value))}
+                            onBlur={(e) => handleBlur('bpm', Number(e.target.value))}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
                         />
@@ -136,10 +137,12 @@ const Pattern = forwardRef((props, ref) => {
                         <p className="m-0">Beats</p>
                         <NumberInput
                             name="beatsPerMeasure"
+                            key="beatsPerMeasure"
                             value={inputData.beatsPerMeasure}
                             min={1}
                             max={64}
                             onChange={(e) => handleUpdate('beatsPerMeasure', Number(e.target.value))}
+                            onBlur={(e) => handleBlur('beatsPerMeasure', Number(e.target.value))}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
                         />
@@ -148,10 +151,12 @@ const Pattern = forwardRef((props, ref) => {
                         <p className="m-0">Measures</p>
                         <NumberInput
                             name="numMeasures"
+                            key="numMeasures"
                             value={inputData.numMeasures}
                             min={1}
                             max={64}
                             onChange={(e) => handleUpdate('numMeasures', Number(e.target.value))}
+                            onBlur={(e) => handleBlur('numMeasures', Number(e.target.value))}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
                         />
