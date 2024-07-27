@@ -40,7 +40,7 @@ export default function NumberInput( props ) {
         event.preventDefault();
         // Use requestAnimationFrame to ensure focus management happens after the default touch action
         requestAnimationFrame(() => {
-            if (value > min) {
+            if (value < max) {
                 setValue((prevValue) => {
                   const newValue = prevValue + 1;
                   inputRef.current.focus();
@@ -50,19 +50,22 @@ export default function NumberInput( props ) {
         });
       };
 
-      const handleTouchDecrement = (event) => {
+    const handleTouchDecrement = (event) => {
         event.preventDefault();
         // Use requestAnimationFrame to ensure focus management happens after the default touch action
         requestAnimationFrame(() => {
             if (value > min) {
                 setValue((prevValue) => {
-                  const newValue = prevValue - 1;
-                  inputRef.current.focus();
-                  return newValue;
+                    const newValue = prevValue - 1;
+                    inputRef.current.focus();
+                    return newValue;
                 });
-              }
+            } else {
+
+            }
+            
         });
-      };
+    };
 
       const handleChange = (event) => {
         const newValue = Number(event.target.value);
