@@ -65,9 +65,21 @@ export default function NumberInput( props ) {
     };
 
       const handleChange = (event) => {
+        if (value === 0) {
+            setValue('');
+        }
         const newValue = Number(event.target.value);
         setValue(newValue);
       };
+
+    function handleBlur() {
+        if (value <= min) {
+            setValue(min);
+        } else if (value >= max) {
+            setValue(max);
+        }
+        onBlur(value);
+    }
 
     //value={value.toString().replace(/^0+/, '')}
 
@@ -93,10 +105,8 @@ export default function NumberInput( props ) {
           focus:border-arsenic focus:ring-2 focus:ring-subtle-gray focus:outline-none`}
         type="number" 
         value={value} 
-        min={min}
-        max={max}
         onChange={handleChange}
-        onBlur={onBlur}
+        onBlur={handleBlur}
         disabled={disabled}
       />
 

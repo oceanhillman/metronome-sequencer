@@ -52,7 +52,6 @@ export default function Editor(props) {
             })));
         } else {
             if (!patternInitialized.current) {
-                console.log("trigger");
                 initializeNewPattern();
                 setUndoHistory([]);
                 patternInitialized.current = true;
@@ -74,11 +73,6 @@ export default function Editor(props) {
             }))
         }
     }, []);
-
-    useEffect(() => {
-        console.log("Song:", song);
-        console.log("History:", undoHistory)
-    }, [song, undoHistory]);
 
     // Trigger metronome to play playlist
     function handleClickPlay() {
@@ -192,7 +186,6 @@ export default function Editor(props) {
     function addToUndoHistory(songVersion) {
         const latestVersion = undoHistory[undoHistory.length - 1];
         if ((history.length === 0 || !_.isEqual(songVersion, latestVersion)) && (song.layout.length === song.playlist.length)) {
-            console.log("Setting history: song version:", songVersion, "Latest history:", latestVersion);
             setUndoHistory(prev => ([...prev, songVersion]));
             setRedoHistory([]);
         }

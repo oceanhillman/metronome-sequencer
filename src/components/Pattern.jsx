@@ -32,6 +32,10 @@ const Pattern = forwardRef((props, ref) => {
         }
     }, [currentPatternId, patternData.id]);
 
+    useEffect(() => {
+        console.log(inputData.bpm);
+    }, [inputData.bpm])
+
     const calculateDuration = (numMeasures, beatsPerMeasure, bpm) => {
         const totalBeats = numMeasures * beatsPerMeasure;
         const secondsPerBeat = 60 / bpm;
@@ -42,9 +46,9 @@ const Pattern = forwardRef((props, ref) => {
     };
 
     function validateNumber(value, min, max) {
-        if (value < min) {
+        if (value <= min) {
             return min;
-        } else if (value > max) {
+        } else if (value >= max) {
             return max;
         } else {
             return value;
@@ -52,11 +56,12 @@ const Pattern = forwardRef((props, ref) => {
     }
 
     function handleUpdateNumber(attribute, value, min, max) {
+        const validatedNumber = validateNumber(value, min, max);
         setInputData((prev) => ({
             ...prev,
-            [attribute]: value,
+            [attribute]: validatedNumber,
         }));
-        handleUpdatePattern(patternData.id, attribute, value);
+        handleUpdatePattern(patternData.id, attribute, validatedNumber);
     }
 
     function handleUpdateName(newTitle) {
@@ -67,10 +72,15 @@ const Pattern = forwardRef((props, ref) => {
     }
 
     function handleBlur(attribute, value, min, max) {
-        const validatedNumber = validateNumber(value, min, max)
-        if (patternData[attribute] !== validatedNumber) {
+        const validatedNumber = validateNumber(value, min, max);
+        console.log("Blur", value, patternData[attribute]);
+
+        if (patternData[attribute] !== value && value >= min && value <= max) {
+            console.log("Blur: adding", validatedNumber);
             addToHistory(song);
-            handleUpdateNumber(attribute, validatedNumber, min, max)
+            handleUpdateNumber(attribute, value, min, max);
+        } else {
+            handleUpdateNumber(attribute, validatedNumber, min, max);
         }
     }
 
@@ -87,6 +97,13 @@ const Pattern = forwardRef((props, ref) => {
 
     function handleClickClone() {
         handleClone(patternData);
+    }
+
+    function updateInputValue(attribute, value) {
+        setInputData((prev) => ({
+            ...prev,
+            [attribute]: value
+        }));
     }
 
     function Buttons() {
@@ -128,7 +145,7 @@ const Pattern = forwardRef((props, ref) => {
                         onTouchStart={(e) => e.stopPropagation()}
                         disabled={performing}
                         onChange={(e) => handleUpdateName(e.target.value)}
-                        onBlur={(e) => handleBlurName(e.target.value)}
+                        onBlur={(e) => handleBlurName(e.target.value)}                        
                     />
                 </div>
                 <div className={` ${performing ? "" : "handle cursor-move" } col-span-1 md:col-span-3 flex flex-row w-full h-[24px] border-x-2 border-dark-gunmetal justify-center`}>
@@ -153,7 +170,7 @@ const Pattern = forwardRef((props, ref) => {
                             min={1}
                             max={300}
                             onChange={(e) => handleUpdateNumber('bpm', Number(e.target.value), 1, 300)}
-                            onBlur={(e) => handleBlur('bpm', Number(e.target.value), 1, 300)}
+                            onBlur={(value) => handleBlur('bpm', value, 1, 300)}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
                         />
@@ -167,9 +184,10 @@ const Pattern = forwardRef((props, ref) => {
                             min={1}
                             max={64}
                             onChange={(e) => handleUpdateNumber('beatsPerMeasure', Number(e.target.value))}
-                            onBlur={(e) => handleBlur('beatsPerMeasure', Number(e.target.value), 1, 64)}
+                            onBlur={(value) => handleBlur('beatsPerMeasure', value, 1, 64)}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
+                            updateInputValue={updateInputValue}
                         />
                     </div>
                     <div className="flex flex-col justify-center items-center">
@@ -181,9 +199,10 @@ const Pattern = forwardRef((props, ref) => {
                             min={1}
                             max={64}
                             onChange={(e) => handleUpdateNumber('numMeasures', Number(e.target.value))}
-                            onBlur={(e) => handleBlur('numMeasures', Number(e.target.value), 1, 64)}
+                            onBlur={(value) => handleBlur('numMeasures', value, 1, 64)}
                             disabled={performing}
                             currentPattern={currentPatternId === patternData?.id}
+                            updateInputValue={updateInputValue}
                         />
                     </div>
                 </div>
