@@ -14,16 +14,26 @@ export default function NumberInput( props ) {
         setValue(initialValue);
     }, [initialValue]);
 
-      const handleClickIncrement = (event) => {
+    useEffect(() => {
+        if (value === 0) {
+            setValue('');
+        }
+    }, [value]);
+
+    useEffect(() => {
+        console.log(value);
+    }, [value]);
+
+    const handleClickIncrement = (event) => {
         event.preventDefault();
         if (value < max) {
-          setValue((prevValue) => {
-            const newValue = prevValue + 1;
-            inputRef.current.focus();
-            return newValue;
-          });
+            setValue((prevValue) => {
+                const newValue = prevValue + 1;
+                inputRef.current.focus();
+                return newValue;
+            });
         }
-      };
+    };
     
       const handleClickDecrement = (event) => {
         event.preventDefault();
@@ -38,7 +48,6 @@ export default function NumberInput( props ) {
 
       const handleTouchIncrement = (event) => {
         event.preventDefault();
-        // Use requestAnimationFrame to ensure focus management happens after the default touch action
         requestAnimationFrame(() => {
             if (value < max) {
                 setValue((prevValue) => {
@@ -52,7 +61,6 @@ export default function NumberInput( props ) {
 
     const handleTouchDecrement = (event) => {
         event.preventDefault();
-        // Use requestAnimationFrame to ensure focus management happens after the default touch action
         requestAnimationFrame(() => {
             if (value > min) {
                 setValue((prevValue) => {
@@ -64,13 +72,11 @@ export default function NumberInput( props ) {
         });
     };
 
-      const handleChange = (event) => {
-        if (value === 0) {
-            setValue('');
-        }
-        const newValue = Number(event.target.value);
-        setValue(newValue);
-      };
+    const handleChange = (event) => {
+
+            setValue(Number(event.target.value));
+        
+    };
 
     function handleBlur() {
         if (value <= min) {

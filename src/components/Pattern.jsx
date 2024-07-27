@@ -72,16 +72,20 @@ const Pattern = forwardRef((props, ref) => {
     }
 
     function handleBlur(attribute, value, min, max) {
-        const validatedNumber = validateNumber(value, min, max);
-        console.log("Blur", value, patternData[attribute]);
+        if (value !== '') {
+            const validatedNumber = validateNumber(value, min, max);
 
-        if (patternData[attribute] !== value && value >= min && value <= max) {
-            console.log("Blur: adding", validatedNumber);
+            if (patternData[attribute] !== value && value >= min && value <= max) {
+                addToHistory(song);
+                handleUpdateNumber(attribute, value, min, max);
+            } else {
+                handleUpdateNumber(attribute, validatedNumber, min, max);
+            }
+        } else if (patternData[attribute] !== min) {
             addToHistory(song);
-            handleUpdateNumber(attribute, value, min, max);
-        } else {
-            handleUpdateNumber(attribute, validatedNumber, min, max);
+            handleUpdateNumber(attribute, min, min, max);
         }
+       
     }
 
     function handleBlurName(newTitle) {
