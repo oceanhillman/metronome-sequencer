@@ -55,9 +55,7 @@ export default function Header() {
 
     // Shows logged in user's profile
     function ProfileSection() {
-        if (!user) {
-            return null;
-        } else if (subscribed) {
+        if (user && subscribed) {
             return (
                 <div className="flex lg:flex-row items-center">
                     {/* <Nav.Link disabled className=" mx-2">{user.email}</Nav.Link> */}
@@ -66,11 +64,19 @@ export default function Header() {
                     <Nav.Link href="/account" className="!text-cultured mx-2">Account</Nav.Link>
                 </div>
             );
+        } else if (user) {
+            return (
+                <div className="flex lg:flex-row items-center">
+                    {/* <Nav.Link disabled className=" mx-2">{user.email}</Nav.Link> */}
+                    <Nav.Link href="/get-premium" className="!text-cyan mx-2">Get Premium</Nav.Link>
+                    <Nav.Link href="/account" className="!text-cultured mx-2">Account</Nav.Link>
+                </div>
+            );
         } else {
             return (
                 <div className="flex lg:flex-row items-center">
                     {/* <Nav.Link disabled className="!text-cultured mx-2">{user.email}</Nav.Link> */}
-                    <Nav.Link href="/get-premium mx-2" className="!text-cyan">Get Premium</Nav.Link>
+                    <Nav.Link href="/get-premium" className="!text-cyan mx-2">Get Premium</Nav.Link>
                 </div>
             );
         }
