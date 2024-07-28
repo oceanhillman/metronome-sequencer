@@ -1,10 +1,11 @@
-import SongLibrary from "@/components/SongLibrary"
+import MySongs from "./MySongs";
 
-export default function MySongs() {
+function MySongsPage() {
     return (
         <div className="flex min-h-screen flex-col items-center">
-            <SongLibrary />
+            <MySongs />
         </div>
     );
-
 }
+
+export default MySongsPage;

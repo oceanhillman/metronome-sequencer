@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
             </head>
         <body className="bg-eerie-black">
             <Header />
-            <main className="bg-dark-gunmetal">
+            <main className="bg-dark-gunmetal text-cultured">
                 {children}
             </main>
             <Footer />
