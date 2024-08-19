@@ -1,8 +1,39 @@
 'use client'
+import { useState, useEffect } from 'react'
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { Container, Row, Col, Card, Button, ListGroup } from 'react-bootstrap';
 import { FaCheck } from 'react-icons/fa';
 
+import { isSubscribed } from '@lib/api';
+
 const GetPremium = () => {
+    const { user, error: authError, isLoading } = useUser();
+
+    const [subscribed, setSubscribed] = useState(false);
+    const [buttonLink, setButtonLink] = useState('');
+
+    useEffect(() => {
+        if (isLoading || !user) {
+            setButtonLink('/api/auth/login');
+        } else if (user) {
+            async function getSubscriptionStatus() {
+                const subscriptionStatus = await isSubscribed(user.email);
+                setSubscribed(subscriptionStatus);
+            }
+        
+            getSubscriptionStatus();
+
+            if (subscribed) {
+                setButtonLink('/account');
+            } else {
+                setButtonLink(process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK.toString() + "?prefilled_email=" + user.email);
+            }
+        }
+
+        
+    
+    }, [user, isLoading, subscribed]);
+
   return (
     <Container className="mt-5">
       <h1 className="text-center mb-4 text-cultured">The ultimate practice tool for musicians.</h1>
@@ -21,7 +52,7 @@ const GetPremium = () => {
                 <ListGroup.Item className="!bg-inherit !text-cultured !border-arsenic !flex !flex-row !items-center"><FaCheck className="mr-2" />Support me, a poor person</ListGroup.Item>
               </ListGroup>
               <div className="d-flex justify-content-center mt-4">
-                <Button href={process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK} variant="primary" size="lg" className="!bg-persian-pink !text-chinese-black !font-medium !border-none">Get Premium</Button>
+                <Button href={buttonLink} variant="primary" size="lg" className="!bg-persian-pink !text-chinese-black !font-medium !border-none">Get Premium</Button>
               </div>
             </Card.Body>
           </Card>
