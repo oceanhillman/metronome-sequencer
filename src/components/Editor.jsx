@@ -149,10 +149,10 @@ export default function Editor(props) {
         };
     }
 
-    async function handleSaveAsNew() {
+    async function handleSaveAsNew(newTitle) {
         if (user) {
             try {
-                const id = await addSong(user?.sub, song.title, song.playlist, song.layout);
+                const id = await addSong(user?.sub, newTitle, song.playlist, song.layout);
                 localStorage.removeItem('unsavedProject');
                 window.location.href = `/song/${id}`;
             } catch (error) {
@@ -331,9 +331,8 @@ export default function Editor(props) {
 
                             <Dropdown.Item>
                                 <SaveAsNewButton 
-                                    songTitle={song.title}
                                     updateSongTitle={(newTitle) => setSong(prev => ({...prev, title: newTitle}))}
-                                    onSave={handleSaveAsNew}
+                                    onSave={(newTitle) => handleSaveAsNew(newTitle)}
                                 />
                             </Dropdown.Item>                                
                         </Dropdown.Menu>

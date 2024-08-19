@@ -3,15 +3,15 @@ import { Form, Button } from "react-bootstrap"
 import { useState } from 'react';
 
 export default function SaveAsNewButton(props) {
-    const { songTitle, updateSongTitle, onSave } = props;
+    const { updateSongTitle, onSave } = props;
         
-
+    const [newSongTitle, setNewSongTitle] = useState("Untitled Song");
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
     function handleClickSave() {
-        onSave();
+        onSave(newSongTitle);
         handleClose();
     }
   
@@ -21,17 +21,17 @@ export default function SaveAsNewButton(props) {
           Save as new
         </button>
   
-        <Modal show={show} onHide={handleClose} centered data-bs-theme="dark">
+        <Modal onFocus={e => e.stopPropagation()} show={show} onHide={handleClose} centered data-bs-theme="dark">
           <Modal.Header closeButton>
-            <Modal.Title>
-                Save as new song
+            <Modal.Title className="!text-cultured">
+                Save As New Song
             </Modal.Title>
           </Modal.Header>
             <Modal.Body>
                 <Form.Control className="w-[200px] self-center"
                     type="text"
-                    value={songTitle}
-                    onChange={(e) => updateSongTitle(e.target.value)}
+                    value={newSongTitle}
+                    onChange={(e) => setNewSongTitle(e.target.value)}
                     placeholder={"Song Title"}
                 />
             </Modal.Body>
