@@ -16,12 +16,15 @@ export default function SaveAsNewButton(props) {
     }
   
     return (
-      <>
+      <div onKeyDown={e => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
+      onFocus={e => e.stopPropagation()}
+      onMouseOver={e => e.stopPropagation()}>
         <button className="disabled:text-gray-400" onClick={handleShow}>
           Save as new
         </button>
   
-        <Modal onFocus={e => e.stopPropagation()} show={show} onHide={handleClose} centered data-bs-theme="dark">
+        <Modal show={show} onHide={handleClose} centered data-bs-theme="dark">
           <Modal.Header closeButton>
             <Modal.Title className="!text-cultured">
                 Save As New Song
@@ -44,6 +47,6 @@ export default function SaveAsNewButton(props) {
             </Button>
           </Modal.Footer>
         </Modal>
-      </>
+      </div>
     );
   }
