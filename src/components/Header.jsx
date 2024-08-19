@@ -14,24 +14,25 @@ export default function Header() {
 
     // Session data
     const { user, error, isLoading } = useUser();
+    const [subscriptionFetched, setSubscriptionFetched] = useState(false);
     const [subscribed, setSubscribed] = useState(false);
 
     useEffect(() => {
-        if (isLoading || !user) return;
+        if (isLoading) return;
+        if (!user) {
+            setSubscriptionFetched(true);
+            return;
+        }
 
         async function getSubscriptionStatus() {
             const subscriptionStatus = await isSubscribed(user.email);
             setSubscribed(subscriptionStatus);
+            setSubscriptionFetched(true);
         }
     
         getSubscriptionStatus();
     
     }, [user, isLoading]);
-
-    useEffect(() => {
-        console.log(subscribed);
-    }, [subscribed]);
-    
 
     function handleLogout() {
         // Clear localStorage
@@ -41,44 +42,36 @@ export default function Header() {
         window.location.href = '/api/auth/logout'; // Or use a custom logout API endpoint
     }
 
-    function AuthSection() {
-        if (isLoading) {
+    function NavContent() {
+        if (isLoading || !subscriptionFetched) {
             return <Nav.Link disabled className="!text-cultured">Loading...</Nav.Link>
         } else if (error) {
             return <div>{error.message}</div>
         } else if (!user) {
-            return <Nav.Link href="/api/auth/login" className="!text-cultured">Login</Nav.Link>;
-        } else {
-            return <Nav.Link onClick={handleLogout} className="">Logout</Nav.Link>;
-        };
-    }
-
-    // Shows logged in user's profile
-    function ProfileSection() {
-        if (user && subscribed) {
             return (
                 <div className="flex lg:flex-row items-center">
-                    {/* <Nav.Link disabled className=" mx-2">{user.email}</Nav.Link> */}
-                    <Nav.Link href="/" className="!text-cultured mx-2">Song Editor</Nav.Link>
-                    <Nav.Link href="/my-songs" className="!text-cultured mx-2">My Songs</Nav.Link>
-                    <Nav.Link href="/account" className="!text-cultured mx-2">Account</Nav.Link>
+                    <Nav.Link href="/" className="!text-cultured">Song Editor</Nav.Link>
+                    <Nav.Link href="/get-premium" className="!text-cyan mx-4">Get Premium</Nav.Link>
+                    <Nav.Link href="/api/auth/login" className="!text-cultured">Login</Nav.Link>
                 </div>
             );
-        } else if (user) {
+        } else if (subscribed) {
             return (
                 <div className="flex lg:flex-row items-center">
-                    {/* <Nav.Link disabled className=" mx-2">{user.email}</Nav.Link> */}
-                    <Nav.Link href="/get-premium" className="!text-cyan mx-2">Get Premium</Nav.Link>
-                    <Nav.Link href="/account" className="!text-cultured mx-2">Account</Nav.Link>
+                    <Nav.Link href="/" className="!text-cultured">Song Editor</Nav.Link>
+                    <Nav.Link href="/my-songs" className="!text-cultured mx-4">My Songs</Nav.Link>
+                    <Nav.Link href="/account" className="!text-cultured mr-4">Account</Nav.Link>
+                    <Nav.Link onClick={handleLogout} className="">Logout</Nav.Link>
                 </div>
             );
         } else {
             return (
                 <div className="flex lg:flex-row items-center">
-                    {/* <Nav.Link disabled className="!text-cultured mx-2">{user.email}</Nav.Link> */}
-                    <Nav.Link href="/get-premium" className="!text-cyan mx-2">Get Premium</Nav.Link>
+                    <Nav.Link href="/" className="!text-cultured">Song Editor</Nav.Link>
+                    <Nav.Link href="/get-premium" className="!text-cyan mx-4">Get Premium</Nav.Link>
+                    <Nav.Link onClick={handleLogout} className="">Logout</Nav.Link>
                 </div>
-            );
+            )
         }
     }
             
@@ -91,8 +84,7 @@ export default function Header() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ml-auto flex flex-col lg:flex-row items-center">
-                        <ProfileSection />
-                        <AuthSection />
+                        <NavContent />
                     </Nav>
                 </Navbar.Collapse>
             </Container>
