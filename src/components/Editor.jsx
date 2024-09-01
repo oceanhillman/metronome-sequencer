@@ -50,6 +50,7 @@ export default function Editor(props) {
                 layout: songPayload.layout,
                 playlist: songPayload.playlist,
             })));
+            setSongTitle(songPayload.title);
         } else {
             if (!patternInitialized.current) {
                 initializeNewPattern();
