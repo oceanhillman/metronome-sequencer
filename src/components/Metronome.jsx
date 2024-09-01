@@ -171,7 +171,8 @@ export default function Metronome(props) {
                     patternIndex++;
                     if (patternIndex >= playlist.length) {
                         if (props.onPlaylistEnd) {
-                            props.onPlaylistEnd();
+                            setTimeout(props.onPlaylistEnd, 60 * 1000 / currentPattern.bpm);
+                            
                         }
                         return;
                     }
