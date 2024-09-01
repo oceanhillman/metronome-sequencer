@@ -25,7 +25,7 @@ const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout
         // Simulate loading
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 150);
+        }, 1000);
 
         // Cleanup timer on unmount
         return () => clearTimeout(timer);
