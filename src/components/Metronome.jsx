@@ -184,6 +184,12 @@ export default function Metronome(props) {
         playClick();
     }
 
+    useEffect(() => {
+        if (props.performing === true) {
+            setPlaying(false);
+        }
+    }, [props.performing]);
+
     return (
         <div className="flex flex-col items-center text-cultured">
             <div className="flex flex-col items-center">
@@ -206,36 +212,44 @@ export default function Metronome(props) {
                     ))}
                 </div> */}
             </div>
-            <div className="flex flex-row mt-3">
-                <div className="flex flex-col justify-center items-center mx-2">
-                    <p className="text-cultured m-0">BPM</p>
-                    <NumberInput
-                        name="metronomeBpm"
-                        value={bpm}
-                        min={0}
-                        max={300}
-                        onChange={(e) => setBpm(Number(e.target.value))}
-                    />
+            <div className={`${props.performing ? "flex" : "hidden" } flex-col items-center justify-center mt-4 mb-4 lg:mb-8 text-cultured font-roboto text-lg h-[100px]`}><p className="m-0">Performing song...</p></div>
+            <div className={`${props.performing ? "hidden" : "flex" } flex-col items-center justify-center mt-4 mb-4 lg:mb-8`}>
+                <div className="flex flex-row">
+                    <div className="flex flex-col justify-center items-center mx-2">
+                        <p className="text-cultured m-0">BPM</p>
+                        <NumberInput
+                            name="metronomeBpm"
+                            value={bpm}
+                            min={0}
+                            max={300}
+                            onChange={(e) => setBpm(Number(e.target.value))}
+                            disabled={props.performing}
+                            onBlur={() => {}}
+                        />
+                    </div>
+                    <div className="flex flex-col justify-center items-center mx-2">
+                        <p className="text-cultured m-0">Beats per measure</p>
+                        <NumberInput
+                            name="metronomeBeatsPerMeasure"
+                            value={beatsPerMeasure}
+                            min={0}
+                            max={64}
+                            onChange={(e) => setBeatsPerMeasure(Number(e.target.value))}
+                            disabled={props.performing}
+                            onBlur={() => {}}
+                        />
+                    </div>
                 </div>
-                <div className="flex flex-col justify-center items-center mx-2">
-                    <p className="text-cultured m-0">Beats per measure</p>
-                    <NumberInput
-                        name="metronomeBeatsPerMeasure"
-                        value={beatsPerMeasure}
-                        min={0}
-                        max={64}
-                        onChange={(e) => setBeatsPerMeasure(Number(e.target.value))}
-                    />
+                <div className="flex flex-row mt-2">
+                    <button onClick={() => setPlaying(!playing)} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
+                        {playing ? 'Stop Click' : 'Play Click'}
+                    </button>
+                    <button onClick={handleTap} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
+                        Tap Tempo
+                    </button>
                 </div>
             </div>
-            <div className="flex flex-row ">
-                <button onClick={() => setPlaying(!playing)} className="mt-2 bg-muted-blue text-white px-2 py-1 rounded mx-2">
-                    {playing ? 'Stop Click' : 'Play Click'}
-                </button>
-                <button onClick={handleTap} className="mt-2 bg-muted-blue text-white px-4 py-1 rounded mx-2">
-                    Tap Tempo
-                </button>
-            </div>
+            
         </div>
     );
 }

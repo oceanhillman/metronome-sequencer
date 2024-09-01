@@ -274,7 +274,7 @@ export default function Editor(props) {
                     onPlaylistEnd={() => setPerforming(false)}
                     onNextPattern={(patternId) => setCurrentPattern(patternId)}
                 />
-                <div className="flex flex-col justify-center mt-4 lg:mt-8">
+                <div className="flex flex-col justify-center">
                     <div className="flex flex-col items-center justify-center">
                         <div className="flex flex-col w-[100%] lg:w-[65%] xl:w-1/2 justify-center">
                             <div className="flex flex-col">
