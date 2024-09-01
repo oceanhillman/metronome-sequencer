@@ -7,6 +7,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout, handleUpdatePattern, handleClickDelete, handleClone, currentPatternId, performing, startFromPattern }) => {
     const [gridLayout, setGridLayout] = useState([]);
     const [settingFromHere, setSettingFromHere] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const isManualChange = useRef(false);
 
     useEffect(() => {
@@ -16,9 +17,19 @@ const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout
         }
     }, [song.layout]);
 
-      useEffect(() => {
+    useEffect(() => {
         setSettingFromHere(false);
-      }, [settingFromHere])
+    }, [settingFromHere]);
+
+    useEffect(() => {
+        // Simulate loading
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 150);
+
+        // Cleanup timer on unmount
+        return () => clearTimeout(timer);
+    }, []);
 
     // Sort the layout by the y value (and x if necessary)
     function sortLayout(layout) {   
@@ -40,7 +51,7 @@ const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout
         handleUpdatePlaylist(newPlaylistOrder);
     }
 
-    // happens when user changes ui.
+    // happens when user changes ui
     const handleLayoutChange = (layout) => {
         setSettingFromHere(true);
         handleUpdateLayout(layout);
@@ -51,57 +62,57 @@ const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout
             isManualChange.current = false;
         }
     }
-        
+
     function handleDragStart () {
         isManualChange.current = true;
         document.body.classList.add('disable-select');
-    };
-    
+    }
+
     function handleDragStop () {
         document.body.classList.remove('disable-select');
-    };
-    
-    return song && song.playlist ? (
-        <div className={`bg-black border-2 border-muted-blue rounded-xl px-[2px] lg:px-4 mt-2 lg:mt-4 ${song.playlist.length === 0 ? "py-3" : ""}`}>
-            {song.playlist.length === 0 ? <div key="tutorial" className="text-center text-cultured">Click + to create a new pattern.</div> : null}
-            <ResponsiveGridLayout
-                className="layout"
-                layouts={{xxl: gridLayout, xl: gridLayout, lg: gridLayout, md: gridLayout, sm: gridLayout, xs: gridLayout, xxs: gridLayout}}
-                cols={{xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1, xxs: 1}}
-                rowHeight={120}
-                margin={song.playlist.length === 0 ? [0, 0] : [0, 20]}
-                width={"100%"}
-                onLayoutChange={(layout, layouts) => handleLayoutChange(layout)}
-                draggableHandle=".handle"
-                draggableCancel=".no-drag"
-                onDragStart={handleDragStart}
-                onDragStop={handleDragStop}
-                transitionDuration={0}
-            >
-                {song.playlist.map(pattern => {
-                    const patternLayout = gridLayout.find(layout => layout.i === pattern.id);
-                    return (
-                        <div key={pattern.id} className="h-full">
-                            <Pattern
-                                key={pattern.id}
-                                song={song}
-                                dataGrid={patternLayout}
-                                addToHistory={addToHistory}
-                                patternData={pattern}
-                                handleUpdatePattern={handleUpdatePattern}
-                                handleClickDelete={handleClickDelete}
-                                handleClone={handleClone}
-                                currentPatternId={currentPatternId}
-                                performing={performing}
-                                startFromPattern={startFromPattern}
-                            />
-                        </div>
-                    );
-                })}
-            </ResponsiveGridLayout>
+    }
+
+    return (
+        <div className={`bg-black border-2 border-muted-blue rounded-xl px-[2px] lg:px-4 mt-2 lg:mt-4 ${isLoading || song.playlist.length === 0 ? "py-3" : ""}`}>
+            {isLoading ? <div className="text-center text-culture m-0 p-0">Loading...</div> : (<>
+                {song.playlist.length === 0 ? <div key="tutorial" className="text-center text-cultured">Click + to create a new pattern.</div> : null}
+                <ResponsiveGridLayout
+                    className="layout"
+                    layouts={{xxl: gridLayout, xl: gridLayout, lg: gridLayout, md: gridLayout, sm: gridLayout, xs: gridLayout, xxs: gridLayout}}
+                    cols={{xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1, xxs: 1}}
+                    rowHeight={120}
+                    margin={song.playlist.length === 0 ? [0, 0] : [0, 20]}
+                    width={"100%"}
+                    onLayoutChange={(layout, layouts) => handleLayoutChange(layout)}
+                    draggableHandle=".handle"
+                    draggableCancel=".no-drag"
+                    onDragStart={handleDragStart}
+                    onDragStop={handleDragStop}
+                    transitionDuration={0}
+                >
+                    {song.playlist.map(pattern => {
+                        const patternLayout = gridLayout.find(layout => layout.i === pattern.id);
+                        return (
+                            <div key={pattern.id} className="h-full">
+                                <Pattern
+                                    key={pattern.id}
+                                    song={song}
+                                    dataGrid={patternLayout}
+                                    addToHistory={addToHistory}
+                                    patternData={pattern}
+                                    handleUpdatePattern={handleUpdatePattern}
+                                    handleClickDelete={handleClickDelete}
+                                    handleClone={handleClone}
+                                    currentPatternId={currentPatternId}
+                                    performing={performing}
+                                    startFromPattern={startFromPattern}
+                                />
+                            </div>
+                        );
+                    })}
+                </ResponsiveGridLayout>
+            </>)}
         </div>
-    ) : (
-        <p key="loading">Loading...</p>
     );
 };
 
