@@ -25,6 +25,7 @@ const Pattern = forwardRef((props, ref) => {
     const patternRef = useRef(null);
 
     const startRef = useRef();
+    const shouldUpdateRef = useRef(false); // Ref to track if updates should continue
 
     useEffect(() => {
         if (currentPatternId === patternData.id) {
@@ -56,30 +57,36 @@ const Pattern = forwardRef((props, ref) => {
         setDuration(calculateDuration(inputData.numMeasures, inputData.beatsPerMeasure, inputData.bpm));
     }, [inputData.bpm, inputData.beatsPerMeasure, inputData.numMeasures]);
 
-
-
-   
-
     useEffect(() => {
-        if (isCurrentPattern) {
-            const updateProgress = () => {
-                const elapsed = (Date.now() - startRef.current) / 1000; // Time in seconds
-                const newFraction = Math.min(1, elapsed / duration);
-                setFractionElapsed(newFraction);
-          
-                // Continue updating if the total duration has not been reached
-                if (newFraction < 1) {
-                  requestAnimationFrame(updateProgress);
-                }
-              };
-          
-              // Start the animation
-              requestAnimationFrame(updateProgress);
-          
-              // Cleanup function
-              return () => cancelAnimationFrame(updateProgress);
+        // Set the start time when the pattern starts
+        startRef.current = Date.now();
+
+        if (isCurrentPattern && performing) {
+        shouldUpdateRef.current = true; // Allow updates
+
+        const updateProgress = () => {
+            if (!shouldUpdateRef.current) return; // Exit if updates should not continue
+
+            const elapsed = (Date.now() - startRef.current) / 1000; // Time in seconds
+            const newFraction = Math.min(1, elapsed / duration);
+            setFractionElapsed(newFraction);
+
+            // Continue updating if the total duration has not been reached and performing is true
+            if (newFraction < 1) {
+            requestAnimationFrame(updateProgress);
+            }
+        };
+
+        // Start the animation
+        requestAnimationFrame(updateProgress);
         }
-    }, [isCurrentPattern]);
+
+        // Cleanup function to stop animation
+        return () => {
+        shouldUpdateRef.current = false; // Stop updates
+        setFractionElapsed(0);
+        };
+    }, [isCurrentPattern, performing, duration]);
 
     const calculateDuration = (numMeasures, beatsPerMeasure, bpm) => {
         const totalBeats = numMeasures * beatsPerMeasure;
@@ -137,7 +144,6 @@ const Pattern = forwardRef((props, ref) => {
             addToHistory(song);
             handleUpdateNumber(attribute, min, min, max);
         }
-       
     }
 
     function handleBlurName(newTitle) {
@@ -215,7 +221,7 @@ const Pattern = forwardRef((props, ref) => {
 
             <div className={`no-drag cursor-auto absolute w-full h-[80%] rounded-b-md bottom-0 
                 ${isCurrentPattern ? "bg-subtle-gray" : "bg-eerie-black"}`}>
-                {isCurrentPattern ? 
+                {isCurrentPattern && performing ? 
                 <div 
                     className="absolute w-full h-full bg-white/[0.03] border-r border-white"
                     style={{ width: `${fractionElapsed * 100}%` }}>
