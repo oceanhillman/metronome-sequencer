@@ -7,6 +7,7 @@ import DeleteIcon from "/public/delete.svg"
 import CloneIcon from "/public/clone.svg"
 import { FaPlay } from "react-icons/fa6";
 import { IconContext } from "react-icons";
+import { current } from "tailwindcss/colors"
 
 const Pattern = forwardRef((props, ref) => {
     const { dataGrid, song, addToHistory, patternData, handleUpdatePattern, handleClone, handleClickDelete, currentPatternId, performing, startFromPattern } = props;
@@ -17,26 +18,77 @@ const Pattern = forwardRef((props, ref) => {
         bpm: patternData.bpm,
         numMeasures: patternData.numMeasures,
     });
-    const [duration, setDuration] = useState("00:00");
+    const [isCurrentPattern, setIsCurrentPattern] = useState(false);
+    const [duration, setDuration] = useState(0);
+    const [fractionElapsed, setFractionElapsed] = useState(0);
+    const [durationText, setDurationText] = useState("00:00");
     const patternRef = useRef(null);
 
+    const startRef = useRef();
+
     useEffect(() => {
-        const newDuration = calculateDuration(patternData.numMeasures, patternData.beatsPerMeasure, patternData.bpm);
-        setDuration(newDuration);
+        if (currentPatternId === patternData.id) {
+            setIsCurrentPattern(true);
+        } else {
+            setIsCurrentPattern(false);
+        }
+    }, [currentPatternId])
+
+    useEffect(() => {
+        const newDuration = getDurationText(patternData.numMeasures, patternData.beatsPerMeasure, patternData.bpm);
+        setDurationText(newDuration);
         setInputData(patternData);
     }, [patternData])
     
     useEffect(() => {
-        if (currentPatternId === patternData.id) {
+        if (isCurrentPattern) {
             patternRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-    }, [currentPatternId, patternData.id]);
+    }, [isCurrentPattern]);
 
     useEffect(() => {
-        console.log(inputData.bpm);
-    }, [inputData.bpm])
+        if (isCurrentPattern) {
+            startRef.current = Date.now();
+        }
+    }, [isCurrentPattern]);
+
+    useEffect(() => {
+        setDuration(calculateDuration(inputData.numMeasures, inputData.beatsPerMeasure, inputData.bpm));
+    }, [inputData.bpm, inputData.beatsPerMeasure, inputData.numMeasures]);
+
+
+
+   
+
+    useEffect(() => {
+        if (isCurrentPattern) {
+            const updateProgress = () => {
+                const elapsed = (Date.now() - startRef.current) / 1000; // Time in seconds
+                const newFraction = Math.min(1, elapsed / duration);
+                setFractionElapsed(newFraction);
+          
+                // Continue updating if the total duration has not been reached
+                if (newFraction < 1) {
+                  requestAnimationFrame(updateProgress);
+                }
+              };
+          
+              // Start the animation
+              requestAnimationFrame(updateProgress);
+          
+              // Cleanup function
+              return () => cancelAnimationFrame(updateProgress);
+        }
+    }, [isCurrentPattern]);
 
     const calculateDuration = (numMeasures, beatsPerMeasure, bpm) => {
+        const totalBeats = numMeasures * beatsPerMeasure;
+        const secondsPerBeat = 60 / bpm;
+        const totalSeconds = totalBeats * secondsPerBeat;
+        return totalSeconds;
+    };
+
+    const getDurationText = (numMeasures, beatsPerMeasure, bpm) => {
         const totalBeats = numMeasures * beatsPerMeasure;
         const secondsPerBeat = 60 / bpm;
         const totalSeconds = totalBeats * secondsPerBeat;
@@ -135,8 +187,8 @@ const Pattern = forwardRef((props, ref) => {
     return (
         <div ref={patternRef} data-grid={{ ...dataGrid, isResizable: false }} key={ref} id={patternData.id}
         className={`flex flex-row rounded-md h-full w-full content-between justify-center 
-            ${currentPatternId === patternData?.id ? "bg-arsenic" : "bg-muted-blue"} text-black`}>
-
+            ${isCurrentPattern ? "bg-arsenic" : "bg-muted-blue"} text-black`}>
+            
             <div className="grid grid-cols-3 md:grid-cols-5 w-full">
                 <div className="col-span-1 mx-2">
                     <input
@@ -156,14 +208,18 @@ const Pattern = forwardRef((props, ref) => {
                     <Image src={DragHandleIcon} alt="Drag handle icon" className={`${performing ? "hidden" : ""} w-auto h-auto`} />
                 </div>
                 <div className="col-span-1 flex justify-between mx-2">
-                    <p className="mt-[2px] text-gray-400 text-sm ">{duration}</p>
+                    <p className="mt-[2px] text-gray-400 text-sm ">{durationText}</p>
                     <Buttons />
                 </div>
             </div>
 
             <div className={`no-drag cursor-auto absolute w-full h-[80%] rounded-b-md bottom-0 
-                ${currentPatternId === patternData?.id ? "bg-subtle-gray" : "bg-eerie-black"}`}>
-
+                ${isCurrentPattern ? "bg-subtle-gray" : "bg-eerie-black"}`}>
+                {isCurrentPattern ? 
+                <div 
+                    className="absolute w-full h-full bg-white/[0.03] border-r border-white"
+                    style={{ width: `${fractionElapsed * 100}%` }}>
+                </div> : null}
                 <div className="flex flex-row justify-center text-xl text-cultured">
                     <div className="flex flex-col justify-center items-center py-2">
                         <p className="m-0">BPM</p>
@@ -176,7 +232,7 @@ const Pattern = forwardRef((props, ref) => {
                             onChange={(e) => handleUpdateNumber('bpm', Number(e.target.value), 1, 300)}
                             onBlur={(value) => handleBlur('bpm', value, 1, 300)}
                             disabled={performing}
-                            currentPattern={currentPatternId === patternData?.id}
+                            currentPattern={isCurrentPattern}
                         />
                     </div>
                     <div className="flex flex-col justify-center items-center px-2 lg:px-4">
@@ -190,7 +246,7 @@ const Pattern = forwardRef((props, ref) => {
                             onChange={(e) => handleUpdateNumber('beatsPerMeasure', Number(e.target.value))}
                             onBlur={(value) => handleBlur('beatsPerMeasure', value, 1, 64)}
                             disabled={performing}
-                            currentPattern={currentPatternId === patternData?.id}
+                            currentPattern={isCurrentPattern}
                             updateInputValue={updateInputValue}
                         />
                     </div>
@@ -205,7 +261,7 @@ const Pattern = forwardRef((props, ref) => {
                             onChange={(e) => handleUpdateNumber('numMeasures', Number(e.target.value))}
                             onBlur={(value) => handleBlur('numMeasures', value, 1, 64)}
                             disabled={performing}
-                            currentPattern={currentPatternId === patternData?.id}
+                            currentPattern={isCurrentPattern}
                             updateInputValue={updateInputValue}
                         />
                     </div>
