@@ -10,7 +10,7 @@ import { IconContext } from "react-icons";
 import { current } from "tailwindcss/colors"
 
 const Pattern = forwardRef((props, ref) => {
-    const { dataGrid, song, addToHistory, patternData, handleUpdatePattern, handleClone, handleClickDelete, currentPatternId, performing, startFromPattern } = props;
+    const { dataGrid, song, addToHistory, patternData, handleUpdatePattern, handleClone, handleClickDelete, currentPatternId, performing, startFromPattern, isPlaying } = props;
 
     const [inputData, setInputData] = useState({
         name: patternData.name,
@@ -64,18 +64,18 @@ const Pattern = forwardRef((props, ref) => {
         if (isCurrentPattern && performing) {
         shouldUpdateRef.current = true; // Allow updates
 
-        const updateProgress = () => {
-            if (!shouldUpdateRef.current) return; // Exit if updates should not continue
+            const updateProgress = () => {
+                if (!shouldUpdateRef.current) return; // Exit if updates should not continue
 
-            const elapsed = (Date.now() - startRef.current) / 1000; // Time in seconds
-            const newFraction = Math.min(1, elapsed / duration);
-            setFractionElapsed(newFraction);
+                const elapsed = (Date.now() - startRef.current) / 1000; // Time in seconds
+                const newFraction = Math.min(1, elapsed / duration);
+                setFractionElapsed(newFraction);
 
-            // Continue updating if the total duration has not been reached and performing is true
-            if (newFraction < 1) {
-            requestAnimationFrame(updateProgress);
-            }
-        };
+                // Continue updating if the total duration has not been reached and performing is true
+                if (newFraction < 1) {
+                requestAnimationFrame(updateProgress);
+                }
+            };
 
         // Start the animation
         requestAnimationFrame(updateProgress);
@@ -86,7 +86,7 @@ const Pattern = forwardRef((props, ref) => {
         shouldUpdateRef.current = false; // Stop updates
         setFractionElapsed(0);
         };
-    }, [isCurrentPattern, performing, duration]);
+    }, [isCurrentPattern, performing]);
 
     const calculateDuration = (numMeasures, beatsPerMeasure, bpm) => {
         const totalBeats = numMeasures * beatsPerMeasure;
@@ -172,8 +172,8 @@ const Pattern = forwardRef((props, ref) => {
         if (!performing) {
             return (
                 <div className="col-span-1 flex h-[24px] items-center space-x-1 ml-auto mr-2">
-                    <button onClick={handleClickPlay} className="w-[20px] h-[20px]">
-                        <IconContext.Provider value={{ color: 'green', }}>
+                    <button onClick={handleClickPlay} disabled={isPlaying} className="w-[20px] h-[20px]">
+                        <IconContext.Provider value={{ color: isPlaying ? 'gray' : 'green', }}>
                             <FaPlay />
                         </IconContext.Provider>
                     </button>

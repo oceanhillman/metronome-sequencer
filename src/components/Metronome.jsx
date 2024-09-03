@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import NumberInput from "@/components/NumberInput";
+import { interval } from "date-fns";
 
 export default function Metronome(props) {
     const [bpm, setBpm] = useState(120);
@@ -11,6 +12,9 @@ export default function Metronome(props) {
     const [playing, setPlaying] = useState(false);
     const [rotation, setRotation] = useState(-45);
     const [tapTimes, setTapTimes] = useState([]);
+    const [elapsedBeatTime, setElapsedBeatTime] = useState(0);
+    const [transitionDuration, setTransitionDuration] = useState(0);
+    const [direction, setDirection] = useState(0);
 
     const audioContext = useRef(null);
     const audioHiBuffer = useRef(null);
@@ -39,8 +43,11 @@ export default function Metronome(props) {
     }
 
     useEffect(() => {
+        props.handlePlaying(playing);
         if (playing) {
             lastClickTimeRef.current = performance.now();
+            // setRotation(-45);
+            // setDirection(0);
             playMetronome();
         } else {
             clearTimeout(intervalIdRef.current);
@@ -78,8 +85,6 @@ export default function Metronome(props) {
             clearTimeout(intervalIdRef.current);
         }
 
-        setRotation((prev) => (prev === -45 ? 45 : -45));
-
         setCurrentBeat((prevBeat) => {
             const newBeat = prevBeat % beatsPerMeasure;
             const buffer = newBeat === 0 ? audioHiBuffer.current : audioLoBuffer.current;
@@ -96,6 +101,62 @@ export default function Metronome(props) {
 
         intervalIdRef.current = setTimeout(playMetronome, getInterval(bpm));
     };
+
+    const animationFrameId = useRef();
+
+    useEffect(() => {
+        let animationFrameId;
+        const initialStartTime = performance.now();
+        let startTime = initialStartTime;
+        const interval = getInterval(bpm);
+
+        if (currentBeat === 0) {
+            return;
+        }
+    
+        const updateArmAngle = (currentTime) => {
+            // if (currentTime < startTime) {
+            //     startTime = currentTime; // Reset startTime if currentTime is less
+            //     console.log("reset start time", startTime);
+            // }
+    
+            const elapsedTime = currentTime - startTime;
+
+            if ((elapsedTime) < 16) {
+                animationFrameId = requestAnimationFrame(updateArmAngle);
+                return;
+            }
+
+            setElapsedBeatTime(elapsedTime);
+    
+            const fractionElapsed = (elapsedTime % interval) / interval;
+            const isEvenBeat = currentBeat % 2 === 0;
+    
+            let newAngle;
+    
+            if (!isEvenBeat) {
+                setDirection(0);
+                newAngle = -45 + (90 * fractionElapsed);
+            } else {
+                setDirection(1);
+                newAngle = 45 - (90 * fractionElapsed);
+            }
+    
+            if ((playing || props.performing) && newAngle >= -45 && newAngle <= 45) {
+                setRotation(newAngle);
+                animationFrameId = requestAnimationFrame(updateArmAngle);
+            } else {
+                if (playing || props.performing) {
+                    animationFrameId = requestAnimationFrame(updateArmAngle);
+                }
+            }
+        };
+        animationFrameId = requestAnimationFrame(updateArmAngle);
+    
+        return () => {
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, [currentBeat, props.performing]);
 
     const handleTap = () => {
         setPlaying(false);
@@ -132,6 +193,8 @@ export default function Metronome(props) {
     }, [props.performing]);
 
     function stopPerformance() {
+        setPlaying(false);
+        resetArmPosition();
         clearTimeout(playlistTimerRef.current);
         props.onNextPattern("");
     };
@@ -151,7 +214,8 @@ export default function Metronome(props) {
                 setNumMeasures(currentPattern.numMeasures);
             }
 
-            setRotation((prev) => (prev === -45 ? 45 : -45));
+            setCurrentBeat(beatIndex + 1);
+            setDirection(beatIndex % 2);
 
             const buffer = beatIndex % currentPattern.beatsPerMeasure === 0 ? audioHiBuffer.current : audioLoBuffer.current;
             if (buffer) {
@@ -190,6 +254,53 @@ export default function Metronome(props) {
         }
     }, [props.performing]);
 
+    const resetTimeoutRef = useRef();
+
+    function resetArmPosition() {
+        if (rotation !== -45) {
+            function restArm (duration) {
+                setRotation(-45);
+                setTransitionDuration(duration);
+            }
+    
+            const remainingTime = getInterval(bpm) - elapsedBeatTime;
+    
+            if (direction === 0) {
+                setRotation(45);
+                setTransitionDuration(remainingTime);
+                resetTimeoutRef.current = setTimeout(() => restArm(getInterval(bpm)), remainingTime);
+            } else {
+                restArm(remainingTime);
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (!playing && !props.performing) {
+            setCurrentBeat(0);
+            resetArmPosition();
+        } else {
+            clearTimeout(resetTimeoutRef);
+        }
+    }, [playing, props.performing]);
+
+    function handleToggleMetronome() {
+        if (playing) {
+            setPlaying(false);
+            // setCurrentBeat(0);
+
+            // resetArmPosition();
+
+        } else {
+            setPlaying(true);
+        }
+        
+    }
+
+    // useEffect(() => {
+    //     console.log(rotation);
+    // }, [rotation]);
+
     return (
         <div className="flex flex-col items-center text-cultured">
             <div className="flex flex-col items-center">
@@ -199,11 +310,11 @@ export default function Metronome(props) {
                     }}
                 ></div>
                 <div
-                    className={`absolute w-1 h-20 rounded-xl bg-cultured transition-transform ease-linear`}
+                    className={`absolute w-1 h-20 rounded-xl bg-cultured ${(!playing && !props.performing) ? "transition-transform ease-linear" : ""}`}
                     style={{
                         transform: `rotate(${rotation}deg)`,
                         transformOrigin: 'bottom center',
-                        transitionDuration: `${getInterval(bpm)}ms`,
+                        transitionDuration: (!playing && !props.performing) ? `${transitionDuration}ms` : '0ms',
                     }}
                 ></div>
                 {/* <div className="flex flex-row mt-4 flex-wrap">
@@ -241,7 +352,7 @@ export default function Metronome(props) {
                     </div>
                 </div>
                 <div className="flex flex-row mt-2">
-                    <button onClick={() => setPlaying(!playing)} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
+                    <button onClick={handleToggleMetronome} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
                         {playing ? 'Stop Click' : 'Play Click'}
                     </button>
                     <button onClick={handleTap} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
