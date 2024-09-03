@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useUser } from '@auth0/nextjs-auth0/client';
 
 import Metronome from "@/components/Metronome";
+import BeatTracker from '@/components/BeatTracker';
 import Playlist from "@/components/Playlist";
 import SaveAsNewButton from "@/components/SaveAsNewButton";
 
@@ -38,6 +39,8 @@ export default function Editor(props) {
     const [currentPattern, setCurrentPattern] = useState();
     const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
     const [metronomeIsPlaying, setMetronomeIsPlaying] = useState(false);
+    const [beatsTracked, setBeatsTracked] = useState(0);
+    const [currentBeatTracked, setCurrentBeatTracked] = useState(0);
     const patternInitialized = useRef(false);
     const bottomRef = useRef(null);
     
@@ -275,6 +278,8 @@ export default function Editor(props) {
                     onPlaylistEnd={() => setPerforming(false)}
                     onNextPattern={(patternId) => setCurrentPattern(patternId)}
                     handleMetronomeIsPlaying={(isPlaying) => setMetronomeIsPlaying(isPlaying)}
+                    updateCurrentBeat={(currentBeat) => setCurrentBeatTracked(currentBeat)}
+                    updateBeatsPerMeasure={(beatsPerMeasure) => setBeatsTracked(beatsPerMeasure)}
                 />
                 <div className="flex flex-col justify-center">
                     <div className="flex flex-col items-center justify-center">
@@ -315,55 +320,67 @@ export default function Editor(props) {
             </div>
         </div>
 
-        <div ref={bottomRef} className="sticky bottom-0 bg-eerie-black border-t-2 border-arsenic text-cultured py-4">
-            <div className="flex flex-row items-center justify-center w-full">
-                <div className="flex w-full h-full items-center justify-center">
-                    <Dropdown
-                        show={dropdownIsOpen}
-                        onToggle={toggleDropdown}
-                    >
-                        <Dropdown.Toggle variant="success" id="dropdown-basic" className="d-flex items-center justify-center">
-                            <IoIosSave />
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu className="flex flex-col">
-                            <Dropdown.Item disabled={user && song.id ? false : true}>
-                                <button onClick={handleSave} className="disabled:text-gray-400">
-                                    Save
-                                </button>
-                            </Dropdown.Item>
-
-                            <Dropdown.Item>
-                                <SaveAsNewButton 
-                                    updateSongTitle={(newTitle) => setSong(prev => ({...prev, title: newTitle}))}
-                                    onSave={(newTitle) => handleSaveAsNew(newTitle)}
-                                />
-                            </Dropdown.Item>                                
-                        </Dropdown.Menu>
-                    </Dropdown>
+        <div ref={bottomRef} className="sticky bottom-0 bg-eerie-black border-t-2 border-arsenic text-cultured pt-3 pb-4">
+            <div className="flex flex-col items-center justify-center w-full">
+                <div className="flex flex-row items-center justify-center w-full">
+                    <div className="flex flex-row items-center justify-center mb-2">
+                        <BeatTracker
+                            beatsPerMeasure={beatsTracked}
+                            currentBeat={currentBeatTracked}
+                        />
+                    </div>
                 </div>
-                <div className="flex flex-row items-center justify-center">
-                    <div className="flex flex-row w-full h-full items-center justify-center">
-                        <button onClick={undo} disabled={undoHistory.length === 0} className="text-cultured disabled:text-arsenic text-xl">
-                            Undo
-                        </button>
-                    </div>
-                    <div className="flex items-center justify-center mx-4">
-                        <button onClick={handleClickPlay} disabled={metronomeIsPlaying} className={`mt-2 mx-2 text-black h-16 w-16 flex items-center justify-center rounded-full
-                        ${metronomeIsPlaying ? "bg-gray-400" : "bg-cultured"}`}>
-                            {performing ? <FaStop className="h-8 w-8" /> : <FaPlay className="ml-[5px] h-8 w-8"/>}
-                        </button>
-                    </div>
+                <div className="flex flex-row items-center justify-center w-full">
                     <div className="flex w-full h-full items-center justify-center">
-                        <button onClick={redo} disabled={redoHistory.length === 0} className="text-cultured disabled:text-arsenic text-xl">
-                            Redo
-                        </button>
+                        <Dropdown
+                            show={dropdownIsOpen}
+                            onToggle={toggleDropdown}
+                        >
+                            <Dropdown.Toggle variant="success" id="dropdown-basic" className="d-flex items-center justify-center">
+                                <IoIosSave />
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu className="flex flex-col">
+                                <Dropdown.Item disabled={user && song.id ? false : true}>
+                                    <button onClick={handleSave} className="disabled:text-gray-400">
+                                        Save
+                                    </button>
+                                </Dropdown.Item>
+
+                                <Dropdown.Item>
+                                    <SaveAsNewButton 
+                                        updateSongTitle={(newTitle) => setSong(prev => ({...prev, title: newTitle}))}
+                                        onSave={(newTitle) => handleSaveAsNew(newTitle)}
+                                    />
+                                </Dropdown.Item>                                
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </div>
-                </div>
-                <div className="col-span-1 flex w-full h-full items-center justify-center">
-                    <Button onClick={handleClickClear} variant="danger" className="text-cultured border-none">
-                        Clear
-                    </Button>
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="flex flex-row items-center justify-center">
+                            <div className="flex flex-row w-full h-full items-center justify-center">
+                                <button onClick={undo} disabled={undoHistory.length === 0} className="text-cultured disabled:text-arsenic text-xl">
+                                    Undo
+                                </button>
+                            </div>
+                            <div className="flex items-center justify-center mx-4">
+                                <button onClick={handleClickPlay} disabled={metronomeIsPlaying} className={`mt-2 mx-2 text-black h-16 w-16 flex items-center justify-center rounded-full
+                                ${metronomeIsPlaying ? "bg-gray-400" : "bg-cultured"}`}>
+                                    {performing ? <FaStop className="h-8 w-8" /> : <FaPlay className="ml-[5px] h-8 w-8"/>}
+                                </button>
+                            </div>
+                            <div className="flex w-full h-full items-center justify-center">
+                                <button onClick={redo} disabled={redoHistory.length === 0} className="text-cultured disabled:text-arsenic text-xl">
+                                    Redo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-span-1 flex w-full h-full items-center justify-center">
+                        <Button onClick={handleClickClear} variant="danger" className="text-cultured border-none">
+                            Clear
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

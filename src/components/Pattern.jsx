@@ -249,7 +249,7 @@ const Pattern = forwardRef((props, ref) => {
                             key="beatsPerMeasure"
                             value={inputData.beatsPerMeasure}
                             min={1}
-                            max={64}
+                            max={32}
                             onChange={() => {}}
                             onBlur={(value) => handleBlur('beatsPerMeasure', value, 1, 64)}
                             disabled={performing}

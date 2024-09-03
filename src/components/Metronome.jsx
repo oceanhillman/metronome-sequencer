@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import NumberInput from "@/components/NumberInput";
+import BeatTracker from "./BeatTracker";
 
 export default function Metronome(props) {
     const [bpm, setBpm] = useState(120);
@@ -128,6 +129,7 @@ export default function Metronome(props) {
             performPlaylist(props.playlist);
         } else {
             stopPerformance();
+            setCurrentBeat(0);
         }
     }, [props.performing]);
 
@@ -162,6 +164,7 @@ export default function Metronome(props) {
             }
 
             beatIndex++;
+            setCurrentBeat(beatIndex);
 
             if (beatIndex >= currentPattern.beatsPerMeasure) {
                 beatIndex = 0;
@@ -194,6 +197,11 @@ export default function Metronome(props) {
         props.handleMetronomeIsPlaying(playing);
     }, [playing])
 
+    useEffect(() => {
+        props.updateCurrentBeat(currentBeat);
+        props.updateBeatsPerMeasure(beatsPerMeasure);
+    }, [currentBeat, beatsPerMeasure])
+
     return (
         <div className="flex flex-col items-center text-cultured">
             <div className="flex flex-col items-center">
@@ -210,11 +218,6 @@ export default function Metronome(props) {
                         transitionDuration: `${getInterval(bpm)}ms`,
                     }}
                 ></div>
-                {/* <div className="flex flex-row mt-4 flex-wrap">
-                    {Array.from({ length: beatsPerMeasure }, (_, index) => (
-                        <div key={index} className={`${currentBeat - 1 === index ? "bg-persian-pink" : "bg-cultured" } h-4 w-4 rounded-full mx-1`}></div>
-                    ))}
-                </div> */}
             </div>
             <div className={`${props.performing ? "flex" : "hidden" } flex-col items-center justify-center mt-4 mb-4 lg:mb-8 text-cultured font-roboto text-lg h-[100px]`}><p className="m-0">Performing song...</p></div>
             <div className={`${props.performing ? "hidden" : "flex" } flex-col items-center justify-center mt-4 mb-4 lg:mb-8`}>
@@ -238,7 +241,7 @@ export default function Metronome(props) {
                             name="metronomeBeatsPerMeasure"
                             value={beatsPerMeasure}
                             min={1}
-                            max={64}
+                            max={32}
                             onChange={(val) => setBeatsPerMeasure(Number(val))}
                             disabled={props.performing}
                             onBlur={() => {}}
