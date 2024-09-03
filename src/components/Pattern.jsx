@@ -7,7 +7,24 @@ import DeleteIcon from "/public/delete.svg"
 import CloneIcon from "/public/clone.svg"
 import { FaPlay } from "react-icons/fa6";
 import { IconContext } from "react-icons";
-import { current } from "tailwindcss/colors"
+
+const Buttons = React.memo(({ handleClickPlay, handleClickClone, handleClickDelete, metronomeIsPlaying, patternData }) => {
+    return (
+      <div className="col-span-1 flex h-[24px] items-center space-x-1 ml-auto mr-2">
+        <button onClick={handleClickPlay} disabled={metronomeIsPlaying} className="w-[20px] h-[20px]">
+          <IconContext.Provider value={{ color: metronomeIsPlaying ? "gray" : "green" }}>
+            <FaPlay />
+          </IconContext.Provider>
+        </button>
+        <button onClick={handleClickClone} className="w-[20px] h-[20px]">
+          <Image src={CloneIcon} alt="Clone icon" className="w-auto h-auto" />
+        </button>
+        <button onClick={() => handleClickDelete(patternData.id)} className="w-[20px] h-[20px]">
+          <Image src={DeleteIcon} alt="Delete icon" className="w-auto h-auto" />
+        </button>
+      </div>
+    );
+  });
 
 const Pattern = forwardRef((props, ref) => {
     const { dataGrid, song, addToHistory, patternData, handleUpdatePattern, handleClone, handleClickDelete, currentPatternId, performing, startFromPattern, metronomeIsPlaying } = props;
@@ -168,28 +185,6 @@ const Pattern = forwardRef((props, ref) => {
         }));
     }
 
-    function Buttons() {
-        if (!performing) {
-            return (
-                <div className="col-span-1 flex h-[24px] items-center space-x-1 ml-auto mr-2">
-                    <button onClick={handleClickPlay} disabled={metronomeIsPlaying} className="w-[20px] h-[20px]">
-                        <IconContext.Provider value={{ color: metronomeIsPlaying ? "gray" : "green", }}>
-                            <FaPlay />
-                        </IconContext.Provider>
-                    </button>
-                    <button onClick={handleClickClone} className="w-[20px] h-[20px]">
-                        <Image src={CloneIcon} alt="Clone icon" className="w-auto h-auto"/>
-                    </button>
-                    <button onClick={() => handleClickDelete(patternData.id)} className="w-[20px] h-[20px]">
-                        <Image src={DeleteIcon} alt="Delete icon" className="w-auto h-auto"/>
-                    </button>
-                </div>
-            );
-        } else {
-            return <div className="ml-auto"></div>;
-        }
-    }
-
     return (
         <div ref={patternRef} data-grid={{ ...dataGrid, isResizable: false }} key={ref} id={patternData.id}
         className={`flex flex-row rounded-md h-full w-full content-between justify-center 
@@ -215,7 +210,13 @@ const Pattern = forwardRef((props, ref) => {
                 </div>
                 <div className="col-span-1 flex justify-between mx-2">
                     <p className="mt-[2px] text-gray-400 text-sm ">{durationText}</p>
-                    <Buttons />
+                    <Buttons
+                        handleClickPlay={handleClickPlay}
+                        handleClickClone={handleClickClone}
+                        handleClickDelete={handleClickDelete}
+                        metronomeIsPlaying={metronomeIsPlaying}
+                        patternData={patternData}
+                    />
                 </div>
             </div>
 
