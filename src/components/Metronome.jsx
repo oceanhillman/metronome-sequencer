@@ -190,6 +190,10 @@ export default function Metronome(props) {
         }
     }, [props.performing]);
 
+    useEffect(() => {
+        props.handleMetronomeIsPlaying(playing);
+    }, [playing])
+
     return (
         <div className="flex flex-col items-center text-cultured">
             <div className="flex flex-col items-center">

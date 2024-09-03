@@ -4,7 +4,7 @@ import Pattern from './Pattern';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout, handleUpdatePattern, handleClickDelete, handleClone, currentPatternId, performing, startFromPattern }) => {
+const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout, handleUpdatePattern, handleClickDelete, handleClone, currentPatternId, performing, startFromPattern, metronomeIsPlaying }) => {
     const [gridLayout, setGridLayout] = useState([]);
     const [settingFromHere, setSettingFromHere] = useState(false);
     const isManualChange = useRef(false);
@@ -94,6 +94,7 @@ const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout
                                 currentPatternId={currentPatternId}
                                 performing={performing}
                                 startFromPattern={startFromPattern}
+                                metronomeIsPlaying={metronomeIsPlaying}
                             />
                         </div>
                     );

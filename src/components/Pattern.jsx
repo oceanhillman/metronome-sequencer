@@ -10,7 +10,7 @@ import { IconContext } from "react-icons";
 import { current } from "tailwindcss/colors"
 
 const Pattern = forwardRef((props, ref) => {
-    const { dataGrid, song, addToHistory, patternData, handleUpdatePattern, handleClone, handleClickDelete, currentPatternId, performing, startFromPattern } = props;
+    const { dataGrid, song, addToHistory, patternData, handleUpdatePattern, handleClone, handleClickDelete, currentPatternId, performing, startFromPattern, metronomeIsPlaying } = props;
 
     const [inputData, setInputData] = useState({
         name: patternData.name,
@@ -172,8 +172,8 @@ const Pattern = forwardRef((props, ref) => {
         if (!performing) {
             return (
                 <div className="col-span-1 flex h-[24px] items-center space-x-1 ml-auto mr-2">
-                    <button onClick={handleClickPlay} className="w-[20px] h-[20px]">
-                        <IconContext.Provider value={{ color: 'green', }}>
+                    <button onClick={handleClickPlay} disabled={metronomeIsPlaying} className="w-[20px] h-[20px]">
+                        <IconContext.Provider value={{ color: metronomeIsPlaying ? "gray" : "green", }}>
                             <FaPlay />
                         </IconContext.Provider>
                     </button>

@@ -37,6 +37,7 @@ export default function Editor(props) {
     const [currentSection, setCurrentSection] = useState();
     const [currentPattern, setCurrentPattern] = useState();
     const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
+    const [metronomeIsPlaying, setMetronomeIsPlaying] = useState(false);
     const patternInitialized = useRef(false);
     const bottomRef = useRef(null);
     
@@ -273,6 +274,7 @@ export default function Editor(props) {
                     performing={performing}
                     onPlaylistEnd={() => setPerforming(false)}
                     onNextPattern={(patternId) => setCurrentPattern(patternId)}
+                    handleMetronomeIsPlaying={(isPlaying) => setMetronomeIsPlaying(isPlaying)}
                 />
                 <div className="flex flex-col justify-center">
                     <div className="flex flex-col items-center justify-center">
@@ -300,6 +302,7 @@ export default function Editor(props) {
                                 handleUpdatePattern={updatePattern}
                                 handleClickDelete={(id) => handleClickDeletePattern(id)}
                                 performing={performing}
+                                metronomeIsPlaying={metronomeIsPlaying}
                                 startFromPattern={handleStartFromPattern}
                             />
                         </div>
@@ -346,7 +349,8 @@ export default function Editor(props) {
                         </button>
                     </div>
                     <div className="flex items-center justify-center mx-4">
-                        <button onClick={handleClickPlay} className="mt-2 mx-2 bg-cultured text-black h-16 w-16 flex items-center justify-center rounded-full">
+                        <button onClick={handleClickPlay} disabled={metronomeIsPlaying} className={`mt-2 mx-2 text-black h-16 w-16 flex items-center justify-center rounded-full
+                        ${metronomeIsPlaying ? "bg-gray-400" : "bg-cultured"}`}>
                             {performing ? <FaStop className="h-8 w-8" /> : <FaPlay className="ml-[5px] h-8 w-8"/>}
                         </button>
                     </div>
