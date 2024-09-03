@@ -235,7 +235,7 @@ const Pattern = forwardRef((props, ref) => {
                             value={inputData.bpm}
                             min={1}
                             max={300}
-                            onChange={(e) => handleUpdateNumber('bpm', Number(e.target.value), 1, 300)}
+                            onChange={() => {}}
                             onBlur={(value) => handleBlur('bpm', value, 1, 300)}
                             disabled={performing}
                             currentPattern={isCurrentPattern}
@@ -249,7 +249,7 @@ const Pattern = forwardRef((props, ref) => {
                             value={inputData.beatsPerMeasure}
                             min={1}
                             max={64}
-                            onChange={(e) => handleUpdateNumber('beatsPerMeasure', Number(e.target.value))}
+                            onChange={() => {}}
                             onBlur={(value) => handleBlur('beatsPerMeasure', value, 1, 64)}
                             disabled={performing}
                             currentPattern={isCurrentPattern}
@@ -264,7 +264,7 @@ const Pattern = forwardRef((props, ref) => {
                             value={inputData.numMeasures}
                             min={1}
                             max={64}
-                            onChange={(e) => handleUpdateNumber('numMeasures', Number(e.target.value))}
+                            onChange={() => {}}
                             onBlur={(value) => handleBlur('numMeasures', value, 1, 64)}
                             disabled={performing}
                             currentPattern={isCurrentPattern}

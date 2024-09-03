@@ -212,7 +212,7 @@ export default function Metronome(props) {
                 ></div>
                 {/* <div className="flex flex-row mt-4 flex-wrap">
                     {Array.from({ length: beatsPerMeasure }, (_, index) => (
-                        <div key={index} className={`${beatIndex === index ? "bg-red-500" : "bg-white" } h-4 w-4 rounded-full mx-1`}></div>
+                        <div key={index} className={`${currentBeat - 1 === index ? "bg-persian-pink" : "bg-cultured" } h-4 w-4 rounded-full mx-1`}></div>
                     ))}
                 </div> */}
             </div>
@@ -224,11 +224,12 @@ export default function Metronome(props) {
                         <NumberInput
                             name="metronomeBpm"
                             value={bpm}
-                            min={0}
+                            min={1}
                             max={300}
-                            onChange={(e) => setBpm(Number(e.target.value))}
+                            onChange={(val) => setBpm(Number(val))}
                             disabled={props.performing}
                             onBlur={() => {}}
+                            currentPattern={false}
                         />
                     </div>
                     <div className="flex flex-col justify-center items-center mx-2">
@@ -236,11 +237,12 @@ export default function Metronome(props) {
                         <NumberInput
                             name="metronomeBeatsPerMeasure"
                             value={beatsPerMeasure}
-                            min={0}
+                            min={1}
                             max={64}
-                            onChange={(e) => setBeatsPerMeasure(Number(e.target.value))}
+                            onChange={(val) => setBeatsPerMeasure(Number(val))}
                             disabled={props.performing}
                             onBlur={() => {}}
+                            currentPattern={false}
                         />
                     </div>
                 </div>

@@ -5,7 +5,7 @@ import MinusIcon from "/public/minus.svg";
 import PlusIcon from "/public/plus.svg";
 
 export default function NumberInput( props ) {
-    const {name, value: initialValue, min, max, disabled, currentPattern, onBlur} = props;
+    const {name, value: initialValue, min, max, disabled, currentPattern, onChange, onBlur} = props;
 
     const [value, setValue] = useState(initialValue);
     const inputRef = useRef(null);
@@ -17,11 +17,9 @@ export default function NumberInput( props ) {
     useEffect(() => {
         if (value === 0) {
             setValue('');
+        } else {
+            onChange(value);
         }
-    }, [value]);
-
-    useEffect(() => {
-        console.log(value);
     }, [value]);
 
     const handleClickIncrement = (event) => {
@@ -55,6 +53,7 @@ export default function NumberInput( props ) {
                   inputRef.current.focus();
                   return newValue;
                 });
+                onChange(value);
               }
         });
       };
@@ -68,33 +67,26 @@ export default function NumberInput( props ) {
                     inputRef.current.focus();
                     return newValue;
                 });
+                onChange(value);
             }
         });
     };
 
     const handleChange = (event) => {
-
-            setValue(Number(event.target.value));
-        
+        setValue(Number(event.target.value));
+        onChange(Number(event.target.value));
     };
 
     function handleBlur() {
         if (value <= min) {
             setValue(min);
+            onChange(min);
         } else if (value >= max) {
             setValue(max);
+            onChange(max);
         }
         onBlur(value);
     }
-
-    //value={value.toString().replace(/^0+/, '')}
-
-    // perfect behavior:
-    // - can backspace into blank field, but falls back to 0 when lost focus
-    // - removes leading zero
-    // - doesn't allow non-numerical input to affect value (minus sign, equals sign, etc)
-    // - doesn't allow decimals at all (for now)
-
     
   return (
     <div className="flex items-center justify-center">
