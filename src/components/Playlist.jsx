@@ -33,10 +33,9 @@ const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout
 
     // Reorder playlist to match layout order
     function reorderPlaylist(newLayout) {
-        const newPlaylistOrder = newLayout.map(item =>
+        const newPlaylistOrder = sortLayout(newLayout).map(item =>
             song.playlist.find(pattern => pattern.id === item.i)
         ).filter(Boolean);
-        
         handleUpdatePlaylist(newPlaylistOrder);
     }
 
@@ -71,7 +70,7 @@ const Playlist = ({ song, addToHistory, handleUpdatePlaylist, handleUpdateLayout
                 rowHeight={120}
                 margin={song.playlist.length === 0 ? [0, 0] : [0, 20]}
                 width={"100%"}
-                onLayoutChange={(layout, layouts) => handleLayoutChange(layout)}
+                onLayoutChange={(layout) => handleLayoutChange(layout)}
                 draggableHandle=".handle"
                 draggableCancel=".no-drag"
                 onDragStart={handleDragStart}
