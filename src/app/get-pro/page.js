@@ -1,9 +1,9 @@
-import GetPremium from "./GetPremium";
+import GetPro from "./GetPro";
 
-export default function PremiumPage() {
+export default function ProPage() {
     return (
         <div className="flex min-h-screen flex-col items-center bg-eerie-black">
-            <GetPremium />
+            <GetPro />
         </div>
     );
 }

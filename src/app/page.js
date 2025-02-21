@@ -28,7 +28,7 @@ export default async function Home() {
                             Create Your First Song
                             <svg className="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
                         </a>
-                        <a href="/get-premium" className="w-full xxl:w-[320px] mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-arsenic focus:ring-4 focus:ring-gray-100">
+                        <a href="/get-pro" className="w-full xxl:w-[320px] mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-arsenic focus:ring-4 focus:ring-gray-100">
                             Get Metronome Sequencer Pro
                         </a> 
                     </div>            
@@ -62,7 +62,7 @@ export default async function Home() {
                         <li className="lg:max-w-2xl xxl:max-w-full mb-4 font-thin md:text-lg"><span className="font-bold">Save & Organize Your Projects</span> – Keep a personal library of custom metronome sequences for different songs and practice sessions.</li>
                         <li className="lg:max-w-2xl xxl:max-w-full mb-4 font-thin md:text-lg"><span className="font-bold">Share Your Songs</span> – Send custom metronome sequences to bandmates, students, or friends with a simple link.</li>
                         <li className="lg:max-w-2xl xxl:max-w-full mb-4 font-thin md:text-lg"><span className="font-bold">Collaborate With Others</span> – Want to tweak a sequence? Make edits to others' projects and save them to your song library.</li>
-                        <a href="/get-premium" className="w-full lg:[320px] inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-arsenic focus:ring-4 focus:ring-gray-100">
+                        <a href="/get-pro" className="w-full lg:[320px] inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-arsenic focus:ring-4 focus:ring-gray-100">
                             Get Metronome Sequencer Pro
                         </a>    
                     </div>

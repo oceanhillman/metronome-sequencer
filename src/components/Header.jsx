@@ -51,7 +51,7 @@ export default function Header() {
             return (
                 <div className="flex lg:flex-row items-center">
                     <Nav.Link href="/editor" className="!text-cultured">Song Editor</Nav.Link>
-                    <Nav.Link href="/get-premium" className="!text-persian-pink mx-4">Get Premium</Nav.Link>
+                    <Nav.Link href="/get-pro" className="!text-persian-pink mx-4">Metronome Sequencer Pro</Nav.Link>
                     <Nav.Link href="/api/auth/login" className="!text-cultured">Login</Nav.Link>
                 </div>
             );
@@ -61,15 +61,15 @@ export default function Header() {
                     <Nav.Link href="/editor" className="!text-cultured">Song Editor</Nav.Link>
                     <Nav.Link href="/my-songs" className="!text-cultured mx-4">My Songs</Nav.Link>
                     <Nav.Link href="/account" className="!text-cultured mr-4">Account</Nav.Link>
-                    <Nav.Link onClick={handleLogout} className="">Logout</Nav.Link>
+                    <Nav.Link onClick={handleLogout} className="!text-cultured">Logout</Nav.Link>
                 </div>
             );
         } else {
             return (
                 <div className="flex lg:flex-row items-center">
                     <Nav.Link href="/editor" className="!text-cultured">Song Editor</Nav.Link>
-                    <Nav.Link href="/get-premium" className="!text-persian-pink mx-4">Get Premium</Nav.Link>
-                    <Nav.Link onClick={handleLogout} className="">Logout</Nav.Link>
+                    <Nav.Link href="/get-pro" className="!text-persian-pink mx-4">Upgrade to Pro</Nav.Link>
+                    <Nav.Link onClick={handleLogout} className="!text-cultured">Logout</Nav.Link>
                 </div>
             )
         }

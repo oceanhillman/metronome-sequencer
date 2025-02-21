@@ -5,7 +5,7 @@ import { Container, Row, Col, Card, Button, ListGroup } from 'react-bootstrap';
 import { FaCheck } from 'react-icons/fa';
 import { isSubscribed } from '@lib/api';
 
-const GetPremium = () => {
+const GetPro = () => {
     const { user, error: authError, isLoading } = useUser();
     const [subscribed, setSubscribed] = useState(false);
     
@@ -58,7 +58,7 @@ const GetPremium = () => {
                 <Col md={8}>
                     <Card className="!bg-chinese-black border-2 !border-muted-blue">
                         <Card.Body>
-                            <Card.Title className="text-center !text-cyan !text-3xl">Upgrade to Premium</Card.Title>
+                            <Card.Title className="text-center !text-cyan !text-3xl">Upgrade to Pro</Card.Title>
                             <Card.Text className="text-center !text-cultured">
                                 <span className="text-2xl text-bold">$1.99</span> / Month
                             </Card.Text>
@@ -70,7 +70,7 @@ const GetPremium = () => {
                             </ListGroup>
                             <div className="d-flex justify-content-center mt-4">
                                 <Button onClick={handleCheckout} variant="primary" size="lg" className="!bg-persian-pink !text-chinese-black !font-medium !border-none">
-                                    Get Premium
+                                    Get Pro
                                 </Button>
                             </div>
                         </Card.Body>
@@ -81,4 +81,4 @@ const GetPremium = () => {
     );
 };
 
-export default GetPremium;
+export default GetPro;
