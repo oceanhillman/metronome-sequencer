@@ -2,15 +2,24 @@
 import Image from 'next/image';
 import EditorImage from '/public/editor_ss.png'
 import MetronomeImage from '/public/metronome.png'
+import { getSession } from '@auth0/nextjs-auth0';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
+export default async function Home() {
+
+    const session = await getSession();
+  
+    if (session) {
+      redirect('/editor'); // Redirect logged-in users to the tool
+    }
+
     return (
         <div className=" text-cultured font-roboto min-h-screen bg-eerie-black ">
 
             <section className="bg-eerie-black overflow-hidden pt-8 md:pt-28 pb-16">
                 <div className="grid  xl:mx-32 md:gap-12 p-4 md:py-8 md:grid-cols-12 max-w-screen-xl xxl:max-w-full">
                     <div className="flex flex-col items-center md:mt-0 md:col-span-5 md:flex">
-                        <Image src={MetronomeImage} className="w-[50%] sm:w-[35%] md:w-[400px] md:h-[400px] max-w-none" alt="mockup" />
+                        <Image src={MetronomeImage} priority={true} className="w-[50%] sm:w-[35%] md:w-[400px] md:h-[400px] max-w-none" alt="mockup" />
                     </div>  
                     <div className="md:mr-auto place-self-center items-center md:col-span-7">
                         <h1 className="max-w-2xl mb-4 text-4xl tracking-tight leading-none sm:text-5xl xl:text-6xl">Master complex rhythms</h1>

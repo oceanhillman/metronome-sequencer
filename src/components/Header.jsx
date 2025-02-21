@@ -68,7 +68,7 @@ export default function Header() {
             return (
                 <div className="flex lg:flex-row items-center">
                     <Nav.Link href="/editor" className="!text-cultured">Song Editor</Nav.Link>
-                    <Nav.Link href="/get-premium" className="!text-cyan mx-4">Get Premium</Nav.Link>
+                    <Nav.Link href="/get-premium" className="!text-persian-pink mx-4">Get Premium</Nav.Link>
                     <Nav.Link onClick={handleLogout} className="">Logout</Nav.Link>
                 </div>
             )
@@ -83,7 +83,7 @@ export default function Header() {
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="ml-auto flex flex-col lg:flex-row items-center">
+                    <Nav className="ml-auto flex flex-col lg:flex-row items-center font-roboto">
                         <NavContent />
                     </Nav>
                 </Navbar.Collapse>
