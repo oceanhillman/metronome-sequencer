@@ -8,6 +8,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+        screens: {
+            'xxl': '1536px',
+        },
       colors: {
         ...colors,
         'dark-gunmetal':'#1e1e2e',
