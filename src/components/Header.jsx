@@ -69,6 +69,7 @@ export default function Header() {
                 <div className="flex lg:flex-row items-center">
                     <Nav.Link href="/editor" className="!text-cultured">Song Editor</Nav.Link>
                     <Nav.Link href="/get-pro" className="!text-persian-pink mx-4">Upgrade to Pro</Nav.Link>
+                    <Nav.Link href="/account" className="!text-cultured mr-4">Account</Nav.Link>
                     <Nav.Link onClick={handleLogout} className="!text-cultured">Logout</Nav.Link>
                 </div>
             )
