@@ -1,15 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import Image from 'next/image';
-import { FaCheck } from 'react-icons/fa';
 import { isSubscribed } from '@lib/api';
 
 const GetPro = () => {
     const { user, error: authError, isLoading } = useUser();
     const [subscribed, setSubscribed] = useState(false);
-    
-
 
     const CheckIcon = (props) => (
         <svg
@@ -86,7 +82,7 @@ const GetPro = () => {
                     <div className="bg-arsenic p-4 border-1 border-persian-pink shadow">
                         <h2 className="font-bold my-2 text-persian-pink">Pro</h2>
                         <h2><span className="font-bold">$1.99 </span> <span className="!text-sm">USD /month</span></h2>
-                        <button onClick={handleCheckout} className="w-full mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-arsenic focus:ring-4 focus:ring-gray-100">
+                        <button onClick={handleCheckout} className="w-full mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-subtle-gray focus:ring-4 focus:ring-gray-100">
                             Subscribe
                         </button> 
                         <p className="mt-4 font-bold text-lg">All of our free features, plus:</p>

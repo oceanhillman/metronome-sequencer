@@ -5,7 +5,7 @@ import { useUser } from '@auth0/nextjs-auth0/client'
 import { redirect } from 'next/navigation';
 import { isSubscribed } from '@lib/api';
 import { AuthenticationClient } from 'auth0';
-import { deleteUser, logout } from '@lib/api';
+import { deleteUser, logout, sendResetPassword } from '@lib/api';
 import CloseIcon from "/public/close.svg"
 export default function AccountManager() {
 
@@ -14,6 +14,10 @@ export default function AccountManager() {
     const [subscriptionFetched, setSubscriptionFetched] = useState(false);
     const [subscribed, setSubscribed] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [isGoogleUser, setIsGoogleUser] = useState(false);
+    const [isUsernamePasswordUser, setIsUsernamePasswordUser] = useState(false);
+    const [isEmailSent, setIsEmailSent] = useState(false);
+    const [resetPasswordText, setResetPasswordText] = useState("");
 
     const STRIPE_LINK = process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL;
 
@@ -21,8 +25,29 @@ export default function AccountManager() {
         if (isLoading) return;
         if (!user) {
             redirect('/'); // Redirect logged-in users to the tool
+        } else {
+            setIsGoogleUser(user.sub.startsWith('google-oauth2|'));
+            setIsUsernamePasswordUser(user.sub.startsWith('auth0|'));
         }
     }, [user, isLoading]);
+
+    useEffect(() => {
+        console.log(resetPasswordText);
+    }, [resetPasswordText])
+
+    const handleResetPassword = async () => {
+        if (isLoading) return;
+
+        setResetPasswordText(""); // Clear previous messages
+
+        try {
+            await sendResetPassword(user.email);
+            setResetPasswordText("Check your email for a link to reset your password.");
+        } catch (error) {
+            console.log(error);
+            setResetPasswordText("An error occurred while sending the reset password email. Please try again.");
+        }
+    };
 
     const handleDeleteUser = async () => {
         if (isLoading) return;
@@ -33,6 +58,20 @@ export default function AccountManager() {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    const ResetPasswordButton = () => {
+        if (isUsernamePasswordUser) {
+            return(
+                <button onClick={handleResetPassword} className="inline-flex items-center justify-center text-base no-underline font-medium text-center text-cyan">
+                    Reset Password
+                </button>
+            );
+        } else return null;
+    }
+
+    const ResetPasswordMessage = () => {
+        return(<p>{resetPasswordText}</p>)
     }
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,7 +85,7 @@ export default function AccountManager() {
                     <div className="text-right">
                         <button onClick={() => {setIsModalOpen(false)}} className="w-[20px] h-[20px] ml-auto">
                             <Image src={CloseIcon}/>
-                        </button>
+                        </button>   
                     </div>
                     <h3 className="text-center">Are you sure?</h3>
                     <p className="text-center">All of your data will be erased, including your song library. This action cannot be undone.</p>
@@ -65,8 +104,13 @@ export default function AccountManager() {
             <section className="w-screen lg:w-full pt-8 px-4 md:pt-28">
                 <h1 className="text-center mb-4 text-cultured font-roboto">Account settings</h1>
                 <p className="text-center">
-                    Logged in as: {user ? user.email : null}
+                    {user ? user.name : null}
                 </p>
+
+                <div className="text-center lg:max-w-[292px]">
+                    <ResetPasswordButton />
+                    <ResetPasswordMessage />
+                </div>
                 
                 <a href={STRIPE_LINK} className="w-full mt-4 xl:mt-0 inline-flex items-center justify-center py-3 shadow text-base no-underline font-medium text-center text-eerie-black bg-cultured hover:bg-primary-800 focus:ring-4 focus:ring-primary-300">
                     Manage Subscription
