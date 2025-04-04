@@ -33,9 +33,15 @@ export default function Header() {
         window.location.href = '/api/auth/logout';
     }
 
-    function NavContent() {
+    const NavContent = () => {
         if (isLoading || !subscriptionFetched) {
-            return <div className="text-cultured">Loading...</div>
+            return (
+                <div className="flex flex-col lg:flex-row items-center gap-4">
+                    <div className="h-6 w-24 bg-subtle-gray rounded animate-pulse"></div>
+                    <div className="h-6 w-24 bg-subtle-gray rounded animate-pulse"></div>
+                    <div className="h-6 w-24 bg-subtle-gray rounded animate-pulse"></div>
+                </div>
+            );
         } else if (error) {
             return <div>{error.message}</div>
         } else if (!user) {
@@ -65,7 +71,7 @@ export default function Header() {
                 </div>
             );
         }
-    }
+    };
 
     return (
         <nav className=" bg-eerie-black">
