@@ -1,21 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0/client';
-
 import { isSubscribed } from '@lib/api';
 
 export default function Header() {
-
     // Session data
     const { user, error, isLoading } = useUser();
     const [subscriptionFetched, setSubscriptionFetched] = useState(false);
     const [subscribed, setSubscribed] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         if (isLoading) return;
@@ -31,64 +26,97 @@ export default function Header() {
         }
     
         getSubscriptionStatus();
-    
     }, [user, isLoading]);
 
     function handleLogout() {
-        // Clear localStorage
         localStorage.removeItem('unsavedProject');
-    
-        // Perform the logout
-        window.location.href = '/api/auth/logout'; // Or use a custom logout API endpoint
+        window.location.href = '/api/auth/logout';
     }
 
     function NavContent() {
         if (isLoading || !subscriptionFetched) {
-            return <Nav.Link disabled className="!text-cultured">Loading...</Nav.Link>
+            return <div className="text-cultured">Loading...</div>
         } else if (error) {
             return <div>{error.message}</div>
         } else if (!user) {
             return (
-                <div className="flex lg:flex-row items-center">
-                    <Nav.Link href="/editor" className="!text-cultured">Song Editor</Nav.Link>
-                    <Nav.Link href="/get-pro" className="!text-persian-pink mx-4">Metronome Sequencer Pro</Nav.Link>
-                    <Nav.Link href="/api/auth/login" className="!text-cultured">Login</Nav.Link>
+                <div className="flex flex-col lg:flex-row items-center gap-4">
+                    <Link href="/editor" className="text-cultured hover:text-persian-pink transition-colors no-underline">Song Editor</Link>
+                    <Link href="/get-pro" className="text-persian-pink hover:text-persian-pink/80 transition-colors no-underline">Metronome Sequencer Pro</Link>
+                    <Link href="/api/auth/login" className="text-cultured hover:text-persian-pink transition-colors no-underline">Login</Link>
                 </div>
             );
         } else if (subscribed) {
             return (
-                <div className="flex lg:flex-row items-center">
-                    <Nav.Link href="/editor" className="!text-cultured">Song Editor</Nav.Link>
-                    <Nav.Link href="/my-songs" className="!text-cultured mx-4">My Songs</Nav.Link>
-                    <Nav.Link href="/account" className="!text-cultured mr-4">Account</Nav.Link>
-                    <Nav.Link onClick={handleLogout} className="!text-cultured">Logout</Nav.Link>
+                <div className="flex flex-col lg:flex-row items-center gap-4">
+                    <Link href="/editor" className="text-cultured hover:text-persian-pink transition-colors no-underline">Song Editor</Link>
+                    <Link href="/my-songs" className="text-cultured hover:text-persian-pink transition-colors no-underline">My Songs</Link>
+                    <Link href="/account" className="text-cultured hover:text-persian-pink transition-colors no-underline">Account</Link>
+                    <button onClick={handleLogout} className="text-cultured hover:text-persian-pink transition-colors">Logout</button>
                 </div>
             );
         } else {
             return (
-                <div className="flex lg:flex-row items-center">
-                    <Nav.Link href="/editor" className="!text-cultured">Song Editor</Nav.Link>
-                    <Nav.Link href="/get-pro" className="!text-persian-pink mx-4">Upgrade to Pro</Nav.Link>
-                    <Nav.Link href="/account" className="!text-cultured mr-4">Account</Nav.Link>
-                    <Nav.Link onClick={handleLogout} className="!text-cultured">Logout</Nav.Link>
+                <div className="flex flex-col lg:flex-row items-center gap-4">
+                    <Link href="/editor" className="text-cultured hover:text-persian-pink transition-colors no-underline">Song Editor</Link>
+                    <Link href="/get-pro" className="text-persian-pink hover:text-persian-pink/80 transition-colors no-underline">Upgrade to Pro</Link>
+                    <Link href="/account" className="text-cultured hover:text-persian-pink transition-colors no-underline">Account</Link>
+                    <button onClick={handleLogout} className="text-cultured hover:text-persian-pink transition-colors">Logout</button>
                 </div>
-            )
+            );
         }
     }
-            
+
     return (
-        <Navbar variant="dark" className="w-full bg-eerie-black" expand="lg">
-            <Container>
-                <Navbar.Brand href="/" className="text-cultured font-orbitron">
-                    Metronome Sequencer
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="ml-auto flex flex-col lg:flex-row items-center font-roboto">
+        <nav className=" bg-eerie-black">
+            <div className=" px-4 xxl:mx-32">
+                <div className="flex items-center justify-between h-16">
+                    <Link href="/" className="text-cultured font-orbitron text-xl no-underline">
+                        Metronome Sequencer
+                    </Link>
+
+                    {/* Mobile menu button */}
+                    <button
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="lg:hidden text-cultured focus:outline-none"
+                    >
+                        <svg
+                            className="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            {isMenuOpen ? (
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            ) : (
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                />
+                            )}
+                        </svg>
+                    </button>
+
+                    {/* Desktop menu */}
+                    <div className="hidden lg:flex">
                         <NavContent />
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
+                    </div>
+                </div>
+
+                {/* Mobile menu */}
+                <div className={`lg:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
+                    <div className="px-2 pt-2 pb-3 space-y-1">
+                        <NavContent />
+                    </div>
+                </div>
+            </div>
+        </nav>
     );
 }
