@@ -1,14 +1,17 @@
 import Modal from 'react-bootstrap/Modal'
 import { Form, Button } from "react-bootstrap"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function SaveAsNewButton(props) {
-    const { updateSongTitle, onSave } = props;
+    const { updateSongTitle, onSave, songTitle } = props;
         
-    const [newSongTitle, setNewSongTitle] = useState("Untitled Song");
+    const [newSongTitle, setNewSongTitle] = useState(songTitle);
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const handleClose = () => {
+        setShow(false);
+        setNewSongTitle(songTitle);
+    }
 
     function handleClickSave() {
         onSave(newSongTitle);

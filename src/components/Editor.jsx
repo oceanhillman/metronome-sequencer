@@ -251,6 +251,7 @@ export default function Editor(props) {
 
     function handleEditTitle(newTitle) {
         setSongTitle(newTitle);
+        console.log(songTitle);
     }
 
     function handleBlurTitle(newTitle) {
@@ -350,7 +351,8 @@ export default function Editor(props) {
                                 <Dropdown.Item>
                                     <SaveAsNewButton 
                                         updateSongTitle={(newTitle) => setSong(prev => ({...prev, title: newTitle}))}
-                                        onSave={(newTitle) => handleSaveAsNew(newTitle)}
+                                        onSave={() => handleSaveAsNew()}
+                                        songTitle={songTitle}
                                     />
                                 </Dropdown.Item>                                
                             </Dropdown.Menu>
