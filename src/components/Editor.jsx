@@ -271,8 +271,8 @@ export default function Editor(props) {
 
     return (
     <div className="flex flex-col min-h-screen w-full">
-        <div className="flex-grow pt-6 lg:pt-12 d-flex flex-col pb-16">
-            <div className="w-full h-full d-flex flex-col">
+        <div className="flex-grow pt-8 lg:pt-12 d-flex flex-col pb-16">
+            <div className="w-full h-full d-flex flex-col pt-4">
                 <Metronome
                     playlist={currentSection}
                     performing={performing}
@@ -322,7 +322,7 @@ export default function Editor(props) {
         </div>
 
         <div ref={bottomRef} className="sticky bottom-0 bg-eerie-black border-t-2 border-arsenic text-cultured pt-3 pb-4">
-            <div className="flex flex-col items-center justify-center w-full">
+            <div className="flex flex-col items-between justify-center w-full">
                 <div className="flex flex-row items-center justify-center w-full">
                     <div className="flex flex-row items-center justify-center mb-2">
                         <BeatTracker
@@ -331,13 +331,13 @@ export default function Editor(props) {
                         />
                     </div>
                 </div>
-                <div className="flex flex-row items-center justify-center w-full">
-                    <div className="flex w-full h-full items-center justify-center">
+                <div className="flex flex-row items-center px-4 xxl:mx-32">
+                    <div className="flex w-full h-full items-center">
                         <Dropdown
                             show={dropdownIsOpen}
                             onToggle={toggleDropdown}
                         >
-                            <Dropdown.Toggle variant="success" id="dropdown-basic" className="d-flex items-center justify-center">
+                            <Dropdown.Toggle variant="success" id="dropdown-basic" className="d-flex items-center">
                                 <IoIosSave />
                             </Dropdown.Toggle>
 
@@ -360,7 +360,7 @@ export default function Editor(props) {
                     </div>
                     <div className="flex flex-col items-center justify-center">
                         <div className="flex flex-row items-center justify-center">
-                            <div className="flex flex-row w-full h-full items-center justify-center">
+                            <div className="flex flex-row w-full h-full items-center justify-start">
                                 <button onClick={undo} disabled={undoHistory.length === 0} className="text-cultured disabled:text-arsenic text-xl">
                                     Undo
                                 </button>
@@ -378,7 +378,7 @@ export default function Editor(props) {
                             </div>
                         </div>
                     </div>
-                    <div className="col-span-1 flex w-full h-full items-center justify-center">
+                    <div className="col-span-1 flex w-full h-full items-center justify-end">
                         <Button onClick={handleClickClear} variant="danger" className="text-cultured border-none">
                             Clear
                         </Button>

@@ -12,6 +12,7 @@ export default function Metronome(props) {
     const [playing, setPlaying] = useState(false);
     const [rotation, setRotation] = useState(-45);
     const [tapTimes, setTapTimes] = useState([]);
+    const [showControls, setShowControls] = useState(false);
 
     const audioContext = useRef(null);
     const audioHiBuffer = useRef(null);
@@ -219,44 +220,62 @@ export default function Metronome(props) {
                     }}
                 ></div>
             </div>
-            <div className={`${props.performing ? "flex" : "hidden" } flex-col items-center justify-center mt-4 mb-4 lg:mb-8 text-cultured font-roboto text-lg h-[100px]`}><p className="m-0">Performing song...</p></div>
-            <div className={`${props.performing ? "hidden" : "flex" } flex-col items-center justify-center mt-4 mb-4 lg:mb-8`}>
-                <div className="flex flex-row">
-                    <div className="flex flex-col justify-center items-center mx-2">
-                        <p className="text-cultured m-0">BPM</p>
-                        <NumberInput
-                            name="metronomeBpm"
-                            value={bpm}
-                            min={1}
-                            max={300}
-                            onChange={(val) => setBpm(Number(val))}
-                            disabled={props.performing}
-                            onBlur={() => {}}
-                            currentPattern={false}
-                        />
-                    </div>
-                    <div className="flex flex-col justify-center items-center mx-2">
-                        <p className="text-cultured m-0">Beats per measure</p>
-                        <NumberInput
-                            name="metronomeBeatsPerMeasure"
-                            value={beatsPerMeasure}
-                            min={1}
-                            max={32}
-                            onChange={(val) => setBeatsPerMeasure(Number(val))}
-                            disabled={props.performing}
-                            onBlur={() => {}}
-                            currentPattern={false}
-                        />
-                    </div>
-                </div>
-                <div className="flex flex-row mt-2">
-                    <button onClick={() => setPlaying(!playing)} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
-                        {playing ? 'Stop Click' : 'Play Click'}
-                    </button>
-                    <button onClick={handleTap} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
-                        Tap Tempo
-                    </button>
-                </div>
+            <div className={`${props.performing ? "flex" : "hidden" } flex-col items-center py-2 justify-center text-cultured font-roboto text-lg h-[60px]`}><p className="m-0">Performing song...</p></div>
+            <div className={`${props.performing ? "hidden" : "flex" } flex-col items-center py-2 justify-center`}>
+                <button 
+                    onClick={() => setShowControls(!showControls)}
+                    className="text-cultured/50 hover:text-cultured/85 px-2 rounded  flex items-center gap-1"
+                >
+                    {showControls ? 'Hide basic functions' : 'Show basic functions'}
+                    <svg 
+                        className={`w-4 h-4 transition-transform duration-200 ${showControls ? '-rotate-180' : ''}`}
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                {showControls && (
+                    <>
+                        <div className="flex flex-row">
+                            <div className="flex flex-col justify-center items-center mx-2">
+                                <p className="text-cultured m-0">BPM</p>
+                                <NumberInput
+                                    name="metronomeBpm"
+                                    value={bpm}
+                                    min={1}
+                                    max={300}
+                                    onChange={(val) => setBpm(Number(val))}
+                                    disabled={props.performing}
+                                    onBlur={() => {}}
+                                    currentPattern={false}
+                                />
+                            </div>
+                            <div className="flex flex-col justify-center items-center mx-2">
+                                <p className="text-cultured m-0">Beats per measure</p>
+                                <NumberInput
+                                    name="metronomeBeatsPerMeasure"
+                                    value={beatsPerMeasure}
+                                    min={1}
+                                    max={32}
+                                    onChange={(val) => setBeatsPerMeasure(Number(val))}
+                                    disabled={props.performing}
+                                    onBlur={() => {}}
+                                    currentPattern={false}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-row mt-2">
+                            <button onClick={() => setPlaying(!playing)} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
+                                {playing ? 'Stop Click' : 'Play Click'}
+                            </button>
+                            <button onClick={handleTap} disabled={props.performing} className={`${props.performing ? "text-gray-400" : "text-cultured"} bg-muted-blue px-2 py-1 rounded mx-2`}>
+                                Tap Tempo
+                            </button>
+                        </div>
+                    </>
+                )}
             </div>
             
         </div>
