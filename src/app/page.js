@@ -1,9 +1,8 @@
-
 import Image from 'next/image';
 import EditorImage from '/public/editor_ss.png'
-import MetronomeImage from '/public/metronome.png'
 import { getSession } from '@auth0/nextjs-auth0';
 import { redirect } from 'next/navigation';
+import SimpleMetronome from '@/components/SimpleMetronome';
 
 export default async function Home() {
 
@@ -18,11 +17,11 @@ export default async function Home() {
 
             <section className="bg-eerie-black overflow-hidden pt-8 md:pt-28 pb-16">
                 <div className="grid  xl:mx-32 md:gap-12 p-4 md:py-8 md:grid-cols-12 max-w-screen-xl xxl:max-w-full">
-                    <div className="flex flex-col items-center md:mt-0 md:col-span-5 md:flex">
-                        <Image src={MetronomeImage} priority={true} className="w-[50%] sm:w-[35%] md:w-[400px] md:h-[400px] max-w-none" alt="mockup" />
+                    <div className="flex flex-col items-center justify-center md:mt-0 md:col-span-5 md:flex mb-4 md:m-0 ">
+                        <SimpleMetronome />
                     </div>  
                     <div className="md:mr-auto place-self-center items-center md:col-span-7">
-                        <h1 className="max-w-2xl mb-4 text-4xl tracking-tight leading-none sm:text-5xl xl:text-6xl">Master complex rhythms</h1>
+                        <h1 className="max-w-2xl mb-4 text-4xl tracking-tight leading-none sm:text-5xl xl:text-6xl bg-gradient-to-r from-cyan via-persian-pink to-cultured inline-block text-transparent bg-clip-text drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]">Master complex rhythms</h1>
                         <p className=" max-w-2xl mb-4 font-thin sm:text-md md:text-xl">Create custom metronome sequences of different tempo and time signatures to suit all of your time-keeping needs.</p>
                         <a href="/editor" className="w-full xxl:w-[320px] inline-flex items-center justify-center px-5 py-3 shadow xl:mr-3 text-base no-underline font-medium text-center text-eerie-black bg-cultured hover:bg-primary-800 focus:ring-4 focus:ring-primary-300">
                             Create Your First Song
@@ -37,18 +36,18 @@ export default async function Home() {
 
             <section className="py-16 bg-eerie-black">
                 <div className="xxl:mx-32 p-4 md:text-center">
-                    <h1 className="mb-4 text-3xl tracking-tight leading-none md:text-4xl xl:text-5xl">More features than any other metronome</h1>
+                    <h1 className="mb-4 text-3xl tracking-tight leading-none md:text-4xl xl:text-5xl text-cultured drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]">More features than any other metronome</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                        <div className="border-1 border-arsenic shadow-lg p-8">
+                        <div className="border-1 border-arsenic shadow-lg p-8 transition-transform duration-300 hover:scale-105">
                             <h3 className="text-4xl text-cultured">Sequence entire songs</h3>
                             <p className="mt-4 xxl:px-8">Unlike a standard metronome, you can program tempo changes, time signature shifts, and custom beat patterns from start to finish.</p>
                         </div>
-                        <div className="border-1 border-arsenic shadow p-8">
-                            <h3 className="text-4xl">Use free in your browser</h3>
+                        <div className="border-1 border-arsenic shadow p-8 transition-transform duration-300 hover:scale-105">
+                            <h3 className="text-4xl text-cultured">Use free in your browser</h3>
                             <p className="mt-4 xxl:px-8">No downloads or installations—just open and start creating metronome sequences in your browser.</p>
                         </div>
-                        <div className="border-1 border-arsenic shadow-lg p-8">
-                            <h3 className="text-4xl">Save, share, collaborate</h3>
+                        <div className="border-1 border-arsenic shadow-lg p-8 transition-transform duration-300 hover:scale-105">
+                            <h3 className="text-4xl text-cultured">Save, share, collaborate</h3>
                             <p className="mt-4 xxl:px-8">Pro users gain access to upgraded features for personal and professional use.</p>
                         </div>
                     </div>
@@ -58,13 +57,17 @@ export default async function Home() {
             <section className="bg-eerie-black overflow-hidden py-16">
                 <div className="grid px-4 py-8 lg:gap-8 xl:gap-0 lg:py-16 grid-cols-12 max-w-screen-xl xxl:max-w-full xxl:mx-32 xxl:gap-x-12">
                     <div className="md:w-full place-self-center col-span-12 lg:col-span-7 xxl:col-span-6 text-left ">
-                        <h1 className="lg:max-w-2xl xxl:max-w-full mb-4 text-3xl tracking-tight leading-none md:text-4xl xl:text-5xl ">Unlock exclusive features with <span className="text-persian-pink">Pro</span></h1>
-                        <li className="lg:max-w-2xl xxl:max-w-full mb-4 font-thin md:text-lg"><span className="font-bold">Save & Organize Your Projects</span> – Keep a personal library of custom metronome sequences for different songs and practice sessions.</li>
-                        <li className="lg:max-w-2xl xxl:max-w-full mb-4 font-thin md:text-lg"><span className="font-bold">Share Your Songs</span> – Send custom metronome sequences to bandmates, students, or friends with a simple link.</li>
-                        <li className="lg:max-w-2xl xxl:max-w-full mb-4 font-thin md:text-lg"><span className="font-bold">Collaborate With Others</span> – Want to tweak a sequence? Make edits to others' projects and save them to your song library.</li>
-                        <a href="/get-pro" className="w-full lg:[320px] inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-arsenic focus:ring-4 focus:ring-gray-100">
-                            Get Metronome Sequencer Pro
-                        </a>    
+                        <div className="lg:max-w-2xl xxl:max-w-full">
+                            <div className="mb-4">
+                                <h1 className="w-fit text-3xl tracking-tight leading-none md:text-4xl xl:text-5xl text-cultured drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]">Unlock exclusive features with <span className="text-persian-pink">Pro</span></h1>
+                            </div>
+                            <li className="mb-4 font-thin md:text-lg"><span className="font-bold">Save & Organize Your Projects</span> – Keep a personal library of custom metronome sequences for different songs and practice sessions.</li>
+                            <li className="mb-4 font-thin md:text-lg"><span className="font-bold">Share Your Songs</span> – Send custom metronome sequences to bandmates, students, or friends with a simple link.</li>
+                            <li className="mb-4 font-thin md:text-lg"><span className="font-bold">Collaborate With Others</span> – Want to tweak a sequence? Make edits to others' projects and save them to your song library.</li>
+                            <a href="/get-pro" className="w-full lg:[320px] inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-arsenic focus:ring-4 focus:ring-gray-100">
+                                Get Metronome Sequencer Pro
+                            </a>
+                        </div>
                     </div>
 
                     
@@ -78,7 +81,7 @@ export default async function Home() {
             <section className="py-16 bg-muted-blue">
                 <div className="px-4 text-center flex flex-col items-center">
                     <div className="w-fit">
-                        <h1 className="mb-4 text-3xl  leading-none md:text-4xl xl:text-5xl">
+                        <h1 className="pb-2 mb-2 text-3xl leading-none md:text-4xl xl:text-5xl bg-gradient-to-r from-cyan via-persian-pink to-cultured text-transparent bg-clip-text drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]">
                             Start sequencing now
                         </h1>
                         <div className="text-cultured">
