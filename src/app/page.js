@@ -21,7 +21,7 @@ export default async function Home() {
                         <SimpleMetronome />
                     </div>  
                     <div className="md:mr-auto place-self-center items-center md:col-span-7">
-                        <h1 className="max-w-2xl mb-4 text-4xl tracking-tight leading-none sm:text-5xl xl:text-6xl bg-gradient-to-r from-cyan via-persian-pink to-cultured inline-block text-transparent bg-clip-text drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]">Master complex rhythms</h1>
+                        <h1 className="max-w-2xl mb-0 pb-[24px] text-4xl tracking-tight leading-none sm:text-5xl xl:text-6xl bg-gradient-to-r from-cyan via-persian-pink to-cultured inline-block text-transparent bg-clip-text drop-shadow-[0_0_25px_rgba(255,255,255,0.1)]">Master complex rhythms</h1>
                         <p className=" max-w-2xl mb-4 font-thin sm:text-md md:text-xl">Create custom metronome sequences of different tempo and time signatures to suit all of your time-keeping needs.</p>
                         <a href="/editor" className="w-full xxl:w-[320px] inline-flex items-center justify-center px-5 py-3 shadow xl:mr-3 text-base no-underline font-medium text-center text-eerie-black bg-cultured hover:bg-primary-800 focus:ring-4 focus:ring-primary-300">
                             Create Your First Song
