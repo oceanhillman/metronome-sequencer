@@ -17,7 +17,7 @@ export default async function Home() {
 
             <section className="bg-eerie-black overflow-hidden pt-8 md:pt-28 pb-16">
                 <div className="grid  xl:mx-32 md:gap-12 p-4 md:py-8 md:grid-cols-12 max-w-screen-xl xxl:max-w-full">
-                    <div className="flex flex-col items-center justify-center md:mt-0 md:col-span-5 md:flex md:m-0 ">
+                    <div className="flex flex-col items-center justify-center md:mt-0 md:col-span-5 md:flex mb-[24px] sm:mb-4 md:mb-0">
                         <SimpleMetronome />
                     </div>  
                     <div className="md:mr-auto place-self-center items-center md:col-span-7">
