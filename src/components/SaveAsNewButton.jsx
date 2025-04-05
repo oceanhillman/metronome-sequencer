@@ -17,6 +17,10 @@ export default function SaveAsNewButton(props) {
         onSave(newSongTitle);
         handleClose();
     }
+
+    useEffect(() => {
+        setNewSongTitle(songTitle);
+    }, [songTitle])
   
     return (
       <div onKeyDown={e => e.stopPropagation()}
