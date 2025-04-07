@@ -5,6 +5,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes gradient-shift {
+  0%, 100% { 
+    background-position: 0% 50%;
+    text-shadow: 0 0 10px rgba(255, 121, 198, 0.15);
+  }
+  50% { 
+    background-position: 100% 50%;
+    text-shadow: 0 0 10px rgba(139, 233, 253, 0.15);
+  }
+}
+
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradient-shift 5s ease infinite;
+}
+
+
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 255, 255, 255;
