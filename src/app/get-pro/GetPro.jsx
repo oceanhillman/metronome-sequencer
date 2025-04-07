@@ -49,16 +49,16 @@ const GetPro = () => {
     };
 
     return (
-        <div className="text-cultured font-roboto min-h-screen bg-eerie-black ">
+        <div className="text-cultured min-h-screen bg-eerie-black">
             <section className="bg-eerie-black pt-8 px-4 md:pt-28 lg:pb-4 w-screen lg:w-full">
-                <h1 className="text-left lg:text-center text-4xl tracking-tight leading-none sm:text-5xl">
+                <h1 className="font-heading font-bold text-left lg:text-center text-4xl tracking-tight leading-none sm:text-5xl">
                     Perfect practice begins here
                 </h1>
             </section>
             <section className="bg-eerie-black">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
                     <div className="bg-gunmetal p-4 shadow">
-                        <h2 className="font-bold my-2">Free</h2>
+                        <h2 className="font-heading font-bold my-2">Free</h2>
                         <h2><span className="font-bold">$0 </span><span className="text-sm">USD /month</span></h2>
                         <a href="/api/auth/login" className="w-full mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-eerie-black bg-cultured hover:bg-primary-800 focus:ring-4 focus:ring-primary-300">
                             Create account
@@ -80,12 +80,12 @@ const GetPro = () => {
                         </li>
                     </div>
                     <div className="bg-tuna p-4 border-1 border-persian-pink shadow">
-                        <h2 className="font-bold my-2 text-persian-pink">Pro</h2>
+                        <h2 className="font-heading font-bold my-2 text-persian-pink">Pro</h2>
                         <h2><span className="font-bold">$1.99 </span> <span className="!text-sm">USD /month</span></h2>
                         <button onClick={handleCheckout} className="w-full mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-cultured/5 focus:ring-4 focus:ring-gray-100">
                             Subscribe
                         </button> 
-                        <p className="mt-4 font-bold text-lg">All of our free features, plus:</p>
+                        <p className="mt-4 font-heading font-bold text-lg">All of our free features, plus:</p>
                         <li className="my-4 flex">
                             <span className="mr-2 inline-block">
                                 <CheckIcon />

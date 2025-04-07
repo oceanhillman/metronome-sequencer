@@ -28,10 +28,12 @@ export default function RootLayout({ children }) {
                 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet"/>
                 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet" />
                 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;500&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet" />
             </head>
-        <body className="bg-eerie-black">
+        <body className="bg-eerie-black font-body">
             <Header />
-            <main className="bg-dark-gunmetal text-cultured">
+            <main>
                 {children}
             </main>
             <Footer />

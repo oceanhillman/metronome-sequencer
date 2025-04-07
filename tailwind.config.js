@@ -32,6 +32,8 @@ module.exports = {
         orbitron: ['Orbitron', 'sans-serif'],
         'sans': ['Source Sans Pro', 'sans-serif'],
         'poppins': ['Poppins', 'sans-serif'],
+        'heading': ['Inter', 'sans-serif'],
+        'body': ['Manrope', 'sans-serif'],
       },
     },
   },

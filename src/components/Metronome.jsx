@@ -220,7 +220,7 @@ export default function Metronome(props) {
                     }}
                 ></div>
             </div>
-            <div className={`${props.performing ? "flex" : "hidden" } flex-col items-center py-2 justify-center text-cultured font-roboto text-lg h-[60px]`}><p className="m-0">Performing song...</p></div>
+            <div className={`${props.performing ? "flex" : "hidden" } flex-col items-center py-2 justify-center text-cultured  text-lg h-[60px]`}><p className="m-0">Performing song...</p></div>
             <div className={`${props.performing ? "hidden" : "flex" } flex-col items-center py-2 justify-center`}>
                 <button 
                     onClick={() => setShowControls(!showControls)}

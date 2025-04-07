@@ -102,7 +102,7 @@ export default function AccountManager() {
     return (
         <div className="">
             <section className="w-screen lg:w-full pt-8 px-4 md:pt-28">
-                <h1 className="text-center mb-4 text-cultured font-roboto">Account settings</h1>
+                <h1 className="text-center mb-4 text-cultured ">Account settings</h1>
                 <p className="text-center">
                     {user ? user.name : null}
                 </p>
