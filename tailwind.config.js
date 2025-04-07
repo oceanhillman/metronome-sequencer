@@ -15,6 +15,7 @@ module.exports = {
         ...colors,
         'dark-gunmetal':'#1e1e2e',
         'gunmetal': '#282a36',
+        'tuna': '#343642',
         'eerie-black': '#16161f',
         'cultured': '#f8f8f2',
         'muted-blue': '#2a2a3e',

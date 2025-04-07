@@ -57,7 +57,7 @@ const GetPro = () => {
             </section>
             <section className="bg-eerie-black">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
-                    <div className="bg-arsenic p-4 shadow">
+                    <div className="bg-gunmetal p-4 shadow">
                         <h2 className="font-bold my-2">Free</h2>
                         <h2><span className="font-bold">$0 </span><span className="text-sm">USD /month</span></h2>
                         <a href="/api/auth/login" className="w-full mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-eerie-black bg-cultured hover:bg-primary-800 focus:ring-4 focus:ring-primary-300">
@@ -79,10 +79,10 @@ const GetPro = () => {
                             </span>View others' shared songs as read-only
                         </li>
                     </div>
-                    <div className="bg-arsenic p-4 border-1 border-persian-pink shadow">
+                    <div className="bg-tuna p-4 border-1 border-persian-pink shadow">
                         <h2 className="font-bold my-2 text-persian-pink">Pro</h2>
                         <h2><span className="font-bold">$1.99 </span> <span className="!text-sm">USD /month</span></h2>
-                        <button onClick={handleCheckout} className="w-full mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-subtle-gray focus:ring-4 focus:ring-gray-100">
+                        <button onClick={handleCheckout} className="w-full mt-4 xl:mt-0 inline-flex items-center justify-center px-5 py-3 shadow text-base no-underline font-medium text-center text-persian-pink border-1 border-persian-pink hover:bg-cultured/5 focus:ring-4 focus:ring-gray-100">
                             Subscribe
                         </button> 
                         <p className="mt-4 font-bold text-lg">All of our free features, plus:</p>
