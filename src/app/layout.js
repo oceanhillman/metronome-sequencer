@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;500&display=swap" rel="stylesheet" />
                 <link href="https://fonts.googleapis.com/css2?family=Manrope&display=swap" rel="stylesheet" />
             </head>
-        <body className="bg-eerie-black font-body">
+        <body className="bg-eerie-black font-body text-cultured">
             <Header />
             <main>
                 {children}
