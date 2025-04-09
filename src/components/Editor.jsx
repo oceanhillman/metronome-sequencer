@@ -351,7 +351,7 @@ export default function Editor(props) {
                                 <Dropdown.Item>
                                     <SaveAsNewButton 
                                         updateSongTitle={(newTitle) => setSong(prev => ({...prev, title: newTitle}))}
-                                        onSave={() => handleSaveAsNew()}
+                                        onSave={(newTitle) => handleSaveAsNew(newTitle)}
                                         songTitle={songTitle}
                                     />
                                 </Dropdown.Item>                                
