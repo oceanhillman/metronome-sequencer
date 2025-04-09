@@ -15,6 +15,8 @@
     const pathname = usePathname(); // Get the current pathname
     const songId = pathname.split('/').pop(); // Extract the song ID from the pathname
 
+    const newlySaved = localStorage.getItem('newlySaved');
+
     function UnauthorizedError() {
         return (
         <div className="w-screen h-screen flex flex-col justify-center items-center">
@@ -79,5 +81,5 @@
         layout: songPayload.layout,
     };
 
-    return <Editor songPayload={song} />;
+    return <Editor songPayload={song} newlySaved={newlySaved}  />;
     }

@@ -10,7 +10,7 @@ export async function POST(request) {
   if (request.method === 'POST') {
     const { email, priceId } = await request.json();
 
-    const success_url = process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL + '/account' : process.env.NEXT_DEV_BASE_URL + '/account';
+    const success_url = process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL + '/account' : process.env.NEXT_PUBLIC_DEV_BASE_URL + '/account';
 
     try {
       const session = await stripe.checkout.sessions.create({
@@ -19,7 +19,7 @@ export async function POST(request) {
         mode: 'subscription',
         customer_email: email,
         success_url: success_url,
-        cancel_url: process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_DEV_BASE_URL,
+        cancel_url: process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_DEV_BASE_URL,
       });
 
       return NextResponse.json({ url: session.url });

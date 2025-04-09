@@ -13,7 +13,7 @@ export async function GET(request) {
 
     // Query to get all songs for the specified user_id
     const result = await sql`
-      SELECT id, title, created_at, last_saved
+      SELECT *
       FROM Songs
       WHERE user_id = ${user_id};
     `;

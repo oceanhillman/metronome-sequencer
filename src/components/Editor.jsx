@@ -4,16 +4,18 @@ import { useEffect, useState, useRef } from "react";
 import { Form, Button, Dropdown } from "react-bootstrap";
 import Image from "next/image";
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { ToastContainer, toast } from 'react-toastify';  
 
 import Metronome from "@/components/Metronome";
 import BeatTracker from '@/components/BeatTracker';
 import Playlist from "@/components/Playlist";
-import SaveAsNewButton from "@/components/SaveAsNewButton";
+import TextInputModal from './TextInputModal';
 
 
 import PlusIcon from "/public/plus.svg";
 
 import { saveSong, addSong } from '@lib/api';
+import { toastSuccess, toastError, toastWarning, toastInfo, toastLoading } from '@lib/utils';
 
 import { FaPlay, FaStop } from "react-icons/fa6";
 import { IoIosSave } from "react-icons/io";
@@ -21,7 +23,7 @@ import { IoIosSave } from "react-icons/io";
 const generatePatternId = () => String(Math.round(Date.now() + Math.random()));
 
 export default function Editor(props) {
-    const { songPayload } = props;
+    const { songPayload, newlySaved } = props;
     const { user, error, isLoading } = useUser();
     const [undoHistory, setUndoHistory] = useState([]);
     const [redoHistory, setRedoHistory] = useState([]);
@@ -41,6 +43,7 @@ export default function Editor(props) {
     const [metronomeIsPlaying, setMetronomeIsPlaying] = useState(false);
     const [beatsTracked, setBeatsTracked] = useState(0);
     const [currentBeatTracked, setCurrentBeatTracked] = useState(0);
+    const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const patternInitialized = useRef(false);
     const bottomRef = useRef(null);
     
@@ -76,6 +79,13 @@ export default function Editor(props) {
                 layout: unsavedProjectData.layout,
                 playlit: unsavedProjectData.playlist,
             }))
+        }
+    }, []);
+
+    useEffect(() => {
+        if (newlySaved) {
+            toast.success("Song saved successfully!", toastSuccess);
+            localStorage.removeItem('newlySaved');
         }
     }, []);
 
@@ -149,19 +159,47 @@ export default function Editor(props) {
     
 
     async function handleSave() {
+        const loadingToastId = toast.loading("Saving song...", toastLoading);
+
         if (user && song.id) {
-            await saveSong(song.id, user?.sub, song.title, song.playlist, song.layout);
-        };
+            try {
+                await saveSong(song.id, user?.sub, song.title, song.playlist, song.layout);
+
+                toast.update(loadingToastId, {
+                    ...toastSuccess,
+                    render: "Song saved successfully!",
+                    type: "success",
+                    isLoading: false,
+                });
+
+            } catch (error) {
+                console.error("Caught error during save:", error);
+                
+                toast.update(loadingToastId, {
+                    ...toastError,
+                    render: "Failed to save song. Please try again.",
+                    type: "error",
+                    isLoading: false,
+                });
+            }
+        } else {
+            console.warn("Cannot save: User or Song ID is missing.");
+            // Optionally notify the user about missing info
+            toast.warn("Cannot save: Missing information.", toastWarning);
+        }
     }
 
     async function handleSaveAsNew(newTitle) {
+        const loadingToastId = toast.loading("Saving new song...", toastLoading);
         if (user) {
             try {
                 const id = await addSong(user?.sub, newTitle, song.playlist, song.layout);
                 localStorage.removeItem('unsavedProject');
+                localStorage.setItem('newlySaved', true);
                 window.location.href = `/song/${id}`;
             } catch (error) {
                 console.error("Error adding song:", error.message);
+                toast.error(`Error adding song: ${error.message}`, toastError);
             }
         } else {
             localStorage.setItem('unsavedProject', JSON.stringify(song));
@@ -234,8 +272,6 @@ export default function Editor(props) {
 
     function handleClickDeletePattern(id) {
         
-        
-
         setTimeout(() => {
             if (bottomRef.current) {
                 bottomRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -268,6 +304,18 @@ export default function Editor(props) {
         setDropdownIsOpen(isOpen);
     }
 
+    const handleCloseModal = () => {
+        setIsRenameModalOpen(false);
+    };
+    
+    const handleConfirmSave = (newTitle) => {
+        if (newTitle && newTitle.trim()) {
+            handleSaveAsNew(newTitle.trim())
+            handleCloseModal();
+        } else {
+            toast.warn("Please enter a valid song title.", toastWarning);
+        }
+    };
 
     return (
     <div className="flex flex-col min-h-screen w-full">
@@ -342,18 +390,20 @@ export default function Editor(props) {
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu className="flex flex-col">
-                                <Dropdown.Item disabled={user && song.id ? false : true}>
-                                    <button onClick={handleSave} className="disabled:text-gray-400">
+                                <Dropdown.Item onClick={handleSave} draggable="false" disabled={user && song.id ? false : true}>
+                                    <button className="disabled:text-gray-400">
                                         Save
                                     </button>
                                 </Dropdown.Item>
 
-                                <Dropdown.Item>
-                                    <SaveAsNewButton 
-                                        updateSongTitle={(newTitle) => setSong(prev => ({...prev, title: newTitle}))}
-                                        onSave={(newTitle) => handleSaveAsNew(newTitle)}
-                                        songTitle={songTitle}
-                                    />
+                                <Dropdown.Item draggable="false" onClick={() => setIsRenameModalOpen(true)}>
+                                <div>
+                                    <button
+                                        className="disabled:text-gray-500 disabled:cursor-not-allowed text-black transition-colors" 
+                                    >
+                                        Save as new
+                                    </button>
+                                </div>
                                 </Dropdown.Item>                                
                             </Dropdown.Menu>
                         </Dropdown>
@@ -386,6 +436,21 @@ export default function Editor(props) {
                 </div>
             </div>
         </div>
+        <ToastContainer />
+        <TextInputModal
+                isOpen={isRenameModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmSave}
+                title="Save As New Song"
+                initialValue={songTitle} // Pre-fill with the current title
+                placeholder="Enter New Song Title"
+                inputLabel="New Song Title:" // Add a label
+                confirmText="Save New Song"
+                cancelText="Cancel"
+                // Optionally override button styles if needed
+                // confirmButtonStyle="your-custom-confirm-style"
+                // cancelButtonStyle="your-custom-cancel-style"
+            />
     </div>
 
     )
