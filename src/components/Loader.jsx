@@ -1,3 +1,4 @@
+'use client'
 import { ring } from 'ldrs';
 
 ring.register();

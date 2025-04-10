@@ -1,8 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import Editor from "@/components/Editor";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
 
@@ -72,7 +70,7 @@ function Load() {
 }
 
     return (
-        <div>
+        <>
             <h1 className="text-cultured font-heading font-bold text-3xl sm:text-4xl mb-6 text-center">Saved Song Library</h1>
             <SongLibrary
                 user={user}
@@ -81,7 +79,7 @@ function Load() {
                 onFetchComplete={() => setIsFetched(true)}
             />
             <Load />
-        </div>
+        </>
     )
 }
 
