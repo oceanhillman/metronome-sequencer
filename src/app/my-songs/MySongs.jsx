@@ -72,7 +72,7 @@ function Load() {
 }
 
     return (
-        <>
+        <div>
             <h1 className="text-cultured font-heading font-bold text-3xl sm:text-4xl mb-6 text-center">Saved Song Library</h1>
             <SongLibrary
                 user={user}
@@ -81,7 +81,7 @@ function Load() {
                 onFetchComplete={() => setIsFetched(true)}
             />
             <Load />
-        </>
+        </div>
     )
 }
 
