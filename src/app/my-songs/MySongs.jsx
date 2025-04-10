@@ -8,11 +8,13 @@ import Link from 'next/link';
 
 import { isSubscribed } from '@lib/api';
 import SongLibrary from '@/components/SongLibrary';
+import Loader from '@/components/Loader';
 
 export default function Song() {
 const { user, error: authError, isLoading } = useUser();
 const [error, setError] = useState(null);
-const [subscribed, setSubscribed] = useState(false);
+const [subscribed, setSubscribed] = useState();
+const [isFetched, setIsFetched] = useState(false);
 
 function UnauthorizedError() {
     return (
@@ -53,16 +55,35 @@ useEffect(() => {
     console.log("Subscribed:", subscribed);
 }, [subscribed])
 
+useEffect(() => {
+    console.log("fetched:", isFetched);
+}, [isFetched])
 
-if (isLoading) return <div>Loading...</div>;
 if (error) {
     if (error.status === 403) {
     return <UnauthorizedError />;
     }
     return <div>Error: {error.message}</div>;
 }
-if (!subscribed) return <div>No song data available</div>;
+if (subscribed === false) window.location.href = '/get-pro';
 
-
-return <SongLibrary />;
+function Load() {
+    if (isLoading || !isFetched) return <Loader />
 }
+
+    return (
+        <>
+            <h1 className="text-cultured font-heading font-bold text-3xl sm:text-4xl mb-6 text-center">Saved Song Library</h1>
+            <SongLibrary
+                user={user}
+                authError={authError}
+                isLoading={isLoading}
+                onFetchComplete={() => setIsFetched(true)}
+            />
+            <Load />
+        </>
+    )
+}
+
+// do it here
+// 

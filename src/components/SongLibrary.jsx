@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useUser } from '@auth0/nextjs-auth0/client';
 import { format } from 'date-fns';
 import Link from 'next/link';
 // Removed DeleteSongButton import as it's handled by the menu/modal now
@@ -11,14 +10,13 @@ import { toastSuccess, toastError, toastWarning, toastInfo, toastLoading } from 
 
 import { ToastContainer, toast } from 'react-toastify';
 
-
 // Import the new components
 import SongActionsMenu from '@/components/SongActionsMenu';
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'; // Adjust path if needed
-import TextInputModal from '@/components/TextInputModal'; 
+import TextInputModal from '@/components/TextInputModal';
 
-export default function SongLibrary() {
-  const { user, error, isLoading: authLoading } = useUser();
+export default function SongLibrary(props) {
+  const { user, error, isLoading: authLoading, onFetchComplete } = props
   const [userSongs, setUserSongs] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const [isFetching, setIsFetching] = useState(true);
@@ -132,6 +130,7 @@ export default function SongLibrary() {
         setUserSongs([]);
       } finally {
         setIsFetching(false);
+        onFetchComplete();
       }
     }, []); // Empty dependency array
 
@@ -252,7 +251,7 @@ export default function SongLibrary() {
   // --- Fetching Effect --- (remains the same)
   useEffect(() => {
     if (user?.sub && !authLoading) {
-      fetchSongs(user.sub);
+      fetchSongs(user?.sub);
     } else if (!authLoading) {
         setIsFetching(false);
         setUserSongs([]);
@@ -302,30 +301,15 @@ export default function SongLibrary() {
     setOpenMenuId(null);
    }, []);
 
-   // --- Remove the inline ConfirmModal function ---
-   /*
-   const ConfirmModal = () => { ... } // DELETE THIS FUNCTION DEFINITION
-   */
-
-  // --- Rendering Logic ---
-  if (authLoading) return <div className="text-center text-cultured p-10">Loading User...</div>;
-  if (error) return <div className="text-center text-red-500 p-10">Auth Error: {error.message}</div>;
-  if (!authLoading && fetchError) return <div className="text-center text-red-500 p-10">Error loading songs: {fetchError}</div>;
-  if (!user && !authLoading) return <div className="text-center text-cultured p-10">Please log in to see your song library.</div>;
-
 
   return (
     <div className="w-full my-10">
-      <h1 className="text-cultured font-heading font-bold text-3xl sm:text-4xl mb-6 text-center">Saved Song Library</h1>
 
-      {isFetching && <div className="text-center text-cultured p-10">Loading songs...</div>}
-
-      {!isFetching && userSongs.length === 0 && !fetchError && (
+      {user && !isFetching && userSongs.length === 0 && !fetchError && (
            <div className="text-center text-cultured/70 p-10">
                Your song library is empty. Start creating!
            </div>
        )}
-
 
       {!isFetching && userSongs.length > 0 && (
         <div className=" bg-eerie-black xxl:mx-32 xxl:p-4">
