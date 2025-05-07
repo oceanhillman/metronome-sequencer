@@ -3,10 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Link from 'next/link';
-
+import dynamic from 'next/dynamic';
 import { isSubscribed } from '@lib/api';
 import SongLibrary from '@/components/SongLibrary';
-import Loader from '@/components/Loader';
+const LoaderRing = dynamic(
+    () => import('@/components/Loader'),
+    {
+      ssr: false,
+    }
+  );
 
 export default function Song() {
 const { user, error: authError, isLoading } = useUser();
@@ -66,7 +71,7 @@ if (error) {
 if (subscribed === false) window.location.href = '/get-pro';
 
 function Load() {
-    if (isLoading || !isFetched) return <Loader />
+    if (isLoading || !isFetched) return <LoaderRing />
 }
 
     return (
