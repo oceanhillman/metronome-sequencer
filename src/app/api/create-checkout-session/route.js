@@ -3,14 +3,14 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2022-11-15',
+  apiVersion: '2025-06-30.basil',
 });
 
 export async function POST(request) {
   if (request.method === 'POST') {
     const { email, priceId } = await request.json();
 
-    const success_url = process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL + '/account' : process.env.NEXT_PUBLIC_DEV_BASE_URL + '/account';
+    const success_url = process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL + '/get-pro/success' : process.env.NEXT_PUBLIC_DEV_BASE_URL + '/get-pro/success';
 
     try {
       const session = await stripe.checkout.sessions.create({
