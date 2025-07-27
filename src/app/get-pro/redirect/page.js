@@ -15,8 +15,9 @@ export default function RedirectPage() {
     const { user, error: authError, isLoading } = useUser();
     
     useEffect(() => {
-        checkout(user, '/');
-    }, []);
+        if (!isLoading && user)
+            checkout(user, '/get-pro');
+    }, [isLoading, user]);
 
     return (
         <div className="flex min-h-screen flex-col items-center bg-eerie-black">
