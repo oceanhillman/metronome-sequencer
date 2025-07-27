@@ -8,10 +8,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export async function POST(request) {
   if (request.method === 'POST') {
-    const { email, priceId } = await request.json();
+    const { email } = await request.json();
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_DEV_BASE_URL;
     const success_url = baseUrl + '/get-pro/success';
+    const cancel_url = baseUrl + '/get-pro';
+
+    const priceId = process.env.NEXT_PUBLIC_SUBSCRIPTION_PRICE_ID;
 
     try {
       const session = await stripe.checkout.sessions.create({
@@ -20,7 +23,7 @@ export async function POST(request) {
         mode: 'subscription',
         customer_email: email,
         success_url: success_url,
-        cancel_url: process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_DEV_BASE_URL,
+        cancel_url: cancel_url,
       });
 
       return NextResponse.json({ url: session.url });
