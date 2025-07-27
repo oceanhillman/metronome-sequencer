@@ -10,7 +10,8 @@ export async function POST(request) {
   if (request.method === 'POST') {
     const { email, priceId } = await request.json();
 
-    const success_url = process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL + '/get-pro/success' : process.env.NEXT_PUBLIC_DEV_BASE_URL + '/get-pro/success';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_DEV_BASE_URL;
+    const success_url = baseUrl + '/get-pro/success';
 
     try {
       const session = await stripe.checkout.sessions.create({
